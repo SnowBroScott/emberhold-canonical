@@ -43,7 +43,7 @@ curl -sL "<RAW_URL>?cb=$(date +%s)"
 | Playbook | Covers | Status | Raw URL |
 |---|---|---|---|
 | **session-protocol** | How a build session runs. Read before working. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/session-protocol.md` |
-| **avatar-generation** | How to generate on-band avatars. Hard-won; do not improvise. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/avatar-generation.md` |
+| **avatar-generation** | How to generate on-band avatars. Hard-won; do not improvise. **Rewritten 2026-07-11 — the previous version was wrong.** | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/avatar-generation.md` |
 | **qa-harness** | How QA runs, regardless of which model shows up. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/qa-harness.md` |
 | **phase-b-brief** | How to execute the stranger-proofing gate. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/phase-b-brief.md` |
 
@@ -58,9 +58,13 @@ curl -sL "<RAW_URL>?cb=$(date +%s)"
 
 | Asset | What | Status | Path |
 |---|---|---|---|
-| **avatar roster boards** | The 44-character roster as generated (4 contact sheets). **Backup of record.** | BANKED — not yet transported | `assets/avatars/roster-boards/` |
+| **avatar roster sheets** | The **48-character roster** as generated: 19 sheets, 3 characters each, ~600px per character. Named by class and register (`forge-cute`, `keep-core`, `hall-cool`, …). **Backup of record.** | BANKED — not yet sliced or transported | `assets/avatars/roster-sheets/` |
+| **avatar discards** | Failed and superseded generations. **Keep them** — they are the evidence behind the playbook's rules. The lava-crack sheet *is* the illustration for the luminosity rule. | ARCHIVE | `assets/avatars/discards/` |
+| **avatar roster boards (v1)** | The abandoned 2026-07-03 roster. **Contact-sheet previews, not masters** — ~170px per character, a squashed band, a clipped row. Superseded, kept as the reason. | DEPRECATED | `assets/avatars/archive/roster-boards-v1/` |
 
-*Avatar transport (crop → name → export → upload → picker slotting → free/paid split) is outstanding. See `assets/avatars/README.md`. Design-complete ≠ shipped.*
+*Avatar **generation** is complete (2026-07-11). **Transport** — slice → 512×512 → Supabase storage → picker slotting → free/paid split — is outstanding. **The slice is a Claude Code job**: the geometry is clean and regular, but the success condition is visual, and jAIne cannot see her own image output. A blind slice was attempted and produced garbage. Do not repeat it.*
+
+*Design-complete ≠ shipped. Generated ≠ shipped either.*
 
 ---
 
