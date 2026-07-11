@@ -28,6 +28,7 @@ Every doc has exactly one job. If two docs answer the same question, one of them
 | **`docs/decisions.md`** | **What we decided and why.** Append-only. | When a decision lands |
 | **`docs/playbooks/`** | **How to do a thing.** Reusable method. | When method changes |
 | **`docs/archive/`** | Reasoning history. Superseded but not deleted. | Never (append only) |
+| **`assets/`** | Binary assets. Currently: the 44-character avatar roster. | When assets land |
 
 ### Playbooks
 | Playbook | Covers |

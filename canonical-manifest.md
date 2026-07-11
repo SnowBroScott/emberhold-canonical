@@ -54,6 +54,14 @@ curl -sL "<RAW_URL>?cb=$(date +%s)"
 | **hiatus-wrap-2026-07-09** | ARCHIVE | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/archive/hiatus-wrap-2026-07-09.md` |
 | **operational-readiness-2026-07-02** | ARCHIVE — *superseded by north-star's gate ladder; kept for the full detail behind it* | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/archive/operational-readiness-2026-07-02.md` |
 
+### Assets
+
+| Asset | What | Status | Path |
+|---|---|---|---|
+| **avatar roster boards** | The 44-character roster as generated (4 contact sheets). **Backup of record.** | BANKED — not yet transported | `assets/avatars/roster-boards/` |
+
+*Avatar transport (crop → name → export → upload → picker slotting → free/paid split) is outstanding. See `assets/avatars/README.md`. Design-complete ≠ shipped.*
+
 ---
 
 ## What to fetch, by session type
