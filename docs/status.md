@@ -38,11 +38,8 @@ Everything else is polish. These four, in this order.
 
 ## ⬜ OUTSTANDING — security & distribution (the pre-distribution bundle)
 
-- ⬜ **Quest self-approval RLS exposure** *(CONFIRMED — blocker)*. `Update family quests` UPDATE policy gates by row with **no column-level restriction** — any claimer/assignee can write `status='approved'` / `approved_by` / points via the API. Practical risk today ≈ zero (no kid approve path, no kid session), but the core "embers mint only on approval" rule is enforced by **UI convention, not policy**.
-  - The linter's `has_role(auth.uid(),'parent')` fix is **INSUFFICIENT** — kids act under the owner's session, so `auth.uid()` is always the parent.
-  - Real fix: key on **acting profile** + verified-parent action + **column-level gating** (kids → claimed/in_progress only; approved/approved_by/points → verified parent only).
-  - **Claude Code job.** Requires reading the parent-verification path end to end.
-- ⬜ **SECURITY DEFINER sweep** — 22 definer functions, **15 tripping lint 0029**. Audit for internal caller-gating: `get_member_email`, `set_profile_pin`, `verify_profile_pin`, `member_spendable`, `approve_redemption`, `deny_redemption`, `parent_self_redeem`, `create_adult_profile`. *(`roll_missed_dailies` anon grant already revoked ✅.)*
+- ⬜ **Workstream 1 — approval-path RLS hardening** *(CONFIRMED — PRE-DISTRIBUTION BLOCKER)*. The core "embers mint only on adult approval" rule is currently enforced by UI convention rather than by policy. Confirmed finding, scoped fix, requires reading the parent-verification path end to end. **Claude Code job.** *Exploit specifics are deliberately NOT in this public repo — they live in the private security note handed into the Claude Code session.*
+- ⬜ **SECURITY DEFINER sweep** — a set of definer functions flagged by the linter need an internal-caller-gating audit, bundled with Workstream 1. *(One over-grant already revoked ✅.)* *(Function-level detail held out of the public repo; in the private note.)*
 - ⬜ **Join-code security** — no rotation, no entropy review, no approval gate. Add regenerate-code + likely admit-on-approval. *(Phaeaz's sharpest catch.)*
 - ⬜ **Service worker + app-shell cache** — no functional SW (airplane-mode confirmed). Task zero of any push build; also unblocks the offline shell and makes "installable PWA" true instead of aspirational.
 - ⬜ **Supabase plan + backup posture** — off the free tier (project pausing is a launch-killer); confirm point-in-time recovery.
@@ -115,7 +112,7 @@ Everything else is polish. These four, in this order.
 - ✅ Copy fix — claim-eligibility states itself exactly once per card (kills the "Adults only / Available to anyone" contradiction).
 
 **Security**
-- ✅ `roll_missed_dailies` EXECUTE grant **revoked from anon**, retained for authenticated. *Verified: anon → 401; board still rolls dailies.*
+- ✅ An over-broad anon EXECUTE grant on a data-mutating RPC was **revoked** (retained for authenticated). *Verified: anon → 401; board still functions.*
 
 **Docs / process**
 - ✅ Master spec brought fully current (12 days of drift cleared: 7/03 avatar pass, 7/04 vocabulary + adult Vault, 7/10 Vault run, monetization model folded in for the first time).
