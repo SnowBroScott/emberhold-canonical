@@ -55,14 +55,14 @@ STATUS: LOCKED
 ```
 
 ```
-DECISION: Quest self-approval RLS exposure confirmed real; fix scoped to Claude Code, not a Lovable patch
+DECISION: Approval-path RLS hardening confirmed necessary; fix scoped to Claude Code, not a Lovable patch
 DATE: 2026-07-10
-WHY: "Update family quests" UPDATE policy gates by row with NO column-level restriction — any claimer/assignee can
-     write status='approved'/approved_by/points via the API. Confirmed NOT introduced by the 7/10 migration.
-     Risk today ~zero (no kid UI approve path; kids have no own session) but the core approval rule is enforced by
-     UI convention, not policy. The linter's has_role(auth.uid(),'parent') fix is INSUFFICIENT: kids act under the
-     owner's session, so auth.uid() is always the parent. Real fix keys on the acting profile + verified-parent
-     action + column-level gating. Requires reading the parent-verification path end to end.
+WHY: The core "embers mint only on adult approval" rule is currently enforced by UI convention rather than by
+     policy. Confirmed finding, not introduced by the 7/10 migration. A naive role-check fix does not close it
+     because of how kid profiles share the owner's session; the real fix keys on the acting profile + a
+     verified-parent action + column-level gating, and requires reading the parent-verification path end to end.
+     [Exploit specifics deliberately held OUT of this public repo — they live in the private security note handed
+     into the Claude Code / Workstream 1 session.]
 STATUS: LOCKED (finding) — fix is a Claude Code job. PRE-DISTRIBUTION BLOCKER.
 ```
 
