@@ -14,6 +14,191 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 
 ---
 
+## 2026-07-11
+
+```
+DECISION: The 2026-07-03 avatar roster is ABANDONED and fully regenerated. 48 characters, 12 per class,
+          3 per generated sheet.
+DATE: 2026-07-11
+WHY: The four "roster boards" were never master assets — they were CONTACT-SHEET PREVIEWS. Investigation found
+     ~170px per character (the engine's ~1254px canvas divided by 32), a bottom band the engine had visibly
+     squashed when it ran out of canvas, a bottom row clipped off the edge of the image, and circles packed so
+     tightly they overlapped their neighbours. A picker thumbnail at 72pt on a 3x phone needs ~216px. There was
+     no higher-resolution original — the sheet WAS the master.
+     THIS IS WHY AVATAR TRANSPORT SURVIVED EIGHT DAYS OF DEFERRAL. It was never a file-moving problem. The
+     asset did not exist. Three separate attempts to "just crop them" failed because the thing being cropped
+     was not shippable, and the failure kept presenting as procrastination.
+     Rejected: upscaling the existing roster — cannot invent detail that was never rendered, and does not fix
+     the squash or the clipping.
+     Rejected: re-rendering individual characters at higher resolution from the sheet — unproven fidelity; the
+     engine returns a DIFFERENT dwarf.
+     Accepted cost: a new cast. Generation is free on the work account; roster slots are not. Generate wide,
+     ship narrow — the surplus becomes a Guildhall cosmetic drop that already exists.
+REPLACES: "Avatar roster expands to 10 per class (40 base) + 4 cool-register = 44" (2026-07-03), and its four
+          contact sheets. Free/paid split TBD is inherited and still open.
+STATUS: LOCKED
+```
+
+```
+DECISION: The avatar-generation playbook's central rule — "generate the FULL roster in ONE run" — is REVERSED.
+          Three characters per sheet.
+DATE: 2026-07-11
+WHY: The reasoning behind the old rule was sound and the outcome was still unusable, which makes it the most
+     instructive failure in the project. A cross-roster anti-repeat constraint genuinely can only bind when the
+     engine sees the whole cast at once — but it bought that variety by spending the ENTIRE PIXEL BUDGET. The
+     engine's canvas is fixed (~1254px) no matter how many characters you ask it to put on it.
+     RESOLUTION IS THE CONSTRAINT, and everything else is downstream of it. 32 characters on one canvas is 32
+     previews. Three per sheet yields ~600px each, circles that don't touch, generous dead air for the crop,
+     and a geometry a script can slice blind.
+     The anti-repeat benefit is recoverable — through the reference-sheet technique plus an explicit ban list
+     carried forward between runs. The pixels are not recoverable at all.
+     Validated across 19 consecutive sheets with zero composition drift.
+REPLACES: Rule 2 of playbooks/avatar-generation.md, and point (2) of "The avatar generation method" (2026-07-03).
+          The other four points of that decision survive; the playbook is rewritten around them.
+STATUS: LOCKED
+```
+
+```
+DECISION: THE CONVERGENCE LAW — a generator collapses onto every axis you do not pin.
+DATE: 2026-07-11
+WHY: Observed three times in one day, on three different axes, in three different classes.
+     FORGE, unpinned on EMBLEM → issued nearly every character the same gold anvil-crest, lifted off the
+       reference sheet and worn as a uniform.
+     KEEP, unpinned on COSTUME → gave all three core characters the same silver circlet, blue cloak and
+       crystal brooch. Three people, one wardrobe.
+     HALL, unpinned on SCENE → put every character behind a tavern counter with a chalkboard sign and their
+       goods laid out. Same composition, re-dressed.
+     The defaults are not random. They are UNIFORM, and they are the same every time. The correction is always
+     the same shape: name the axis, then give it options.
+     Corollary: the reference sheet holds STYLE. It does not hold VARIETY. It cannot stop convergence on an
+     axis that was never named.
+REPLACES: Nothing — generalizes and supersedes the framing of "axis errors, not length errors" (2026-07-03).
+          That finding was correct but under-scoped: it named two axes, and there are as many axes as there
+          are things you forgot to say.
+STATUS: LOCKED
+```
+
+```
+DECISION: Character generation requires JOBS, and pose requires a MENU. Adjectives do not work.
+DATE: 2026-07-11
+WHY: Two independent instances of one underlying truth — a word in a prompt does not beat a default.
+     JOBS: Keep's core register returned three interchangeable noble humans in blue robes. Re-run with trades
+     named — stonemason, librarian, gate-guard — it returned a rune-carver with stone dust on her face, a
+     librarian squinting through spectacles at something he clearly finds disappointing, and a snow-covered
+     guard who has been outside a very long time. Same style block, same class, same lighting. The only change
+     was that the characters had something to DO.
+     POSE: "vary pose and expression boldly" produced the same three-quarter turn, chin up, eyes to camera, on
+     every character in the roster — including a corgi. Replacing the adjective with an explicit list of head
+     angles plus a "no two alike" constraint immediately produced a full profile, a straight-on, and an elder
+     looking up and LAUGHING — the best character in the roster.
+     Tell it THAT a character has a job; never WHICH job. Pin the axis, free the content. This is the lane rule
+     applied to prompting, and it resolves the apparent tension with "loose briefs win."
+REPLACES: Nothing — new rules in playbooks/avatar-generation.md.
+STATUS: LOCKED
+```
+
+```
+DECISION: Child-safety fences must be STATED in every generation run. The engine will not infer them.
+DATE: 2026-07-11
+WHY: Unprompted, the generator produced a warrior-woman in a chainmail bikini, and a wide-eyed baby amphibian
+     raising a foaming tankard of ale. A "fantasy tavern" is not a defense — this is a chore app an eight-year-
+     old opens to claim quests, and the read is instant.
+     Standing clauses, every run: all characters fully and modestly clothed or armored; never any alcohol.
+     Note the cost of the fix was ZERO. The tankard became a steaming teapot and the character was otherwise
+     identical. The prop was never doing the work. The face was.
+REPLACES: Nothing — new rule.
+STATUS: LOCKED
+```
+
+```
+DECISION: "Bounty" is banned from card-level UI. In the Open Bounties strip the redundant OPEN BOUNTY chip is
+          removed entirely; on the main board, unclaimed quests carry an UNCLAIMED chip.
+DATE: 2026-07-11
+WHY: The vocabulary law holds "Quest" as universal object language and "Bounty" as a proper noun for the
+     Briefing strip's feature name only. A per-card OPEN BOUNTY chip is bounty-as-object-language — the exact
+     contamination the law exists to prevent. Inside the Open Bounties section the chip is also redundant with
+     its own header. On the main board a chip DOES do work, but it must describe the quest's STATE, not rename
+     the object.
+     Rejected: relabeling to "OPEN QUEST" inside the strip — still redundant with the header.
+     Rejected: restyling the chip — styling does not fix a naming violation.
+REPLACES: Nothing — this ENFORCES "Quest is the universal object term" (2026-07-04). That decision closed with
+          "string audit across all UI surfaces still OWED." The audit is now done. The debt is paid.
+STATUS: LOCKED
+```
+
+```
+DECISION: The activity feed renders the canonical ember tier names (Dim / Warm / Hot / Blazing). The parallel
+          ROUTINE / MILESTONE vocabulary is eliminated.
+DATE: 2026-07-11
+WHY: Heat is ONE dial. Brightness = heat = importance, across every surface. The feed derives its heat from the
+     same ember-value tier ramp the cards do, so it must use the same names. A feed row reading MILESTONE while
+     the quest card reads BLAZING is two dials for one concept.
+     This was DRIFT, not design — nobody decided it, it simply appeared, and it would have hardened into canon
+     if it had lived in a screenshot much longer.
+     "Legendary" remains a campaign-completion override state, not a value tier — consistent with 2026-07-04.
+REPLACES: The undocumented ROUTINE / MILESTONE feed labels.
+STATUS: LOCKED
+```
+
+```
+DECISION: Rendered strings derived from database identifiers are COPY, not identifiers. Audit them as such.
+DATE: 2026-07-11
+WHY: The `bounty_posted` enum value is an identifier and can live forever — nobody reads the database. But the
+     feed row it renders ("New bounty: …", "BOUNTY POSTED") is a sentence a child reads, and it is squarely in
+     scope for the vocabulary law. An audit that files these under "internal identifiers, not user-facing"
+     misses them by CATEGORY ERROR. The test is not "is it derived from code." The test is "does it appear on
+     screen."
+     Corollary, and the more important half: an agent's self-report that strings are "already consistent" is a
+     CLAIM, not a verification. Lovable reported the quest/bounty strings clean and made no edits; a screenshot
+     an hour later showed OPEN BOUNTY stamped on six cards. Require the grep — file by file, with a
+     justification for every survivor. That is what turns an item from asserted to closed.
+REPLACES: Nothing — new standard. Applies beyond vocabulary: it is a QA principle.
+STATUS: LOCKED
+```
+
+```
+DECISION: The install-prompt description is: "Chores become quests. Quests earn embers. Embers buy real
+          rewards. Your household, but fun."
+DATE: 2026-07-11
+WHY: This string is the door, and the door should be in English. Three escalating clauses mean a stranger who
+     reads nothing else understands the entire product — each clause answers the question the last one raised
+     (quests? so what. embers? so what. oh — REAL rewards). Internal vocabulary ("the Hold") is a reward for
+     being inside, not a hook for getting in.
+     Rejected: "gamified" — a tech buzzword; promises rather than describes.
+     Rejected: "epic" — the same disease wearing a cape, and it oversells a product whose actual job is getting
+     a nine-year-old to empty the dishwasher.
+     "but fun" quietly admits household admin normally isn't, which is the shared joke with every parent who
+     reads it. Self-aware beats aspirational at the door.
+REPLACES: "turn household tasks into XP" — the last surviving user-visible XP string in the product, and,
+          being in manifest.webmanifest, the FIRST thing a stranger read.
+STATUS: LOCKED
+```
+
+```
+DECISION: jAIne does not slice images. Tasks whose success condition is visual belong to Claude Code.
+DATE: 2026-07-11
+WHY: jAIne cannot see the images her own tools produce. A programmatic slice of the roster was attempted, the
+     grid was wrong, and the output — two half-avatars per tile, cut through the middle — was delivered anyway,
+     because there was no way to check it. The only reason the error surfaced is that Scott opened the file.
+     This is a SENSORY limit, not a care limit, and no amount of diligence fixes it. Any task where the success
+     condition is "does this look right" must go to a tool that can look. Claude Code reads the filesystem and
+     can inspect its own output.
+     Corollary: this gave Claude Code its first real job, and it is a far better first outing than a security
+     fix — the failure mode is visible and harmless.
+REPLACES: Nothing — new lane boundary.
+STATUS: LOCKED
+```
+
+```
+DECISION: Engine bundle — daily respawn VERIFIED. Promoted from DRAFT to LOCKED.
+DATE: 2026-07-11
+WHY: A completed daily reappeared fresh and correctly dated the following morning. This was the one unverified
+     half of the 2026-07-10 engine bundle. The quest lifecycle is now verified end to end, not asserted.
+REPLACES: The DRAFT status on "Engine bundle shipped" (2026-07-10), which was held pending overnight
+          verification of the due_date rollover across midnight.
+STATUS: LOCKED
+```
+
 ## 2026-07-10
 
 ```
