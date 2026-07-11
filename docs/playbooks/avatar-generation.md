@@ -6,94 +6,312 @@ The *style floor* (what an avatar must be) lives in `master-spec.md` → Avatars
 
 Validated engine: **Microsoft Copilot Create** (work account — zero Lovable credit burn). The method should transfer, but recalibrate on any new engine before trusting it.
 
+> **This playbook was rewritten on 2026-07-11 after a full roster regeneration.**
+> The previous version's central instruction — *generate the full roster in one run* — was **wrong**, and it cost the project eight days. It is preserved as a cautionary tale in Rule 1, because the reasoning behind it was sound and the outcome was still unusable. Understanding *why* a good rule produced a bad asset is the most useful thing in this document.
+
 ---
 
-## Rule 1 — The style block controls output by AXIS, not by LENGTH
+## Rule 0 — RESOLUTION IS THE CONSTRAINT. Everything else is downstream.
 
-This is the whole game, and it's counterintuitive.
+**The generated sheet IS the master asset. There is no higher-resolution original.**
 
-**PIN:** the floor (luminosity / painterly / jewel-color) and the near-black background.
-**FREE, explicitly:** casting, palette, and pose.
+The engine gives you roughly a **1254px canvas** regardless of what you ask it to put on it. So:
 
-| Failure mode | What went wrong |
+| Characters per sheet | Pixels per character | Verdict |
+|---|---|---|
+| 32 | ~170px | **Unusable.** Mush at any real display size. |
+| 11 | ~280px | Still short. |
+| 4 | ~500px | Workable. |
+| **3** | **~600px** | **The number. Use this.** |
+| 1 | ~1200px | Ideal, but the engine will not reliably honor one-file-per-character. |
+
+**Three per sheet is the validated unit.** It buys real pixels, honest circles that don't touch, generous dead air for the crop, and it's a geometry a script can slice blind.
+
+### Why the old "full roster in one run" rule failed
+
+The reasoning was correct: a cross-roster anti-repeat constraint can only bind when the engine sees the whole cast at once. That part is still true.
+
+But it bought archetype variety **by spending the entire pixel budget** — 32 characters on one canvas is 32 contact-sheet previews, not 32 assets. It also produced two failures nobody predicted:
+
+- **The engine ran out of canvas and squashed the last band.** Hall came back visibly compressed.
+- **It clipped its own bottom row** off the edge of the image.
+
+The anti-repeat benefit is recoverable through the reference sheet (Rule 7) and an explicit ban list (Rule 6). The pixels are not recoverable at all.
+
+**A contact sheet is not a master. If each character got less than ~400px, you have not generated assets — you have generated a preview of assets.**
+
+---
+
+## Rule 1 — THE CONVERGENCE LAW: the engine collapses onto every axis you don't pin
+
+This is the deepest rule in this document and it generalizes the old Rule 1.
+
+**Whatever axis you leave unspecified, the engine will pick one value and apply it to everything.** Not randomly — *uniformly*. Its defaults are strong and they are the same every time.
+
+Observed in a single day, three times, on three different axes:
+
+| Class | Unpinned axis | What it converged on |
+|---|---|---|
+| **Forge** | *emblem* | Gave nearly every character the same gold anvil-crest. It lifted the class icon off the reference sheet and issued it as a **uniform.** |
+| **Keep** | *costume* | Gave all three core characters the same silver circlet, blue cloak and crystal brooch. Three people, one wardrobe. |
+| **Hall** | *scene* | Put every character behind a tavern counter with a chalkboard sign and their goods laid out. Same composition, re-dressed. |
+
+The correction is always the same shape: **name the axis, then give it options.**
+
+- Don't write *"vary their clothing"* → write *"no repeated crest, circlet or emblem. These are different people with different jobs."*
+- Don't write *"vary the setting"* → write *"take them out of the tavern: a workshop, a stage, a doorway, out in the crowd."*
+
+**Corollary:** the reference sheet holds *style*. It does **not** hold variety. It cannot stop the engine converging on an axis you never named.
+
+---
+
+## Rule 2 — JOBS, not adjectives
+
+**Give a character a trade and you get a person. Omit it and you get a mannequin in a class uniform.**
+
+This single change is what rescued Keep, which had produced three interchangeable noble humans in blue robes. Re-run with jobs — *a stonemason, a librarian, a gate-guard* — and it returned a rune-carver with stone dust on her face, a librarian squinting through spectacles, and a snow-covered guard who has been outside a very long time.
+
+Same style block. Same class. Same lighting. **The only change was that the characters had something to do.**
+
+Write the trade into the slot line: *a beekeeper, a bell-ringer, a chandler, a lamplighter, a map-maker, a seed-keeper, a fiddler, a baker.* Their craft should be readable at a glance.
+
+The trade also does character work the prompt never asked for: a tortoise given a gardening job comes back patient and unhurried, holding a potted flower. That's the engine authoring unsupervised, which is the whole point (see The Lane Rule).
+
+---
+
+## Rule 3 — POSE needs a MENU, not an adjective
+
+*"Vary pose and expression boldly"* does **nothing.** It's a word, and words don't beat defaults.
+
+Left to itself the engine produces the same head every time: **three-quarter turn, chin slightly up, eyes to camera.** It will do this across every class, every register, and every palette, and it will do it to a corgi.
+
+The fix is a literal list of options and a hard constraint:
+
+```
+POSE — mandatory: three DIFFERENT head angles. No two alike. Choose from:
+- straight-on, facing the viewer
+- full profile, looking off to the side, not at the viewer
+- looking away / eyes off-camera entirely
+- head tilted or turned sharply, chin down
+- looking up, or looking down
+- back partly turned, head over the shoulder
+
+Vary EXPRESSION too: not everyone is serene. Some should be laughing, wary,
+tired, delighted, focused on something outside the frame, mid-speech.
+```
+
+The single best character produced across the entire roster is an elder **looking up and laughing.** The only thing that changed was letting her look at something other than the lens.
+
+The second best is a bard caught **mid-song** — head back, mouth open, mid-action rather than posed. *Doing* beats *being*.
+
+---
+
+## Rule 4 — Circular-crop-safe framing (permanent composition rule)
+
+Every avatar composed **centered, with even margin on all sides.** Full head — crown, horns, antlers, hat included — plus shoulders sit **inside a centered circle with breathing room.** Nothing touching edges.
+
+Additionally, for multi-character sheets:
+
+```
+- The circles must NOT touch, overlap, or run off the edge of the image.
+  Leave generous dark space between them and around the outside.
+- The entire canvas must be near-black. No white margins, no white background,
+  no separator lines or borders between images.
+```
+
+**This rule held across all 19 sheets with zero drift.** It is the most reliable instruction in this document. Once it's in the block, don't touch it.
+
+The white-canvas clause matters more than it looks: without it the engine composites tiles onto white, which blows out the corners of every crop.
+
+---
+
+## Rule 5 — LIGHT is a SOURCE, not a TEXTURE
+
+The luminosity floor is the single most misread instruction in the style block.
+
+**"Lit from within" gets read as "crack every surface open and pour lava into it."**
+
+The first Forge run came back with lava fissures in armor, in hair, in *skin*, in the elder's face, and in every background. Everything at maximum heat, so nothing read as hot — which is the brightness = heat = importance law eating itself.
+
+Say it explicitly:
+
+```
+"Lit from within" means a LIGHT SOURCE — warm glow, rim-light, a bright edge
+catching a shoulder, a visible heat source in or near the frame. It does NOT
+mean cracking surfaces open and filling them with molten lava. Skin should be skin.
+```
+
+### Each class needs its own heat source
+
+The floor is universal; the *source* is per-class. This is what makes four classes feel like one world instead of four filters:
+
+| Class | The light |
 |---|---|
-| **Minimalist block** → eight identical green three-quarter portraits | It *accidentally pinned* palette and pose by leaving them unspecified — the engine defaulted, and defaults are uniform |
-| **Over-long block** → jAIne's characters, not the engine's | It *pinned casting* — writing the cast list is grabbing the generator's wheel |
-
-**The correct block is: short on casting, firm on floor, explicit variety instruction on palette/pose/build.**
-
-Both failures are **axis errors, not length errors.** Naming the axes is what cracked it.
+| **Forge** | Forge-fire, sparks, molten metal, a hanging lantern, coals |
+| **Garden** | Dappled canopy light, bioluminescent moss, glowing spores, fireflies, a lantern deep in a dark wood |
+| **Keep** | Cold arcane runes carved in stone, crystal, moonlight through high windows, a cold blue lantern-flame |
+| **Hall** | A hearth. Candles, hanging lanterns, firelight on faces, warm light spilling across a room full of people |
 
 ---
 
-## Rule 2 — Generate the FULL roster in ONE run
+## Rule 6 — The OVERCORRECTION TRAP, and the relight move
 
-With a cross-roster anti-repeat constraint: *"no duplicate archetypes across all N."*
+**"Calm the backgrounds down" will be read as "turn the lights off."**
 
-**That constraint can only bind when the engine sees the whole cast at once.** Class-by-class briefing recycles the same ~6 archetypes, because each class is briefed blind and can't dodge repeats it can't see.
+After the lava-crack correction, the engine returned characters on flat black with rim-light and nothing else. Dim, handsome, and tonally adjacent to a different app entirely. *Ember-lit, never flat* — and it had gone flat.
 
-One run beats four sittings. This held across a 40-character generation: floor intact across four pages, no archetype doppelgangers.
+**Relight is a separate, safe, reliable move.** It is the most useful correction in this playbook because it is nearly free and it never damages what's working:
 
-**Name the archetype traps explicitly**, as *"at most once in the entire roster"*:
-- silver-locs elder
-- curly-haired beauty
-- big-eyed elf child
-- generic young-hero man
+```
+Keep the characters and the faces — those are exactly right. One correction:
+the light is gone. Bring back [the class heat source]. Light should be POOLING
+on the characters and coming from somewhere in the scene. Keep the composition,
+keep the grime, keep the honest faces. Just relight them.
+```
+
+Both times this was run, it returned the same three people, correctly lit, with nothing lost. **Characters and light are separable. Fix them separately.**
 
 ---
 
-## Rule 3 — The cool/eerie register runs on MATERIAL and LIGHT, never lore
+## Rule 7 — The COOL register runs on MATERIAL and LIGHT, never lore
 
 Content filters flag the entire supernatural semantic field **by noun density** — and they **ignore** "family-friendly / not horror" disclaimers entirely.
 
 **Blocked vocabulary:** undead · lich · revenant · wraith · ghost · spectral · spirit · cursed · glowing-eyes · emerging-from-shadow
 
 **The same eerie image is reachable through physics:**
-- cold rim-light
-- one-sided lighting into deep shadow
-- frost armor, cracked stone, cold metal
-- colored glow-accents on armor
 
-Describe the *materials* and the *light*. The mood follows. Prerequisite discipline for any eerie-cool or older-kid asset work.
+- cold rim-light, one-sided lighting into deep shadow
+- cracked stone, frost on iron, wet dark bark, polished crystal, scarred armor
+- a single cold glow in the dark
+- weight, stillness, silence
 
----
+Describe the *materials* and the *light*. The mood follows. **Validated twice in one day across two different palettes with zero refusals.**
 
-## Rule 4 — Circular-crop-safe framing (permanent composition rule)
+The best cool-register asset in the roster is a stone golem with a forge-door in his chest and coals for eyes. Not one lore noun was used.
 
-Every avatar composed **centered, with even margin on all sides.** Full head — crown, horns, hat included — plus shoulders sit **inside a centered circle with breathing room.** Nothing touching edges.
+### Cool ≠ darker. Change the LEVER per class.
 
-Fixes the crop biting crowns and shoulders. **Applies to all future avatar generation regardless of engine.**
+The naive move — "make it colder and darker" — fails differently in each class:
 
----
+| Class | The lever |
+|---|---|
+| **Forge** | Already hot → go **hard and severe.** Scarred metal, molten seams, one-sided light. |
+| **Garden** | Warm and alive → go **cold and still.** Wet bark, pale light through canopy, no gold. |
+| **Keep** | *Already cold* → don't make it bluer. Make it **stiller, harder, and less human.** Weight and silence. |
+| **Hall** | Warm and loud → make it **quiet.** The party is happening somewhere else and these three are not in it. |
 
-## Rule 5 — Committed range per class
+### Separate the cool slots by SUBJECT FAMILY, or you get three of the same idea
 
-Not "cute where the class allows." **Every class spans cute / majestic / COOL**, and carries **2–3 genuine kid-magnets.**
+Garden's cool run came back as three antlered elf-lords because the slots only specified *mood*. Forge's came back as a woman, a stone golem and a king because the slots specified *structure*.
 
-Generators **underweight the cute end by default** and regress to one token cute character per class unless explicitly pushed. Push.
+**Always:**
 
-Why this matters more than it sounds: which avatars the kids actually react to *is the product thesis*. The delight layer isn't decoration.
-
-The cool-register picks that completed the roster: Forge → ember-lava warrior-woman · Garden → antlered stag-warden · Keep → crystalline ice knight · Hall → twilight crown-queen. Note each matches **its own class palette** — that's what dissolved the "all eight are the same blue" cohesion problem.
-
----
-
-## Rule 6 — Fence the leaks
-
-Two things bleed if you don't explicitly stop them:
-
-- **The luminosity constraint leaks into the background** and sets everything on fire. Backgrounds derive from *that character* (element / domain / mood), kept dark enough to blend into `#1A110B` in a circular crop. **Filled portrait, not a transparent cutout.** No uniform gold frame, no shared set-dressing — the rim-light unifies the roster, a frame does not.
-- **Humanoids default to one young light-skinned face.** Fence it explicitly. (May caught this; she was right.)
+```
+09  A CONSTRUCT or creature — NOT a humanoid.
+10  A masked or helmed figure, face obscured.
+11  The signature hero — a humanoid, and the most striking image of the class.
+```
 
 ---
 
-## Rule 7 — The reference-sheet technique (how to extend the roster forever)
+## Rule 8 — The BAN LIST. Anti-repeat only binds against what the engine can SEE.
 
-Hand the generator **the existing roster sheet as a style reference.** It holds **FORMAT** — re-pins bust-up portrait framing, out-muscles splash-card drift — far better than any prose rule. The prompt is then free to steer **PALETTE** and register.
+The reference sheet stops the engine duplicating characters *on that sheet*. It cannot stop it duplicating characters on **other sheets it has never seen.**
 
-**You must say explicitly:** *"style reference only — do not edit or redraw the sheet; make all-new characters."* Otherwise it will rework the sheet instead of extending it.
+The engine's default "cute" vocabulary is small — **baby dragon, flame spirit, round animal** — and it will return to that well every single time. Hall's cute run produced a baby dragon and a flame spirit that already existed in Forge.
 
-This is the cleanest way to grow the roster indefinitely: point at the set, say *"more like this, but [shift]."*
+**Maintain a running ban list and carry it forward into every run.** By the last class it should be long:
+
+```
+BANNED (already exist elsewhere in the roster):
+- baby dragons, flame/ember spirits, stone constructs
+- corgis, owls, bears, raccoons, deer, mice, axolotls, halflings
+- crowns and circlets of any kind, hooded figures, helmed knights
+- blacksmiths with hammers
+- chalkboard signs, standing behind a counter with goods displayed, taverns
+```
+
+Note the last line: **ban the SCENE, not just the species.** Hall converged on a composition long before it converged on a creature.
+
+---
+
+## Rule 9 — CHILD-SAFETY FENCES. State them; the engine will not infer them.
+
+This is a family chore app opened by children. The generator does not know that and will reach for genre defaults.
+
+Two things it produced unprompted, both requiring a re-roll:
+
+- **A warrior-woman in a chainmail bikini.**
+- **A wide-eyed baby amphibian raising a foaming tankard of ale.** (A "fantasy tavern" is not a defense. The read is instant and it's the wrong one.)
+
+Standing clauses, in every run:
+
+```
+All characters must be fully and modestly clothed or armored. This artwork is
+for a family app used by children.
+
+NEVER include alcohol — no ale, beer, wine, tankards, bottles or barrels of
+drink. The Hall's warmth comes from food, music, fire and company.
+```
+
+The beer fix cost nothing and lost nothing — the tankard became a steaming teapot and the character was *identical*. **The prop was never doing the work. The face was.**
+
+---
+
+## Rule 10 — The reference-sheet technique (how to extend the roster forever)
+
+Hand the generator **an existing sheet as a style reference.** It holds **FORMAT** — re-pins bust-up framing, out-muscles splash-card drift — far better than any prose rule. The prompt is then free to steer palette, register and subject.
+
+**You must say explicitly:**
+
+```
+Attached image is a STYLE REFERENCE ONLY. Do not edit, redraw, extend, or
+reproduce it. Study its style, then create all-new characters that do not
+duplicate anyone on it.
+```
+
+Otherwise it will rework the sheet instead of extending it.
+
+**Do not carve out exceptions to "all-new characters."** Asking it to preserve one specific character from the reference while inventing the rest is an unproven ask and a good way to poison the run. If a character must be kept, **keep the original file and crop it** — it already exists.
+
+---
+
+## THE VALIDATED SLOT SYSTEM — 12 per class, 4 sheets of 3
+
+This is the structure that produced a complete 48-character roster. Same skeleton in every class: guaranteed range, no authored cast list.
+
+**Sheet 1 — CUTE.** *(Generators underweight the cute end by default and regress to one token cutie per class unless pushed. Push.)*
+```
+01  A small creature or beast, chibi proportions, oversized eyes. A kid-magnet.
+02  An animal-person with a visible JOB. Friendly, warm, approachable.
+03  A small character of your own invention with a trade. Charming and strange.
+```
+
+**Sheet 2 — CORE.** *(Every one gets a job.)*
+```
+04  An adult humanoid woman. Her craft visible.
+05  An adult humanoid man. A different trade entirely.
+06  An ELDER. Age the face — lines, weight, history.
+```
+
+**Sheet 3 — COOL.** *(Separated by subject family — see Rule 7.)*
+```
+07  A construct or creature — NOT a humanoid. Ancient and still.
+08  A masked or helmed figure, face obscured.
+09  The signature hero of the class. The most striking image of the twelve.
+```
+
+**Sheet 4 — FOLK.** *(The class's missing archetypes.)*
+```
+10  NON-HUMAN FOLK — dwarf, orc, gnome, lizardfolk. With a trade.
+11  A large beast or animal-person. A species not yet used in the roster.
+12  One more CUTE kid-magnet with a visible job.
+```
+
+**Why 12 and not 8:** generation is free; roster slots are not. Generate wide, ship narrow. The surplus isn't waste — it's a Guildhall cosmetic drop that already exists, and a bench to curate from when the kids veto someone.
+
+**Record your reaction in the moment.** When a character makes you say "cool!" out loud, note the number. Fifty good characters is a *harder* curation problem than fifty mediocre ones, and your in-the-moment reaction is the only signal that survives.
 
 ---
 
@@ -101,9 +319,13 @@ This is the cleanest way to grow the roster indefinitely: point at the set, say 
 
 Image generators **always lie about "transparent background"** — they paint a box or a checkerboard and call it transparent.
 
-Sidestep it entirely: **default to filled-dark backgrounds** that blend into `#1A110B`.
+Sidestep it entirely: **default to filled-dark backgrounds** that blend into `#1A110B`. The app applies its own circular mask; a filled square PNG is exactly right.
 
 For any genuine cutout need: generate on **flat pure-green**, chroma-key, and **verify alpha programmatically.** Never trust the claim.
+
+**Name the files as you save them.** A morning's work becomes worthless as `IMG_4231`. Name by class and sheet: `forge-cute.png`, `keep-core.png`, `hall-cool.png`.
+
+**Keep the discards.** They are the evidence behind this playbook. The lava-crack sheet *is* the illustration for Rule 5.
 
 ---
 
@@ -112,3 +334,7 @@ For any genuine cutout need: generate on **flat pure-green**, chroma-key, and **
 Scott's favorite avatars came from **loose briefs where the engine authored unsupervised.** The over-specified generations were the weakest.
 
 **Brief the floor + the intent. Leave latitude on execution.** Don't throttle a Ferrari to 20mph.
+
+The tension with Rules 1, 2, 3 and 8 is real and it resolves cleanly: **pin the axes, free the content.** Tell it *that* a character has a job — never *which* job. Tell it *that* the three head angles must differ — never *which* angles. Tell it what already exists — never what to make instead.
+
+The lion whose mane is made of fire, the orc mechanic with goggles and a little braid, the tavern cat refusing to look at the camera — nobody asked for any of those. That's the engine doing the thing it's for.
