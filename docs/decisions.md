@@ -11,6 +11,155 @@ WHY: [the reasoning, including rejected alternatives]
 REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
+# APPEND TO `docs/decisions.md`
+
+*Paste these at the top of the current-decisions section. `decisions.md` is append-only.*
+
+---
+
+## 2026-07-12
+
+```
+DECISION: Claude Code can perform frontend build work via the two-way GitHub sync. The Lovable credit
+ceiling is no longer the binding constraint on frontend throughput.
+DATE: 2026-07-12
+WHY: Trial job (the feed vocabulary bundle) executed end-to-end by Claude Code — grep audit,
+     shared-helper refactor, tsc/eslint/build clean, committed c9069a6, pushed. Lovable pulled it and
+     the change renders live. Lovable's own subsequent audit reads Code's post-fix files as canonical,
+     confirming the pull. Code also outperformed the brief: it found Briefing.tsx already had a correct
+     private feedHeat(), promoted it to a shared helper rather than duplicating the fix, and left a
+     scoped, justified follow-up (vault.tsx TIER_LABEL duplication) instead of silently absorbing it.
+     UNTESTED — DO NOT ASSUME: whether Lovable RUNS a migration file pushed from outside. Backend and
+     schema work through Code remains unproven. Frontend only.
+REPLACES: The "batch interlocking fixes ruthlessly / roughly one meaningful prompt on free-credit days"
+     throughput rule, for frontend work.
+STATUS: LOCKED
+```
+
+```
+DECISION: The batching reflex is retired. Small, single-concern, well-scoped jobs to Code — one at a time.
+DATE: 2026-07-12
+WHY: Batching existed because Lovable credits made each prompt precious. Under Code the binding
+     constraint is job weight and context, not prompt count. A fat multi-concern job burns more context
+     and produces a diff that is harder to review; a bug in one item contaminates the signal on the
+     others. One commit per item, each independently reviewable.
+REPLACES: The batching rule in the session protocol, for Code jobs. Lovable prompts may still bundle.
+STATUS: LOCKED
+```
+
+```
+DECISION: Auto-accept is scoped by job type, not left on by default.
+DATE: 2026-07-12
+WHY: ON for bounded, reversible, single-concern implementation jobs. OFF for audits, security work, and
+     anything that could touch supabase/. Auto-accept approves CHANGES; an audit is defined by producing
+     none — so the setting can only ever fire when the agent has departed from the brief, which is the
+     exact moment a human should be looking. The realistic failure is not misbehavior but helpfulness: an
+     agent finding an obvious, safe fix mid-audit and applying it, collapsing the deliberate audit/fix
+     seam that exists so Scott sees the finding before the patch. Compounded by the open unknown of
+     whether Lovable executes externally pushed migrations — a .sql file is not "dangerous" by any
+     heuristic Code has, and auto-accept would let one through.
+REPLACES: Nothing — new operating rule.
+STATUS: LOCKED
+```
+
+```
+DECISION: Overnight / unattended Claude Code runs are gated on FAILURE MODE, not on trust.
+DATE: 2026-07-12
+WHY: Competence is established; the question is supervision cost. A job is night-eligible if it is
+     bounded, reversible, verifiable by inspection, and produces no decision Scott must make mid-flight.
+     Audits and security work are disqualified — their output is a judgment call, so running them
+     unattended yields a document read the next morning anyway: zero throughput gain, at the cost of an
+     unsupervised read of the security model. Anything touching supabase/ is disqualified until it is
+     known whether Lovable executes externally pushed migrations.
+     Corollary: Chrome QA (Layer 2) must not run against a site Code is actively changing. Code builds →
+     Lovable pulls → Scott eyeballs → Chrome tests what landed.
+REPLACES: Nothing — new operating rule. Complements the auto-accept scoping rule.
+STATUS: LOCKED
+```
+
+```
+DECISION: Vocabulary audits must grep case-insensitively and against the SOURCE value, not the rendered
+string.
+DATE: 2026-07-12
+WHY: `ROUTINE` / `MILESTONE` had ZERO exact-case hits repo-wide. The violation was the
+     `activity_significance` enum value `routine`, rendered raw and uppercased by CSS at paint. A grep for
+     the offending screen text returns clean while the violation is live on the screen. This is the
+     inverse of the existing law: rendered strings are copy, not identifiers — AND an identifier rendered
+     raw BECOMES copy, with the transform between them invisible to grep.
+REPLACES: Nothing — extends the vocabulary-law audit method.
+STATUS: LOCKED
+```
+
+```
+DECISION: The `rewards` INSERT policy is scoped to household OWNER, not to the ADULT role. Non-owner
+adults cannot author rewards. Folded into Workstream 1 as a confirmed finding.
+DATE: 2026-07-12
+WHY: Verified by isolation — May (Adult, non-Owner) fails INSERT on quick-pick, on custom/everyone, and
+     on custom/adults-only alike; SnowDad (Owner) succeeds. That rules out the `audience` column and the
+     custom-reward payload; the policy itself is the fault. Not a Lovable patch: it is the same disease as
+     the approval-path finding — the role model was never written into the write-side policies — so it
+     needs a full policy inventory against the role model, not a spot fix that makes the error message go
+     away. Product impact: in a two-adult household only one adult can stock the Vault. Public-repo safe:
+     an over-NARROW grant discloses nothing to an attacker.
+REPLACES: Nothing — new finding.
+STATUS: LOCKED
+```
+
+```
+DECISION: Email confirmation is REQUIRED. Signup runs through a holding state.
+DATE: 2026-07-12
+WHY: Auto-confirm was on since inception — every account in the product was created without any proof of
+     control over the email address, and the app had NO code path for a user who exists but is
+     unconfirmed. Turning confirmation on broke signup instantly ("could not start session"), because
+     signUp() returns { user, session: null } and the app assumed a live session. Fixed forward rather
+     than rolled back: a holding view ("ALMOST LIT — check your email"), a resend with cooldown, spam
+     guidance, an escape hatch, plus handling for duplicate-email signup and unconfirmed sign-in.
+     Auth email deliverability and sender identity remain broken — see status.md.
+REPLACES: The implicit auto-confirm posture.
+STATUS: LOCKED
+```
+
+```
+DECISION: Pip's first-run makes the loop KNOWN, not FELT. Comprehension only — no manufactured magic
+moment. Delivered as additional onboarding SCREENS, not a live-site overlay tour.
+DATE: 2026-07-12
+WHY: Cold-start testing (P1×L1 / L6) showed onboarding ENDS at roster creation: the user lands on a board
+     that says "all quiet" three different ways and never says what to do next. Setup was conflated with
+     activation — they have members but have never created a quest, minted an ember, or redeemed anything.
+     The fix rides the pattern that already exists (the Pip-narrated guided form), so it costs no new
+     machinery; an overlay/coach-mark system would be a permanent new subsystem to own.
+     Screens: (2) post your first quest · (3) stock the Vault with one reachable reward · (4) here's where
+     everything else lives. All skippable. Net effect: the board they land on already has their own quest
+     on it.
+     Crucially, the tour does NOT stage the activation moment. The magic — a kid completes a quest, an
+     adult approves, embers mint, embers buy something real — is powerful precisely because it is earned
+     in practice. Staged inside a tutorial it becomes a demo, and a demo reads as a demo. The tour's only
+     job is that the user knows what the loop is and how to reach it. Then get out of the way.
+     Lists / Calendar / Campaigns are SHOWN, never toured — touring utilities inside the first-run flow is
+     a membrane violation.
+     Because every screen is skippable, the empty board must ALSO be built as a doorway, not a eulogy:
+     "No quests yet — post your first with +."
+REPLACES: The parking-lot "Pip onboarding flow" item, which assumed a tour.
+STATUS: LOCKED
+```
+
+```
+DECISION: Quality (the 5-star at approval) is a SIGNAL, not a modifier. It never affects embers.
+DATE: 2026-07-12
+WHY: The real use case is "approved, but half-assed" — a parent wants the effort noted without
+     withholding the reward. Metering embers by quality turns every approval into a negotiation at the
+     point of handoff, which is precisely the household conflict Emberhold exists to remove, and it
+     complicates the economy for no gain. Quality instead carries the parent's editorial voice: the embers
+     are unconditional, the note is not.
+     Open before it ships: (1) is quality visible to the KID, or adult-only? A permanent public grade on a
+     kid's board is a different and worse product. (2) What CONSUMES it? Almost certainly the weekly recap
+     ("6 quests, two rushed") — aggregate, low-drama, at a moment of reflection rather than at handoff.
+     Quality therefore binds to the recap and rides its timeline.
+     Today it is collected, displayed on quest detail, and consumed by nothing. Until a consumer exists it
+     is a concept, not a feature, and must not be presented as finished.
+STATUS: LOCKED (direction) — consumer and kid-visibility still open.
+```
+
 
 ---
 
