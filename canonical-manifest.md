@@ -2,7 +2,8 @@
 
 *Single source of truth for all Emberhold documents.*
 
-Repo: `https://github.com/SnowBroScott/emberhold-canonical`
+Repo (docs + assets): `https://github.com/SnowBroScott/emberhold-canonical`
+Repo (the app): `https://github.com/SnowBroScott/theemberhold` — private, Lovable-synced (two-way)
 Branch: `main`
 
 ---
@@ -58,13 +59,14 @@ curl -sL "<RAW_URL>?cb=$(date +%s)"
 
 | Asset | What | Status | Path |
 |---|---|---|---|
-| **avatar roster sheets** | The **48-character roster** as generated: 19 sheets, 3 characters each, ~600px per character. Named by class and register (`forge-cute`, `keep-core`, `hall-cool`, …). **Backup of record.** | BANKED — not yet sliced or transported | `assets/avatars/roster-sheets/` |
+| **avatar roster — SLICED** | **The 48 individual avatars.** 512×512, filled dark background (`#1A110B`), no alpha. Named `forge-01…12`, `garden-01…12`, `keep-01…12`, `hall-01…12`. **These are the assets.** | READY — not yet uploaded | `assets/avatars/roster/` |
+| **avatar roster sheets** | The 19 source sheets as generated: 3 characters each, ~600px per character, named by class and register. **Backup of record** — re-cut from these if a bigger size is ever needed (e.g. wall mode). | BANKED | `assets/avatars/roster-sheets/` |
 | **avatar discards** | Failed and superseded generations. **Keep them** — they are the evidence behind the playbook's rules. The lava-crack sheet *is* the illustration for the luminosity rule. | ARCHIVE | `assets/avatars/discards/` |
 | **avatar roster boards (v1)** | The abandoned 2026-07-03 roster. **Contact-sheet previews, not masters** — ~170px per character, a squashed band, a clipped row. Superseded, kept as the reason. | DEPRECATED | `assets/avatars/archive/roster-boards-v1/` |
 
-*Avatar **generation** is complete (2026-07-11). **Transport** — slice → 512×512 → Supabase storage → picker slotting → free/paid split — is outstanding. **The slice is a Claude Code job**: the geometry is clean and regular, but the success condition is visual, and jAIne cannot see her own image output. A blind slice was attempted and produced garbage. Do not repeat it.*
+*Avatar **generation** ✅ and **slice** ✅ are both complete (2026-07-11). Remaining transport: Supabase storage upload → picker slotting → free/paid split. All three need the app repo.*
 
-*Design-complete ≠ shipped. Generated ≠ shipped either.*
+*Design-complete ≠ shipped. Generated ≠ shipped. **Sliced ≠ shipped either** — nobody's kid has picked one yet.*
 
 ---
 

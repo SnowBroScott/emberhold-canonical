@@ -19,17 +19,30 @@ The engine's lifecycle is now **fully verified end-to-end**, not asserted. Daily
 
 ## 🔴 THE CRITICAL PATH
 
-Everything else is polish. These four, in this order.
+Everything else is polish.
 
 | # | Item | Blocks |
 |---|---|---|
-| **1** | **Stand up Claude Code** | Workstream 1, the QA harness (Layer 1), this repo's upkeep, **and now the avatar slice** |
+| ~~1~~ | ~~Stand up Claude Code~~ | ✅ **DONE 2026-07-11.** Native Windows install, both repos cloned. Passed its first job (the avatar slice) cleanly. |
+| **1** | **Test whether Claude Code can do BUILD work** *(new — see below)* | Possibly: the entire build model |
 | **2** | **Workstream 1 — self-approval RLS + definer sweep** | Distribution. The mortal-peril item. |
-| **3** | **Avatar transport** — *generation is DONE; slicing + upload remain* | The Guildhall, the free/paid split, the delight layer |
+| **3** | **Avatar transport** — *generation ✅ · slice ✅ · upload + picker + free/paid split remain* | The Guildhall, the delight layer |
 | **4** | **Founding Guildhall build** (Stripe + webhook + entitlement) | Money |
 
-> **Claude Code now has two jobs waiting, and they should run in that order.**
-> The avatar slice is the better first outing: the failure mode is visible and harmless, which is exactly what you want from a tool's first job. Then it's already in the codebase with its shoes on for the RLS audit.
+### 🔵 NEW — the Lovable credit ceiling may no longer exist
+
+**Lovable is now GitHub-synced** (`SnowBroScott/theemberhold`, private, 576 commits). The sync is **two-way**: Claude Code can write to the repo, push, and Lovable pulls the changes in.
+
+**If that works, Claude Code can do build work without burning Lovable credits** — it bills against the Claude subscription instead. That would demolish the constraint behind the "batch interlocking fixes ruthlessly / roughly one meaningful prompt on free-credit days" rule that has shaped every session to date.
+
+**Unknowns — do not assume any of these:**
+- **Do migrations actually apply?** `supabase/migrations/` is in the repo, but it is unconfirmed whether Lovable *runs* a migration file pushed from outside, or whether the file just sits there while the database stays untouched. **This is the whole ballgame** — it's the difference between "Code can do frontend work" and "Code can do backend work."
+- **Two-way sync means two-way conflicts.** Two agents can now write the same codebase. Prompting Lovable while Code has uncommitted work will produce divergence.
+- **Lovable knows its own scaffolding; Code has to learn it.** 576 commits of conventions, patterns and routing that Lovable is native to and Code is not.
+
+**The cheap test, already written and already queued:** the `BOUNTY POSTED` / `ROUTINE`-`MILESTONE` string bundle (see OUTSTANDING below). Pure frontend, no migration, no schema, tiny blast radius. **Give it to Code instead of Lovable.** If it lands clean, that is the most valuable thing learned this month. If it doesn't, nothing is lost — the Lovable prompt still works.
+
+**Run this test before Workstream 1.** It's cheap, it's low-stakes, and if it passes it changes how everything after it gets built.
 
 ---
 
@@ -50,7 +63,7 @@ Everything else is polish. These four, in this order.
 
 ## ⬜ OUTSTANDING — ship-blocking debt
 
-- ⬜ **Avatar transport — SLICE + UPLOAD.** Generation is complete (see SHIPPED below). 19 sheets, 3 characters each, banked as named files. Remaining: crop → 512×512 → Supabase storage → picker slotting → free/paid split. **The crop is a Claude Code job** — the geometry is clean and regular, but it needs a tool that can *see* its own output, which jAIne cannot. *A blind slice was attempted and failed; do not repeat it.*
+- ⬜ **Avatar transport — UPLOAD + PICKER + SPLIT.** Generation ✅ and slice ✅ are both done: **48 individual 512×512 PNGs**, named `forge-01…12`, `garden-01…12`, `keep-01…12`, `hall-01…12`, on disk and in the repo. Remaining: Supabase storage upload → picker slotting → free/paid split. **These three need the app repo, which is now cloned** — so this is unblocked end to end for the first time.
 - ⬜ **Feed heat vocabulary — `ROUTINE` / `MILESTONE` must die.** The activity feed invented a second tier ladder. The canonical names are Dim / Warm / Hot / Blazing, derived from the ember-value ramp at render time. Prompt written, not yet run. Bundled with:
 - ⬜ **`BOUNTY POSTED` display label** — rendered on every feed row from the `bounty_posted` enum. The enum stays (it's an identifier, nobody reads the database); the rendered sentence must say `QUEST POSTED`. Prompt written, not yet run.
 - ⬜ **Vault favorites → real per-profile persistence** — currently `localStorage`. Won't survive across devices or the shared-wall model, and favoriting is now load-bearing (goal-commitment) across kid store, adult store, and the rail. **Build-to-validate; fix-before-ship.**
@@ -102,7 +115,12 @@ Everything else is polish. These four, in this order.
 - ✅ **48 characters. 19 sheets. 3 per sheet, ~600px each.** Four classes × twelve, every class carrying cute / core / cool / folk. Named, banked, on a real filesystem.
 - ✅ **The old roster was found to be unshippable and abandoned.** Investigation revealed the four "roster boards" were **contact-sheet previews, not master assets**: ~170px per character, a bottom band Copilot had squashed, a bottom row clipped off the canvas edge, and circles packed so tightly they overlapped. *This is why avatar transport survived eight days of deferral — it was never a file-moving problem. The asset didn't exist.*
 - ✅ **The avatar-generation playbook was rewritten.** Its central instruction — *generate the full roster in one run* — was wrong. See `playbooks/avatar-generation.md`; five new laws, all validated the same day.
-- ⬜ *Slicing deferred to Claude Code. A blind slice was attempted here and produced garbage — jAIne cannot see her own image output, and this is a task where seeing the result is the job.*
+- ✅ **Sliced by Claude Code — 48 individual 512×512 PNGs.** Cropped, vignetted to `#1A110B`, named to convention, verified against a contact sheet **that Code looked at itself.** Three tiles from `forge-cute` carried white corners (that sheet predates the black-canvas clause); Code filled and feathered them to match the other 45.
+
+**Claude Code stood up and passed its first job**
+- ✅ **Installed** (native Windows, v2.1.207). Both repos cloned locally: `emberhold-canonical` and `theemberhold`.
+- ✅ **It read the docs, restated the task, and refused to start when it couldn't find the input** — rather than guessing. It also independently flagged that upload/picker/split need the app repo, which it didn't have. *That is four things this morning's tools did not do.*
+- ✅ **Lovable ↔ GitHub sync connected.** `SnowBroScott/theemberhold`, private, 576 commits. **This is the first backup the app codebase has ever had** — until today it existed only inside Lovable. It also opens the build-lane question at the top of this doc.
 
 ---
 

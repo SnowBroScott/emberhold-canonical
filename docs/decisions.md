@@ -17,6 +17,31 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ## 2026-07-11
 
 ```
+DECISION: The Lovable codebase is now GitHub-synced (SnowBroScott/theemberhold, private, two-way). Whether
+          Claude Code can therefore do BUILD work — bypassing the Lovable credit meter — is an OPEN QUESTION
+          to be tested, not an assumption to be acted on.
+DATE: 2026-07-11
+WHY: Lovable's GitHub sync is two-way: Code writes to the repo, pushes, Lovable pulls it in. If build work
+     lands cleanly that way, it bills against the Claude subscription instead of Lovable credits — which
+     demolishes the constraint behind "batch interlocking fixes ruthlessly; the floor on a free-credit day is
+     roughly one meaningful prompt." That rule has shaped every session to date.
+     But three things are UNKNOWN and must not be assumed:
+     (1) Do migrations actually APPLY? supabase/migrations/ is in the repo, but it is unconfirmed whether
+         Lovable runs a migration file pushed from outside or whether the file simply sits there while the
+         database stays untouched. This is the whole ballgame — frontend-only vs. genuinely full-stack.
+     (2) Two-way sync means two-way CONFLICTS. Two agents can now write the same codebase.
+     (3) Lovable is native to its own 576 commits of scaffolding. Code is not, yet.
+     THE TEST: give Code the already-written BOUNTY POSTED / ROUTINE-MILESTONE string bundle. Pure frontend,
+     no migration, no schema, tiny blast radius. Run it BEFORE Workstream 1 — it's cheap, and if it passes it
+     changes how everything after it gets built.
+     Also worth recording plainly: this sync is the FIRST BACKUP the app codebase has ever had. Until today it
+     existed only inside Lovable.
+REPLACES: Nothing — new. If the test passes it will supersede the credit-ceiling reasoning behind the
+          "batch ruthlessly" working rule.
+STATUS: NOTED
+```
+
+```
 DECISION: The 2026-07-03 avatar roster is ABANDONED and fully regenerated. 48 characters, 12 per class,
           3 per generated sheet.
 DATE: 2026-07-11
