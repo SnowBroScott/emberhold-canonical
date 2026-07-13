@@ -15,6 +15,163 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 
 *Paste these at the top of the current-decisions section. `decisions.md` is append-only.*
 
+```
+
+## 2026-07-12 (eve)
+
+```
+DECISION: Claude Code's lane is TEXT. Any task whose success criterion is VISUAL is outside it —
+and briefing it harder does not help.
+DATE: 2026-07-12
+WHY: Four escalating attempts to crop the avatar roster programmatically, four failures — each one
+     more sophisticated and none of them closer.
+     (1) Fixed 236px radius: 0.30 confidence on all 48, silent fallback to a heuristic on every file,
+         two spot-checks, "success."
+     (2) Ray-cast to the rim: r=74-126 on a 512 frame. It locked onto INTERIOR bright features —
+         lava cracks, glowing eyes — not the rim ring.
+     (3) "Outermost non-background pixel": r=219-247. THE CONTAMINATION IS NON-BACKGROUND. It grew a
+         circle around the fringe it was hired to delete and reported 0.97 confidence.
+     (4) Re-slice from source sheets: found 64 circles across 19 sheets. There are 57. Five on one sheet.
+     The root cause was never the algorithm. The success condition was "does this look right," and
+     NEITHER AGENT IN THE LOOP CAN SEE. Code cannot see its output; jAIne cannot see it either, so every
+     brief she wrote was inference dressed as instruction — and she grew MORE confident as she grew more
+     wrong. Two blind agents converging is not a review process; it is a louder mistake.
+     This EXTENDS "jAIne does not slice images" (2026-07-11) rather than repeating it. That rule named
+     jAIne's sensory limit and routed the work to Code as the tool that "can look." Code cannot look
+     either. It can READ. Those are different senses.
+     THE LINE: Code owns anything it can verify by reading — code, config, strings, files, structure.
+     The moment correctness is judged by eye, it belongs to Scott.
+     Cost of learning it: one evening and zero assets. Nothing was overwritten. The source sheets being
+     banked is the only reason that sentence is true.
+REPLACES: Nothing — extends the 2026-07-11 lane boundary to cover Claude Code, which the earlier
+     decision explicitly (and wrongly) named as the fix.
+STATUS: LOCKED
+```
+
+```
+DECISION: The avatar roster is cropped BY HAND, in GIMP, by Scott. Automation is DECLINED.
+DATE: 2026-07-12
+WHY: See above. Method: ellipse-select, fixed 1:1 aspect, snapped to the gold rim and BIASED 2-3px
+     INWARD. Crop to selection, invert, fill #1A110B, scale to 512x512, export. No alpha.
+     THE BIAS RULE IS THE POINT AND IT GENERALIZES: when a process is going to be slightly wrong,
+     choose WHICH WAY it is wrong. Losing a sliver of rim is invisible at avatar size. Keeping one
+     pixel of a neighbour is not. Stop asking a detector to be exact; ask it to be safe.
+     Rejected: keep iterating on the script — four rounds of evidence say the tool is wrong for the job,
+     and every round cost more than the manual cut would have.
+     Corollary: casting happens DURING the cut, because that is the only moment Scott is looking at all
+     of them at once. ~57 portraits into 48 slots. The surplus is Guildhall inventory that already exists.
+REPLACES: The implicit assumption that avatar transport was a scriptable file-moving problem.
+STATUS: DECLINED (automation) / LOCKED (manual method)
+```
+
+```
+DECISION: Avatar transport is FRONTEND-ONLY — except for one migration, which is the cheapest possible
+test of the biggest open question on the board.
+DATE: 2026-07-12
+WHY: Read-only recon of the app repo, verified directly rather than inferred:
+     - Avatars are STATIC FILES bundled by Vite (src/assets/avatars/avatar-01..21.png, id 11 retired),
+       imported as ES modules. Grepped storage.from( / getPublicUrl / bucket across src/ and supabase/:
+       ZERO matches. There is no storage bucket. There never was one.
+     - The picker reads a HARDCODED ARRAY — HERO_AVATARS in Avatar.tsx, one hand-written entry per import.
+     - The choice persists as profiles.avatar_emoji (text, default '🙂'), overloaded to hold EITHER a
+       literal emoji OR the string "hero:"+id. No CHECK constraint, no FK. Swapping which ids exist needs
+       no schema change.
+     - Gating of any kind is CONFIRMED ABSENT (grepped premium|locked|tier|entitlement|guildhall — zero
+       hits in any avatar file).
+     THE ONE MIGRATION: thirteen accounts already hold hero: picks. Reusing ids 01-12 with new art would
+     SILENTLY turn every existing member into a different character — Scott's kids included. Precedent
+     exists: migration 20260628220717 force-reset hero:11 to the default when that avatar was retired.
+     The same one-line UPDATE is required here.
+     This is not damage control. It is a RE-FORGE MOMENT — thirteen drifted users get a reason to open the
+     app: "The hold has been re-forged. Choose your hearthmate."
+     And it makes avatar transport the ideal first test of whether Lovable EXECUTES an externally pushed
+     migration — the unproven question the entire build model hinges on. Low stakes, precedented, and
+     reversible.
+REPLACES: The status doc's characterization of transport as "Supabase storage upload -> picker slotting."
+     There is no storage upload. That step does not exist.
+STATUS: LOCKED
+```
+
+```
+DECISION: Model routing by job type. The meter is usage, not credits.
+DATE: 2026-07-12
+WHY: A mechanical grep does not need a frontier model, and the tenant-isolation audit must not run on a
+     cheap one.
+       HAIKU  — recon, greps, file traces, mechanical edits, file drops. Finding and moving things.
+       SONNET — build jobs with real latitude, authored off a loose brief. Needs taste; worth it.
+       OPUS   — the P4xL8 tenant-isolation audit. An adversary is going to try to reach children's data.
+                This is the one place on the board where cost-optimizing is the wrong instinct. Spend it.
+     Observed cost of getting this wrong: a frontier model performed an extremely competent search of a
+     folder full of Unreal Engine assets.
+REPLACES: Nothing — new operating rule.
+STATUS: LOCKED
+```
+
+```
+DECISION: The 5-hour window is a SCHEDULING constraint, not a budget hierarchy. The resolution is
+temporal separation, never reduced thinking.
+DATE: 2026-07-12
+WHY: Recorded because jAIne got this wrong out loud and Scott corrected it.
+     The observation was real: a heavy Code job and a working session in the same window contend. jAIne
+     inflated that into "design sessions are a cost center competing with the build," which is false and
+     was corrected immediately: Code jobs run at night BECAUSE SCOTT IS ASLEEP. Design sessions run when
+     he is awake and thinking. The windows do not overlap unless someone makes them overlap.
+     THE THINKING WAS NEVER THE EXPENSIVE PART. THE TYPING WAS — and that is precisely what Code exists to
+     absorb. Code exists so Scott stops paying Lovable to type. It does not exist so he stops paying to
+     think.
+     The record is unsentimental about this: every real unlock on this project came out of a conversation,
+     not a commit. The Convergence Law. The membrane. Household-level unlocks only. Killing the admin
+     surface. "Rendered strings are copy, not identifiers" — which caught a live vocabulary violation
+     Lovable had sworn did not exist. None of those came from an agent executing a ticket.
+     THE RULE: never schedule a heavy Code job into a design session's window. Never solve a contention
+     problem by thinking less.
+REPLACES: Nothing — new operating rule. Corrects a claim jAIne made and retracted in the same session.
+STATUS: LOCKED
+```
+
+```
+DECISION: Auth email branding is PROMOTED to the critical path. It is a Gate B/D blocker, not polish.
+DATE: 2026-07-12
+WHY: Recorded with its reversal intact, because the reversal is the lesson.
+     jAIne initially advised DEFERRING it, reasoning that the only audience was a four-person test
+     household who already knew what the app was. Scott accepted. BOTH OF US WERE WORKING FROM A
+     HEADCOUNT THAT WAS WRONG BY NINE.
+     Thirteen accounts exist. Scott's guild and confidants have been in the app for two weeks. They have
+     all received an email from a sender called "Family-Quest-Board" — a Lovable scaffolding placeholder,
+     a name that exists NOWHERE in the product — and the password-recovery mail landed in Junk.
+     An auth email in a spam folder is not cosmetic. IT IS A FUNCTIONAL BREAK IN ONBOARDING: the person
+     never arrives. And it is the first artifact a stranger ever receives from Emberhold — it PRECEDES
+     the app itself.
+     Mechanics, established: Porkbun charges NOTHING for DNS records; DNS management comes with the domain.
+     The fix is an SMTP provider (Resend free tier: 3,000/mo, 100/day, one domain — orders of magnitude
+     above need) plus domain-auth records. Cost: zero. The tollbooth we braced for does not exist.
+     CAUTION, carried forward: any NS-record request must be inspected before pasting. Nameserver
+     delegation is not the same as adding a TXT record, and it can take the domain off the air.
+REPLACES: The 2026-07-12 (eve) NOTED decision deferring this to the pre-distribution bundle. RETRACTED —
+     it was reasoned from a false premise about who was using the product.
+STATUS: LOCKED
+```
+
+```
+DECISION: A LOCKED decision with no landing check is a wish. Decisions must be verified against the
+codebase, not against the doc that records them.
+DATE: 2026-07-12
+WHY: "Feast -> Hall" was LOCKED on 2026-07-03 — a rename AND a redefinition, described in the decision
+     itself as a "cheap find/replace: label, enum value, animation-theme name."
+     TEN DAYS LATER THE APP STILL SHIPS `Feast`. AvatarPicker.tsx filters on Forge/Garden/Keep/Feast.
+     It was found BY ACCIDENT, during a read-only recon for an unrelated question. Nothing was looking
+     for it. The 7/11 vocabulary audit ran a grep sweep and did not catch it, because the audit checked
+     STRINGS against the law and nobody checked whether a DECISION had ever reached the product.
+     This is the inverse of the 7/11 finding. That one said: an agent's self-report of compliance is a
+     claim, not a verification. This one says: A DOC'S RECORD OF A DECISION IS ALSO A CLAIM. The decision
+     log proves what was decided. It proves nothing about what shipped.
+     ACTION: grep every LOCKED decision against the codebase. Assume Feast is not alone. This is cheap —
+     it is a Haiku job.
+REPLACES: Nothing — new QA principle. Generalizes "verify artifacts, not self-reports" from agents to
+     documents.
+STATUS: LOCKED
+```
+
 ---
 
 ## 2026-07-12

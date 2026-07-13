@@ -6,7 +6,7 @@ The *style floor* (what an avatar must be) lives in `master-spec.md` → Avatars
 
 Validated engine: **Microsoft Copilot Create** (work account — zero Lovable credit burn). The method should transfer, but recalibrate on any new engine before trusting it.
 
-> **This playbook was rewritten on 2026-07-11 after a full roster regeneration.**
+> **Rewritten 2026-07-11 after a full roster regeneration. Rule 11 added 2026-07-12 after four failed attempts to automate the crop.**
 > The previous version's central instruction — *generate the full roster in one run* — was **wrong**, and it cost the project eight days. It is preserved as a cautionary tale in Rule 1, because the reasoning behind it was sound and the outcome was still unusable. Understanding *why* a good rule produced a bad asset is the most useful thing in this document.
 
 ---
@@ -315,6 +315,50 @@ This is the structure that produced a complete 48-character roster. Same skeleto
 
 ---
 
+## Rule 11 — THE CROP IS A HUMAN JOB. Do not automate it.
+
+**Added 2026-07-12, after four failed attempts in one evening.**
+
+Cutting 48 circular portraits out of 19 sheets *looks* like the most scriptable task in the entire project. It is geometry. It is repetitive. It is exactly what a machine is for.
+
+**It was attempted four ways and it failed four ways**, each attempt more sophisticated than the last and none of them closer:
+
+| Attempt | Method | Failure |
+|---|---|---|
+| 1 | Fixed radius, centered | 0.30 confidence on all 48 — the detector never fired at all. It fell back to a heuristic on every file, spot-checked two, and declared success. |
+| 2 | Ray-cast outward to find the rim | Radii of 74–126px on a 512 frame. It locked onto **interior** bright features — lava cracks, glowing eyes, a crystal brooch — not the rim ring. |
+| 3 | "Outermost non-background pixel" | Radii of 219–247px. **The contamination IS non-background.** It grew a circle *around* the fringe it was hired to remove, and reported 0.97 confidence. |
+| 4 | Re-slice from the source sheets | Detected **64 circles across 19 sheets.** There are 57. It found five on one sheet and ran circles off the edge of others. |
+
+### Why it failed, and it is not the algorithm
+
+**The success criterion is "does this look right." No agent in the loop can see.**
+
+Claude Code cannot see its own output. jAIne cannot see it either — so every brief she wrote was inference dressed as instruction, and she grew **more** confident as she grew more wrong, defending radii she had never laid eyes on. **Two blind agents converging is not a review process. It is a louder mistake.**
+
+The 2026-07-11 lane rule said *jAIne does not slice images* and routed visual work to Code "as the tool that can look." **Code cannot look. It can read.** Those are different senses, and the distinction cost an evening.
+
+### The method that works
+
+**Scott cuts them by hand in GIMP.** Ellipse Select, **fixed 1:1 aspect ratio**, dragged to the gold rim → Crop to Selection → Invert → fill `#1A110B` → scale to 512×512 → export, no alpha. About a minute each once the rhythm lands.
+
+### BIAS INWARD — and this rule generalizes far past avatars
+
+**Snap the ellipse just *inside* the gold ring. 2–3px in.**
+
+You lose a sliver of rim — invisible at avatar size. You gain a **mathematical guarantee** that nothing outside the circle can survive.
+
+> **When a process is going to be slightly wrong, choose *which way* it is wrong.**
+> Stop asking a detector to be exact. Ask it to be **safe.**
+
+### Cast while you cut
+
+~57 portraits go into 48 slots. **The casting decision happens during the crop, because that is the only moment anyone is looking at all of them at once.** Don't cut first and cast later — you'll never open the folder again.
+
+**Whatever doesn't make the roster is not waste.** It's the Guildhall surplus, already generated, already paid for.
+
+---
+
 ## Asset hygiene
 
 Image generators **always lie about "transparent background"** — they paint a box or a checkerboard and call it transparent.
@@ -324,6 +368,8 @@ Sidestep it entirely: **default to filled-dark backgrounds** that blend into `#1
 For any genuine cutout need: generate on **flat pure-green**, chroma-key, and **verify alpha programmatically.** Never trust the claim.
 
 **Name the files as you save them.** A morning's work becomes worthless as `IMG_4231`. Name by class and sheet: `forge-cute.png`, `keep-core.png`, `hall-cool.png`.
+
+**THE SHEETS ARE THE MASTERS.** Everything cut from them is disposable and re-cuttable. This has now saved the project twice — once when the v1 "roster boards" turned out to be previews, and once when four rounds of automated cropping produced nothing usable and **not a single asset was lost**, because nothing was ever overwritten. *Never let a script write to the roster directory. Ever.*
 
 **Keep the discards.** They are the evidence behind this playbook. The lava-crack sheet *is* the illustration for Rule 5.
 
