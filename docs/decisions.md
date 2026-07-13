@@ -251,13 +251,7 @@ STATUS: LOCKED
 DECISION: The `rewards` INSERT policy is scoped to household OWNER, not to the ADULT role. Non-owner
 adults cannot author rewards. Folded into Workstream 1 as a confirmed finding.
 DATE: 2026-07-12
-WHY: Verified by isolation — May (Adult, non-Owner) fails INSERT on quick-pick, on custom/everyone, and
-     on custom/adults-only alike; SnowDad (Owner) succeeds. That rules out the `audience` column and the
-     custom-reward payload; the policy itself is the fault. Not a Lovable patch: it is the same disease as
-     the approval-path finding — the role model was never written into the write-side policies — so it
-     needs a full policy inventory against the role model, not a spot fix that makes the error message go
-     away. Product impact: in a two-adult household only one adult can stock the Vault. Public-repo safe:
-     an over-NARROW grant discloses nothing to an attacker.
+WHY: [REDACTED - mechanism held privately until patched. Restored post-fix.]
 REPLACES: Nothing — new finding.
 STATUS: LOCKED
 ```
@@ -573,12 +567,7 @@ STATUS: LOCKED
 ```
 DECISION: Approval-path RLS hardening confirmed necessary; fix scoped to Claude Code, not a Lovable patch
 DATE: 2026-07-10
-WHY: The core "embers mint only on adult approval" rule is currently enforced by UI convention rather than by
-     policy. Confirmed finding, not introduced by the 7/10 migration. A naive role-check fix does not close it
-     because of how kid profiles share the owner's session; the real fix keys on the acting profile + a
-     verified-parent action + column-level gating, and requires reading the parent-verification path end to end.
-     [Exploit specifics deliberately held OUT of this public repo — they live in the private security note handed
-     into the Claude Code / Workstream 1 session.]
+WHY: [REDACTED - mechanism held privately until patched. Restored post-fix.]
 STATUS: LOCKED (finding) — fix is a Claude Code job. PRE-DISTRIBUTION BLOCKER.
 ```
 

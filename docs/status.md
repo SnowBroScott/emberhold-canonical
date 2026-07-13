@@ -13,7 +13,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 **What's missing is not a module.** Two structural gaps, both still open:
 
-> **The write-side of the RLS policy layer was never systematically authored.** Reads were scoped to household. Writes got Supabase's defaults and good intentions. **Seven confirmed findings, one CRITICAL, one root cause.**
+> **Security — seven unpatched findings in the authorization policy layer.** One CRITICAL. Shared root cause. Specifics held privately; will be republished when fixes land.
 
 > **Onboarding ends at setup, not at activation.** A new household lands on a board that says "all quiet" three ways and never says what to do next.
 
@@ -34,25 +34,13 @@ See `north-star.md` for the gate ladder.
 
 ---
 
-## 🔴 THE SEVEN FINDINGS — one root cause
+## 🔴 GATE B — OPEN POLICY-LAYER FINDINGS
 
-**Hypothesis, load-bearing:** the policy layer was built read-side-first. Every one of these is the write-side missing. **Assume there are more.** The audit's job is no longer to confirm these — it is to find the ones we haven't found.
+Seven confirmed findings, one CRITICAL, one shared root cause.
 
-| # | Finding | Severity | Source |
-|---|---|---|---|
-| 1 | **Anyone with a household join code can join as a full Parent admin.** No expiry, no rotation, no approval gate. Possession of the string = adult admin. | **CRITICAL** | Lovable deep scan |
-| 2 | **Adult PIN lock is bypassable** — it isn't tied to real permission checks. A UI gate, not a policy. | Warning | Lovable deep scan |
-| 3 | **`activity_log` — uncontrolled writes.** SELECT policy only; no INSERT/UPDATE/DELETE. Forged log entries possible. The log carries `ember_delta`. | Warning | Lovable scan |
-| 4 | **`families` — no INSERT or DELETE policies.** | Warning | Lovable scan |
-| 5 | **SECURITY DEFINER functions callable by signed-in users** — no internal-caller gating. | Warning | Linter |
-| 6 | **Ember minting on approval is enforced by UI convention, not by policy.** | CRITICAL (unrated) | Ours (pre-existing) |
-| 7 | **`rewards` INSERT scoped to OWNER, not to ADULT role.** Non-owner adults cannot stock the Vault. | HIGH | Ours (2026-07-12) |
+**Specifics are held privately until patched.** They live in the working note handed to the Claude Code audit session. Publishing an unpatched vulnerability map for a live application with real users is not transparency, it is an invitation. They will be republished once fixed.
 
-**Do NOT press Lovable's "Try to fix all."** It will write plausible policies for the symptoms it can see, leave the ones it can't, produce no reviewable diff, and leave you believing you are fixed. Join-code policy in particular needs a *design decision* (expire? rotate? admit-on-approval?) that no linter can make.
-
-**Model:** run this one on **Opus.** It is the single place on the board where cost optimization is the wrong instinct.
-
-*Exploit specifics for finding 6 remain OUT of this public repo — they live in the private note handed to the Claude Code session. Findings 1–5 and 7 are safe to publish: over-narrow grants and missing policies disclose nothing an attacker couldn't already probe.*
+Status: audit not yet run. Fixes not yet written.
 
 ---
 

@@ -269,10 +269,9 @@ A single **append-only, permanent, immutable** stream — the source of truth fo
 ---
 
 ## Security posture (design truth, not just a bug list)
-- **The core rule: embers mint only on adult approval.** Today that rule is enforced by **UI convention, not by policy** — and that is a known, confirmed gap.
-- **Confirmed finding — approval-path exposure (PRE-DISTRIBUTION BLOCKER).** The rule is currently unenforced at the policy layer. A naive role-check does not close it, because of how kid profiles share the owner's authenticated session; the real fix keys on the **acting profile** + a verified-parent action + **column-level gating**, and requires reading the parent-verification path end to end. **Claude Code job.** *Exploit specifics are deliberately held out of this public repo — see the private security note.*
-- **SECURITY DEFINER audit.** A set of definer functions flagged by the linter need an internal-caller-gating sweep, bundled with the fix above. *(One over-broad anon grant already revoked.)* *(Function-level detail in the private note, not here.)*
-- **Join codes have no rotation and no approval gate.** Pre-distribution priority: add regenerate-code + likely admit-on-approval.
+- **The core rule: embers mint only on adult approval.**
+- **SECURITY DEFINER audit.** A set of definer functions flagged by the linter need an internal-caller-gating sweep. *(One over-broad anon grant already revoked.)* *(Function-level detail in the private note.)*
+- **Join codes admit members to a household.** Pre-distribution priority: policy design for code rotation and admission flow.
 - **Kid-vs-kid impersonation.** The client-side profile switch is ungated. Kid PINs stay **off by default** (they tax the walk-up thesis, which is the whole shared-device model). Mitigation already built: the **redeemer's name + face on the adult approval card**. Resolution is an optional lightweight picture-lock, shipping with the wall/kiosk phase.
 - **Persistence debt:** Vault favorites currently use `localStorage`. Fine for validation, fatal for the shared-wall model — favoriting is now load-bearing (goal-commitment) across kid store, adult store, and rail. **Needs real per-profile persistence before ship.**
 

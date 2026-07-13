@@ -37,7 +37,7 @@ That changes the shape of Gate E, not the need for it. Friends who signed up bec
 
 What's missing is not a module. It's that **Emberhold has never met a stranger.** "Ready" means the app survives a family that has no Scott in it.
 
-**And the policy layer has a hole in it.** The write side of RLS was never systematically authored — seven confirmed findings, one root cause. See `status.md`. Gate B has teeth.
+**And the policy layer has a hole in it.** See `status.md`. Gate B has teeth.
 
 **Platform posture:** stays a web PWA. No app store, no Apple review, no payment-rail tax. A decision, not a compromise — validated by the Founding Guildhall architecture (~97% revenue retained via Stripe). Capacitor path assessed as viable and deliberately deferred.
 

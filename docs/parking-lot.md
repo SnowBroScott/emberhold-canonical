@@ -21,7 +21,7 @@
 
 - **⚠️ Backend ownership + data backup.** The backend is **Lovable Cloud**, not a Supabase project Scott owns. There is no separate dashboard. **Backups, plan tier, PITR, data export, and the ability to leave are all Lovable's to grant.** The code has a Git backup; **the data has none.** A live structural risk and a Gate B blocker. *What is the exit path if Lovable Cloud is the wrong long-term home?*
 - **Does the P4×L8 adversarial script even run on Lovable Cloud?** The harness assumes a project URL + anon key pointable at the DB from outside the app. `supabase-js` is initialized *somewhere* in the repo — check there first. If those credentials aren't usable externally, the audit degrades to policy-reading and Gate B's exit criterion (*"cross-tenant access provably impossible"*) becomes unprovable by design. **Answer this before running the audit.**
-- **Join codes — the design call inside the CRITICAL finding.** Possession of the string currently grants full adult admin. Expire? Rotate? Admit-on-approval? Rate-limit? **A linter cannot make this call and neither can an agent.**
+- **Join-code policy** — open design call. Held privately until patched. **A linter cannot make this call and neither can an agent.**
 - **⚠️ The free/paid avatar split — and its arithmetic is now stale.** "16 free / 24 paid" was locked against a **44**-character roster. The roster is **48**. The math no longer closes, the selection was never made, and the old split predates a cast nobody has looked at yet. **Re-lock the numbers, then cast.** *This is a product decision and must never be handed to an agent as part of avatar transport.*
 - **What happens to the thirteen existing `hero:` picks.** A roster swap silently turns every current member into a different character unless stale ids are invalidated. **Direction is clear** (invalidate + re-choose, framed as a re-forge). **Open:** does re-choosing get a proper moment — a Pip-voiced prompt, a one-time card — or just a reset to the default emoji? *The moment is nearly free and it's a re-engagement beat for thirteen people who have already drifted.*
 - **Quality — the two open halves.** Direction LOCKED (a signal, never an ember modifier). Still open: (1) is it visible to the KID, or adult-only? (2) What consumes it — the weekly recap, presumably, which is parked behind beta.
@@ -61,7 +61,7 @@
 - **"Spin for a quest"** — random weighted quest assignment, kid-initiated. Deep future.
 - **Capacitor / app-store path** — assessed viable (complexity lives in Apple review, not code). Hinges entirely on whether payment rails are ever needed. Currently: no.
 - **List → quest hook** — deferred to the parked `objectives[]` / multi-step-quest model. A chore list earns embers, but it's *built as a multi-step quest*, so the game still lives in quests.
-- **Flat / peer holds** — roommates, couples with no owner-above-peer. The neutral vocabulary already leaves room; the permission model doesn't. **Adjacent to finding #7** — the owner-vs-adult confusion in the policy layer is the same conceptual gap.
+- **Flat / peer holds** — roommates, couples with no owner-above-peer. The neutral vocabulary already leaves room; the permission model doesn't.
 - **iCal import** — never ask anyone to abandon their work calendar. Import theirs instead.
 
 ---
