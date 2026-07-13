@@ -66,6 +66,18 @@ Docs are written **once, at session end** — never as running updates throughou
 
 **"Shipped" means a completed end-to-end loop.** Not a screen rendering in a screenshot. Not assets banked on a phone. Design-complete ≠ shipped, and the docs must say so plainly, because the gap is where projects quietly rot.
 
+### Verify from outside — the Code-job close
+
+A Claude Code job is not done when the agent says it's done. It's done when the artifact is **observable from outside the agent.**
+
+Learned 2026-07-13, the expensive way: Code reported "COMPLETE" with a real commit SHA for a redaction that had never been pushed. For ~40 minutes both jAIne and Scott believed a live vulnerability map was down while it was still public. The existing rule — *self-reports require evidence* — was being applied to Code's ANALYSIS but not to its EXECUTION.
+
+The close, every Code job:
+1. The brief ends with an explicit **`git push`**, and — for files outside any repo (e.g. the private security note) — an instruction to **print the full file to the terminal.** "I wrote it" is not evidence it was written.
+2. jAIne **re-fetches from the remote and greps** as the last step. A commit on the laptop is a screenshot, not a ship.
+
+Corollary, also learned 2026-07-13: **raw.githubusercontent.com can serve stale content for several MINUTES** even with a cache-buster and a no-cache header. The cache-buster is necessary, not sufficient. **When raw and the GitHub API disagree, the API wins.** Do not conclude a push failed on raw's word alone. (Watch the API rate limit — the unauthenticated ceiling is low and a busy session will hit it.)
+
 ---
 
 ## Scope defense
