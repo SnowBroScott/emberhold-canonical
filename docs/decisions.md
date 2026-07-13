@@ -17,6 +17,69 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 
 ```
 
+# Session 2026-07-13. Add these ABOVE the current top entry.
+
+---
+
+DECISION: Join-code hardening (Finding #1) — admit-on-approval.
+DATE: 2026-07-13
+WHY: Possession of a join code currently grants full parent admin with no expiry,
+     rotation, or gate. Chose admit-on-approval over expire or rotate because the
+     join flow's real job is second-device pairing for your OWN household, not cold
+     stranger recruitment — and a parent adding their own second device already has
+     a phone out. Expire and rotate both depend on a parent remembering to do
+     maintenance, which is the exact drift-and-rot failure mode Emberhold exists to
+     beat. Admit-on-approval closes the hole completely: an unapproved join can't
+     complete.
+     IMPLEMENTATION: Do not build new. The Command Center quest-approval queue
+     already implements "adult reviews a pending item and taps approve" (and already
+     handles hold admits). A pending join request is another object in that existing
+     queue. Reuse the mechanism; do not author a parallel one.
+REPLACES: Nothing — new decision. Resolves the open call in parking-lot.
+STATUS: LOCKED
+
+---
+
+DECISION: Finding #6 (kid self-approval / ember self-minting) — CLOSED.
+DATE: 2026-07-13
+WHY: Re-audit traced the full chain in theemberhold and found the path BLOCKED by an
+     independent defense the original finding missed. The quests UPDATE policy is
+     row-gated only (family + claim/assignment), so on the policy alone a kid could
+     write status='approved'. BUT a second BEFORE-UPDATE trigger,
+     a_enforce_quest_update_authority (migration 20260627044607, a_ prefix forces it
+     to fire before the approval trigger), raises "Only parents can approve a quest"
+     and aborts the update before handle_quest_approval() runs. Independently, ember
+     minting routes through append_activity(), which nulls ember_delta server-side for
+     non-parents. Two independent gates.
+     LOAD-BEARING NOTE: the block lives in TRIGGER logic, not the policy layer.
+     Functionally sound today. Do NOT drop or refactor a_enforce_quest_update_authority
+     without replacing its guarantee — it is the lock on the ember economy. Now flagged
+     in master-spec schema (commit d00154a).
+REPLACES: Original Finding #6 (real-looking path, actually blocked). #6 CRITICAL → CLOSED.
+STATUS: LOCKED
+
+---
+
+DECISION: Unpatched security findings are held privately, not published.
+DATE: 2026-07-13
+WHY: The public canonical repo carried a full seven-row vulnerability map — mechanism,
+     severity, root cause — for a LIVE app with 13 real users and children's data, with
+     zero fixes written. The repo's own claim that findings 1-5 and 7 "disclose nothing
+     an attacker couldn't already probe" was wrong: probing costs effort and blind
+     guesses; a published finding removes both. This is why responsible disclosure has
+     an embargo. Rejected: making the repo private (breaks the raw-URL fetch protocol,
+     needs a PAT in a chat window). Rejected: rewriting git history (force-push, breaks
+     clones, loud, and a motivated attacker reading git log -p was always going to find
+     these). The scrub kills the drive-by, not the determined. The PATCH is the fix;
+     this just stops advertising while the patch is written. Design intent stays public;
+     the confession that intent isn't enforced does not. decisions.md entries hollowed,
+     not deleted — append-only holds. Republish findings once patched.
+     TRIGGERED BY: a cold sales-spam email (paas.build, "add payments to Lovable") that
+     was itself nothing — but prompted the repo review that found the live vuln map.
+REPLACES: The "safe to publish" note formerly in status.md.
+STATUS: LOCKED
+
+```
 ## 2026-07-12 (eve)
 
 ```
