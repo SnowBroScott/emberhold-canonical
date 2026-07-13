@@ -71,6 +71,8 @@ Any future "X should only be seen by Y" want gets answered with this pattern bef
 
 **Adult self-completion:** when the submitter is an Adult, completion writes `status='approved'` + `approved_by=self` **atomically** — embers mint immediately, never entering the pending queue. The gate is *satisfied*, not bypassed. Kid completions unchanged.
 
+**Quest approval is guarded by `a_enforce_quest_update_authority` (a BEFORE-UPDATE trigger that fires before the approval handler and restricts approval to parents). Load-bearing: do not drop or refactor this trigger without replacing its guarantee.**
+
 **Planned extensions (parked):** `objectives[]` — an array of checkable steps turning a quest into a **multi-step quest**. Steps don't mint; only turn-in does, and submit is locked until every step is checked. The model home for **chore lists** and the deferred list→quest hook.
 
 ---
