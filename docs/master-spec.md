@@ -1,7 +1,7 @@
 # Master Spec
 **What Emberhold IS.** Canonical design truth — above any individual build prompt or chat. Status lives in `status.md`; this doc does not track it.
 
-Last substantive update: **2026-07-10** — 12 days of drift cleared (7/03 avatar pass, 7/04 vocabulary + adult Vault, 7/10 Vault run, and the monetization model, which had never been in the spec at all).
+Last substantive update: **2026-07-14** — recurrence reworked to fixed calendar anchors (weekly=Mon, monthly=1st; `recurrence_day` removed), the board's `due_date` gate folded in as load-bearing, and the join-code admit-on-approval gate (pending-member state, `current_family_id()` chokepoint) added to the security posture.
 
 ---
 
@@ -61,9 +61,9 @@ Any future "X should only be seen by Y" want gets answered with this pattern bef
 - `campaign` — empty = everyday; set = tagged, its embers feed that campaign's bar
 - `status` — open → claimed → submitted → approved (directed quests start at claimed)
 - `approved_by` — the adult who approved; **embers only count once set**
-- `due_date` — the board query filters `due_date <= today`. Recurrence spawns the next instance *dated forward*; it appears only when its date arrives.
-- `recurrence` — none / daily / weekly / **monthly** / custom. Monthly reveals a **day-of-month** selector (ember chips 1–31 + "Last day"), short-month clamp. On approval of a recurring quest, archive the completed instance and spawn the next — **never reset in place** (one shared spawn path).
-  - **Per-cadence rollover rule:** daily = no accumulation (missed dailies archive + reset fresh — no guilt-pile); weekly/monthly may legitimately persist as still-due.
+- `due_date` — `DATE NOT NULL DEFAULT CURRENT_DATE`. **No user-facing picker** — set by the default on create, computed by the recurrence trigger on respawn. The board and every open-bounty surface filter `due_date <= today`; recurrence spawns the next instance *dated forward*, so it appears only when its date arrives. **This gate is load-bearing** — it's what keeps the board a "what needs doing now" surface rather than a dump of everything in the table.
+- `recurrence` — none / daily / weekly / **monthly**. **Fixed calendar anchors (LOCKED 2026-07-14):** weekly → the **Monday** of the following week; monthly → the **1st** of the following month; daily → tomorrow. There is **no day-of-month selector** — it was removed. Monthly is always the 1st; anything bespoke is a **calendar event**, not a recurring quest (the membrane). Anchoring is by construction (`date_trunc('week'|'month', …) + interval`), which kills the old relative-drift where a late approval walked the due date forward. On approval of a recurring quest, archive the completed instance and spawn the next — **never reset in place** (one shared spawn path, `handle_quest_approval`). The next instance spawns **only on approval** — there is no timer.
+  - **Per-cadence rollover rule (asymmetric, deliberate):** daily **rolls forward on miss** — `roll_missed_dailies` archives the stale instance and spawns a fresh one for today, no ember accumulation, no guilt-pile. Weekly/monthly do **not** roll — an undone weekly/monthly persists at its original `due_date` until approved, because approval is the only spawn trigger. Consequence: an undone monthly never auto-refreshes and never blocks its own next cycle; it lingers, visibly, which is correct — it's still owed.
 - `rating` — optional 1–5, quality signal only, does NOT change embers
 - `is_favorite` — star → appears in a quick-add template list
 - `tier` — derived from points: **DIM → WARM → HOT → BLAZING.** Drives visual intensity
@@ -126,7 +126,7 @@ Adults earn and spend too — this is what May actually uses, and it's what make
 ## Modules (the surfaces)
 
 ### The Engine
-Quest board, ember economy, recurrence (incl. monthly day-of-month), ratings, favorites, adult approval, Ranks leaderboard, Quest Log.
+Quest board, ember economy, recurrence (fixed anchors — weekly=Mon, monthly=1st), ratings, favorites, adult approval, Ranks leaderboard, Quest Log.
 - Board is **date-windowed** (`due_date <= today`). Completed dailies leave the board; missed dailies archive + reset fresh on board mount (`roll_missed_dailies`).
 - **Scope badges (adult view only):** `adults_only` → "Adults only"; `kids_only` → "Kids only"; `anyone` → no badge. Not shown on the kid board — a kid just sees claimable work.
 - **Claim-eligibility copy states itself exactly once per card.** `anyone` keeps the "Available to anyone" subline and gets no badge; scoped quests show their badge and **drop** the subline. (Kills the "Adults only / Available to anyone" self-contradiction.)
@@ -247,7 +247,7 @@ Coherence is governed by a **wide style band with a hard floor**. Range freely *
 - **Brightness = heat = importance.** The hierarchy principle AND the animation-intensity dial AND the avatar-luminosity floor AND (as of 7/10) the Vault's **affordability-as-heat** mode switch.
 - **Member identity colors are a SEPARATE system from the ember ramp.** Jewel-tone hues across grid dots, event cards, the Briefing horizon. SnowDad amber/gold `#E0A94A` (also "Whole hold" default), May violet `#9B6BD6`, Mia jade `#3FB37A`, Cade steel-blue `#4A9FD6` (spare: rose `#E0607A`, teal `#2DB3A6`, coral `#E08750`).
 - **The household keep glyph.** Tintable SVG (keep body `currentColor`, hearth a fixed warm glow), household-amber, ~20–22px inline.
-- **Date pickers.** Calendar event dates use the **native OS picker**; quest day-of-month uses **ember-styled chips**.
+- **Date pickers.** Calendar event dates use the **native OS picker**. *(Quests carry no user-facing date input — recurrence is fixed-anchor and the old quest day-of-month chip picker was removed 2026-07-14.)*
 - **Depth, not flat:** layered surfaces, a 1px warm top-edge highlight, soft shadow beneath cards, glow on heat.
 - **The FAB-as-submit / FAB-suppression pattern:** on create screens the bottom-center `+` becomes the form's submit, docked in-flow. On a single-purpose surface that already owns a create action, the global FAB is suppressed entirely. **Exactly one create control in the bottom thumb zone, always.**
 - **Layered docked surfaces:** a docked input over a scrolling list must be a full-width **opaque** elevated layer with a hard top edge and a short fade scrim — content scrolls *behind* it, never *through* it. Translucent floating capsules over scrolling content are banned (they wash out).
@@ -273,7 +273,8 @@ A single **append-only, permanent, immutable** stream — the source of truth fo
 ## Security posture (design truth, not just a bug list)
 - **The core rule: embers mint only on adult approval.**
 - **SECURITY DEFINER audit.** A set of definer functions flagged by the linter need an internal-caller-gating sweep. *(One over-broad anon grant already revoked.)* *(Function-level detail in the private note.)*
-- **Join codes admit members to a household.** Pre-distribution priority: policy design for code rotation and admission flow.
+- **Join codes admit members to a household — now gated by admit-on-approval (data layer LOCKED 2026-07-14).** A join-by-code creates a `profiles.status = 'pending'` profile; **`current_family_id()` returns NULL for any non-active profile**, so every family-scoped RLS policy denies by construction — one chokepoint, fail-closed everywhere. The self-selected role is stored as `requested_role` (advisory only); **no `user_roles` row is written at join.** A parent admits *and* confirms the role in one action (`admit_pending_member(_profile_id, _confirmed_role)` — confirmed role is authoritative), enforced at the trigger layer (`enforce_profile_role_change`), not policy alone. **Do not refactor `current_family_id()` without preserving the NULL-for-pending guarantee — it is the lock on the entire pending-member gate**, the way `a_enforce_quest_update_authority` is the lock on the ember economy. STILL OPEN: the admit UI is unbuilt and the verification audit has not run — the hole is clamped and unproven, not stitched.
+- **Schema-history landmine (operational).** The tracked migrations do **not** fully describe the live schema — confirmed 2026-07-14: `recurrence_day` (since dropped) and the `monthly` enum value were both added out of band, with no migration file defining them. Before any structural change, verify against the **live** schema (`information_schema`), not the migration history alone. The exact drift this repo exists to prevent, reappearing at the schema layer.
 - **Kid-vs-kid impersonation.** The client-side profile switch is ungated. Kid PINs stay **off by default** (they tax the walk-up thesis, which is the whole shared-device model). Mitigation already built: the **redeemer's name + face on the adult approval card**. Resolution is an optional lightweight picture-lock, shipping with the wall/kiosk phase.
 - **Persistence debt:** Vault favorites currently use `localStorage`. Fine for validation, fatal for the shared-wall model — favoriting is now load-bearing (goal-commitment) across kid store, adult store, and rail. **Needs real per-profile persistence before ship.**
 
