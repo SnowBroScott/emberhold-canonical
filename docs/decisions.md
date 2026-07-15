@@ -15,6 +15,91 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 
 *Paste these at the top of the current-decisions section. `decisions.md` is append-only.*
 
+---
+
+2026-07-14
+
+DECISION: The hub open-bounty count matches the board — future-dated bounties are hidden everywhere, via one shared predicate.
+DATE: 2026-07-14
+WHY: The Briefing hub counted all non-approved open bounties regardless of due_date (showed 8);
+     the board and kid profiles gate on due_date <= today (showed 4). The board is the honest
+     surface: it answers "what needs doing / what can I claim now," and a done or future-dated
+     recurring quest should NOT appear — a monthly completed yesterday must leave the board or the
+     board stops reflecting the real state of the house, which is the whole reason it exists.
+     Rejected "4 now · 4 upcoming" label: that's the calendar's job, and it's surface creep on a
+     number that just needs to be true.
+     IMPLEMENTATION: all three surfaces now route through isOpenBountyVisible(quest, role,
+     today = todayIsoDate()) in src/lib/quest-helpers.ts — sole source of truth for status +
+     assignment + audience + the due_date<=today gate. todayIsoDate() defines the day-boundary
+     string once. This kills the prior duplication (Briefing hand-rolled its query; board
+     hand-rolled todayStr twice) — same disease as the feedHeat() duplication, same cure.
+REPLACES: Nothing — resolves the 8-vs-4 mismatch found 2026-07-14.
+STATUS: LOCKED
+
+DECISION: Recurrence anchors to the calendar, not to approval date. Daily = today, Weekly = Monday, Monthly = the 1st. The recurrence_day picker is removed.
+DATE: 2026-07-14
+WHY: Recurrence was RELATIVE — handle_quest_approval spawned the next instance at approved_date + 7
+     (weekly) or + 1 month (monthly). Relative recurrence DRIFTS: a quest approved late walks its own
+     due date forward, so "weekly" lands on random weekdays and the due date depends on when an adult
+     happened to approve — reintroducing exactly the human-admin-dependent drift Emberhold exists to
+     beat, living inside the recurrence engine. Fixed calendar anchors kill the drift and are trivially
+     legible: "weekly = Monday" is a fact a kid holds without the app.
+     Monthly = the 1st ONLY. The per-quest "day of month" picker (1-31 + "Last day") is REMOVED:
+     anything bespoke is a CALENDAR event, not a recurring quest. That is the membrane — recurrence is
+     a small set of habit anchors, not a scheduler. ("We have an entire calendar feature for anything
+     else." — Scott.)
+     Weekly anchor is global Monday for now; per-household configurability parked (out-habit, don't
+     out-feature).
+     IMPLEMENTATION (shipped 2026-07-14): trigger weekly next-due =
+     date_trunc('week', COALESCE(due_date, CURRENT_DATE)) + interval '1 week' (Postgres week starts
+     Monday); monthly = date_trunc('month', ...) + interval '1 month' (the 1st). recurrence_day removed
+     from both trigger functions, both frontend forms, and the column dropped. Live re-anchor: 8 rows
+     before / 8 after, 7 re-anchored, 0 dupes, 0 orphans. PAST-DUE monthlies left in place, not swept
+     forward — an undone chore is work still owed and must stay visible on the board (and sweeping it
+     forward would collide with the due_date<=today gate shipped the same day, hiding it entirely).
+     Discontinuity on the recompute was ACCEPTED — live users are informed Alpha testers.
+REPLACES: The relative +7 / +1-month recurrence spawning in handle_quest_approval (migration
+     20260710130515), and the recurrence_day column and its picker.
+STATUS: LOCKED
+
+DECISION: Join-code hardening (Finding #1) is admit-on-approval, implemented lean on the profiles row. CLOSED at the data layer.
+DATE: 2026-07-14
+WHY: Locked 2026-07-13 as admit-on-approval (reuse the approval mechanism, don't build a parallel
+     product). Recon 2026-07-14 corrected the load-bearing premise: the Command Center approval queue is
+     HARDCODED to quests (ZonePending queries quests directly) and does NOT already handle admits — the
+     7/13 note's "it already handles hold admits" was false, same failure family as Feast->Hall. The
+     strategy survived; the "already exists" claim did not.
+     Rejected HEAVY (a holds table + admission-requests table + generic queue refactor + new RPCs +
+     new route + notifications): building an admissions subsystem to gate what is fundamentally
+     second-device pairing for your own household is scope creep wearing a security badge.
+     Chose LEAN: profiles IS the membership row. A join-by-code lands the profile status='pending';
+     current_family_id() returns NULL for a non-active profile, so every family-scoped RLS policy
+     denies by construction — fail-closed everywhere through ONE chokepoint. The self-selected role is
+     stored as requested_role (advisory); no user_roles row is written at join. A parent admits AND
+     confirms the role in one action (admit_pending_member(_profile_id, _confirmed_role)); the confirmed
+     role is authoritative, closing the second wound (kid self-declaring parent) in the same pass.
+     Enforced at the trigger layer (enforce_profile_role_change), not policy alone — mirrors the
+     a_enforce_quest_update_authority guarantee for quest approval.
+     LANE: data layer through Lovable (owns the DB, proven path); a CRITICAL fix is not the guinea pig
+     for the still-unproven external-push migration. Frontend is Code's, next session.
+     STILL OPEN (not closed by this): the admit UI does not exist, and the verification audit was
+     written but never run. The hole is clamped and unproven, not stitched.
+REPLACES: The 2026-07-13 admit-on-approval entry's premise that the existing queue already handles
+     admits. Strategy stands; mechanism is lean-on-profiles, not reuse-the-quest-queue.
+STATUS: LOCKED (design + data layer) / OPEN (frontend + verification audit)
+
+DECISION: Frontend defaults to the SAFE role when admitting a pending member.
+DATE: 2026-07-14
+WHY: admit_pending_member requires the parent to pass a confirmed role, and the RPC ignores the
+     joiner's requested_role in favor of it — the data layer is clean. But if the admit UI pre-selects
+     "parent" just because that's what was requested, it reintroduces the rubber-stamp through the
+     interface. The requested role is shown as CONTEXT ("wants to join as: Parent"); the toggle defaults
+     to KID; promoting to parent is a deliberate tap. Bias toward the safe direction — the same principle
+     as the avatar-crop inward bias, applied to permissions: when a process can be wrong, choose which
+     way it's wrong.
+REPLACES: Nothing — new decision, binds the (unbuilt) admit UI.
+STATUS: LOCKED (applies when the admit UI is built)
+
 ```
 
 # Session 2026-07-13. Add these ABOVE the current top entry.
