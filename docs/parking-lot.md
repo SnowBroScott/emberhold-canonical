@@ -13,7 +13,7 @@
 
 ## Inbox (untriaged)
 
-*(empty — triaged 2026-07-12 eve)*
+*(empty — triaged 2026-07-14)*
 
 ---
 
@@ -21,7 +21,6 @@
 
 - **⚠️ Backend ownership + data backup.** The backend is **Lovable Cloud**, not a Supabase project Scott owns. There is no separate dashboard. **Backups, plan tier, PITR, data export, and the ability to leave are all Lovable's to grant.** The code has a Git backup; **the data has none.** A live structural risk and a Gate B blocker. *What is the exit path if Lovable Cloud is the wrong long-term home?*
 - **Does the P4×L8 adversarial script even run on Lovable Cloud?** The harness assumes a project URL + anon key pointable at the DB from outside the app. `supabase-js` is initialized *somewhere* in the repo — check there first. If those credentials aren't usable externally, the audit degrades to policy-reading and Gate B's exit criterion (*"cross-tenant access provably impossible"*) becomes unprovable by design. **Answer this before running the audit.**
-- **Join-code policy** — open design call. Held privately until patched. **A linter cannot make this call and neither can an agent.**
 - **⚠️ The free/paid avatar split — and its arithmetic is now stale.** "16 free / 24 paid" was locked against a **44**-character roster. The roster is **48**. The math no longer closes, the selection was never made, and the old split predates a cast nobody has looked at yet. **Re-lock the numbers, then cast.** *This is a product decision and must never be handed to an agent as part of avatar transport.*
 - **What happens to the thirteen existing `hero:` picks.** A roster swap silently turns every current member into a different character unless stale ids are invalidated. **Direction is clear** (invalidate + re-choose, framed as a re-forge). **Open:** does re-choosing get a proper moment — a Pip-voiced prompt, a one-time card — or just a reset to the default emoji? *The moment is nearly free and it's a re-engagement beat for thirteen people who have already drifted.*
 - **Quality — the two open halves.** Direction LOCKED (a signal, never an ember modifier). Still open: (1) is it visible to the KID, or adult-only? (2) What consumes it — the weekly recap, presumably, which is parked behind beta.
@@ -34,7 +33,7 @@
 
 ## NOW (this is the next work)
 
-- **Hand-cut the 48-avatar roster in GIMP.** Ellipse-select, fixed 1:1, snapped to the gold rim and **biased 2–3px inward.** Losing a sliver of rim is free; keeping a pixel of a neighbour is not. *Automation was attempted four ways and abandoned — see `status.md`.*
+- **Hand-cut the 48-avatar roster in GIMP.** Ellipse-select, fixed 1:1, snapped to the gold rim and **biased 2–3px inward.** Losing a sliver of rim is free; keeping a pixel of a neighbour is not. *Automation was attempted four ways and abandoned — see `status.md`.* **TABLED by Scott — on the board, not a priority; surface it, don't push it.**
 - **Cast while cutting.** The roster is being cut from ~57 generated portraits into 48 slots. **The casting decision happens while Scott is looking at them, because that's the only time it can happen.** Whatever doesn't make the cut is the surplus, and the surplus is already paid for.
 
 ---
@@ -43,6 +42,7 @@
 
 - **`avatar-review.tsx` — retire or rebuild.** A leftover review page that hand-duplicates the roster in its own local array. It is a second source of truth for the cast, and it will drift. *Kill it unless it's earning something.*
 - **Audit what else from 2026-07-03 never landed.** `Feast` → `Hall` was LOCKED and sat unshipped for ten days. It was found by accident, during a recon for something else. **Grep the LOCKED decisions against the codebase.** *This is a Haiku job and it is cheap.*
+- **Recurrence chip legibility — "Weekly · Mon" / "Monthly · 1st".** Recurrence now anchors to fixed dates (weekly=Monday, monthly=the 1st), but the anchors are invisible to users — a kid sees a bare "MONTHLY" chip with no hint it means the 1st. `RECURRENCE_LABEL` is a plain constant; surfacing the anchor needs conditional render at the chip sites (`QuestCard`, `quest.$id`, `quest-log`). Scoped and skipped during the recurrence cleanup because it exceeds a one-line change. *Cheap, and exactly the ambient legibility the thesis runs on.*
 - **Vault favorites → real per-profile persistence** — `localStorage` won't survive the shared-wall model, and favoriting is load-bearing.
 - **Quick Add defaults expanded on an empty board** — zero quests means the user has never seen one. Same state-driven pattern as the Vault's catalog/curated flip.
 - **A cheap Dim-tier starter reward** — the menu floors at 25, so a new kid can't cash out until they've earned 25. **Doubly important now:** the Pip first-run screen asks them to stock the Vault, and the first reward they set should be *reachable*, not a 500-ember Urban Air Day.
@@ -66,8 +66,13 @@
 
 ---
 
-## KILLED / SUPERSEDED (2026-07-12)
+## KILLED / SUPERSEDED
 
+**2026-07-14**
+- ~~**`recurrence_day` / monthly day-of-month picker**~~ — **REMOVED.** Monthly is always the 1st; anything bespoke is a calendar event, not a recurring quest. Column dropped, picker gone, trigger rewritten. See `decisions.md`.
+- ~~**Join-code policy as an open call**~~ — **DECIDED** as admit-on-approval (lean-on-profiles, data layer shipped). Moved to `decisions.md`.
+
+**2026-07-12**
 - ~~**Auth email branding as a "NEXT / off critical path" item**~~ — **PROMOTED to the critical path.** It is the first artifact a stranger receives, it precedes the app itself, it lands in spam, and thirteen people have already received it. The reasoning that deferred it ("nobody's walking through that door yet") was built on a headcount that was wrong by nine.
 - ~~**Automated avatar cropping / slicing**~~ — **DECLINED.** Four escalating attempts, four failures. Success criterion is visual; no agent in the loop can see. Manual GIMP.
 - ~~**Seasonal frost cosmetic set**~~ — superseded by "cosmetic drop #2 — the roster surplus."
