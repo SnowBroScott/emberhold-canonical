@@ -17,20 +17,22 @@ Scott brings back screenshots / errors
    ↓
 jAIne diagnoses → fixes → writes the next prompt
    ↓
-(session end) docs updated, committed
+(session end) docs regenerated, committed
 ```
 
-Each build phase runs as its own chat. Claude Code handles anything requiring the codebase to be *read* — RLS audits, security fixes, migrations that need the parent-verification path traced end to end. Lovable cannot audit itself from inside itself.
+Each build phase runs as its own chat. Claude Code handles anything requiring the codebase to be *read* — RLS audits, security fixes, migrations that need a path traced end to end. Lovable cannot audit itself from inside itself.
 
 ---
 
 ## Session open
 
-1. Read `north-star.md` — where are we on the ladder?
-2. Read `status.md` — what's pending verify, what's on the critical path?
+1. **Fetch `north-star.md`** — where are we on the ladder?
+2. **Fetch `status.md` — then VERIFY it against reality before trusting it.** This is not optional and it is the single most important step in the protocol. status.md is the doc most likely to be stale, because it changes every session and a tired close can skip it. Cross-check it against the repo / the world: recent commits (GitHub API), what decisions.md says is decided vs. what status claims is open, anything status asserts as "shipped" or "pending." **If status disagrees with reality, say so plainly and reconcile it before starting work.** This is the bilge pump — it catches a bad close within one session instead of letting it rot for days. It costs one `curl` and one API call.
 3. Suggest where to start. Lead with the critical path unless Scott redirects.
 
 **Close the pending-verifies first.** They're cheap and they're blocking honest status.
+
+**Fetch method — non-negotiable:** `bash_tool` + `curl`, never `web_fetch`. Always a cache-buster: `curl -sL -H "Cache-Control: no-cache" "<RAW_URL>?cb=$(date +%s%N)$RANDOM"`. If a fetch fails, stop and report — never fall back to memory. When raw and the GitHub API disagree, the API wins.
 
 ---
 
@@ -38,7 +40,7 @@ Each build phase runs as its own chat. Claude Code handles anything requiring th
 
 - **`park: ...`** — Scott's shorthand. Log it to the parking-lot Inbox and *keep going*. Do not derail the thread to discuss it.
 - **Capture awareness.** Conversations drift from loose to solid. When a riff hardens into a decision, **say so in the moment** — Scott is often too close to see the shift. Don't let a ready decision slide past the moment it was ready. Scott decides what status it gets.
-- **Decision tiers:** LOCKED / NOTED / DRAFT / DECLINED. Record the rejected alternatives and why — a DECLINED decision is what keeps a bad idea from coming back every six weeks.
+- **Decision tiers:** LOCKED / NOTED / DRAFT / DECLINED. Record the rejected alternatives and why — a DECLINED decision is what keeps a bad idea from coming back every six weeks. **The heavy WHY is deliberate: these docs are jAIne's, not Scott's. The reasoning-with-rejected-alternatives is future-jAIne reading, so a settled call doesn't get relitigated. Keep entries thorough — the cost of writing them is jAIne's, and it pays for itself in sessions not wasted.**
 
 ## Build prompts
 
@@ -50,15 +52,31 @@ Delivered as a **clean, one-click copy block.** Just the prompt. No commentary i
 
 ---
 
-## Session close
+## Session close — THE ERGONOMIC LAW
 
-Docs are written **once, at session end** — never as running updates throughout.
+Docs are regenerated **once, at session end** — never as running updates throughout.
 
-1. **`status.md`** — replace. What shipped, what's verified, what's pending, what's still open.
-2. **`decisions.md`** — append. Newest at top. Every decision that landed.
-3. **`parking-lot.md`** — replace. Triage the Inbox into Now/Next/Later, or kill it.
-4. **`master-spec.md`** — update *only if design truth changed.* "We shipped X" is status. "X works like this" is spec.
-5. **Commit.** The commit message is the session log. You don't need a separate one.
+**The governing principle: the labor lives with jAIne, not Scott.** jAIne can see the repo, so regenerating a whole doc is cheap for jAIne and zero-effort for Scott. Scott's job at close is exactly three moves: **copy, paste, commit.** Nothing else. If any doc update requires Scott to *read* the doc, *find* a spot, *judge* placement, or *strip* an instruction before pasting — the boat is leaking and the delivery is wrong.
+
+**Delivery format — hard rule:**
+
+- **Full-doc regenerations are delivered as FILES / ARTIFACTS, never as in-chat copy blocks.** A long markdown doc pasted into chat fights the renderer and arrives garbled (a fenced block spills its own fence; the diagram breaks into prose). Scott opens the artifact, selects all, overwrites the repo file, commits. This applies to status, parking-lot, master-spec, and any playbook.
+- **Only `decisions.md` comes as an in-chat copy block** — because it's a small top-append, not a whole file. Even then, the block is *only the entries*, and the "paste at top" instruction lives in jAIne's message, never in the block.
+
+**How each doc is delivered:**
+
+1. **`status.md`** — **full rip-and-replace, as a file.** jAIne regenerates the whole doc. Scott overwrites and commits. Scott never reads it to update it.
+2. **`parking-lot.md`** — **full rip-and-replace, as a file.** Same. Never "insert this bullet between X and Y" — that's a hunt, not a paste. Regenerate the whole doc.
+3. **`master-spec.md`** — **full rip-and-replace as a file, but only when design truth changed.** "We shipped X" is status; "X works like this" is spec. **jAIne makes this call and states it out loud** ("spec: no change" or "spec: changed, here's the file") — Scott never has to judge whether the spec needs touching at the end of a long session.
+4. **`decisions.md`** — **top-append only** (it's append-only history; it can't be regenerated). jAIne delivers a **clean in-chat copy block of just the new entries**, formatted exactly as they sit in the file. Scott pastes at the very top, below the format header. **The "paste at top" instruction lives in jAIne's chat message, NEVER inside the copy block** — nothing pasteable ever contains an instruction Scott has to delete.
+5. **Commit.** The commit message is the session log.
+
+**The rules that fall out of the principle:**
+- **Full docs are files, not chat blocks.** Chat blocks are for small top-appends only (decisions.md).
+- **Copy blocks never contain instructions.** Any "where / how" lives in jAIne's surrounding message text, never in the pasteable content. A block that needs editing before it pastes clean is a failed delivery.
+- **Default to full-replace.** Full-replace is zero cognitive load for Scott (overwrite) and the cost is entirely jAIne's (regenerate). "It's more work" is irrelevant when the work is jAIne's. Only decisions.md is exempt, because history can't be overwritten.
+
+**At close, jAIne states what changed** as the artifacts are delivered — a one-line reconciliation ("status replaced · one decision appended · spec unchanged · parking-lot replaced"). This is jAIne labeling jAIne's own output, not a checklist Scott has to run. It exists so a miss is visible in the moment; it costs Scott nothing.
 
 ---
 
