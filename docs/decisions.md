@@ -11,11 +11,15 @@ WHY: [the reasoning, including rejected alternatives]
 REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
+
+
+
 ---
 
-# APPEND TO `docs/decisions.md`
-
-*Paste these at the top of the current-decisions section (below the format header, above the 2026-07-14 block). `decisions.md` is append-only.*
+DECISION: The 07-14 batch was logged from INTENT, not landed code. Every frontend change a migration claims to have made is grep-verified against the actual tree before it's called shipped.
+DATE: 2026-07-15
+WHY: Three separate live defects today all traced to 07-14 work the decision log recorded as "shipped": the admit/deny enum bug, the reconcile-branch escalation, and the recurrence_day frontend removal that was written, STASHED, and never committed — crashing quest creation in prod for real users. "removed from both frontend forms" was in the log; the code disagreed. Design-complete was recorded as shipped. Generalizes the existing "a doc's record of a decision is a claim, not a verification" (2026-07-12, Feast→Hall): this is the same disease, three instances in one day. The fix is cheap — grep the tree.
+STATUS: LOCKED
 
 ---
 
