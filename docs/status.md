@@ -1,7 +1,7 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-07-15** — *the admit-on-approval verification audit finally ran — live against the database — and it earned its keep.* The join-code bypass (#1) is confirmed **genuinely closed**. But the audit surfaced a **separate, live privilege-escalation** the 07-14 migration shipped: `complete_household_setup`'s reconcile branch trusted a caller-supplied `_role`, letting an active kid mint themselves a parent `user_roles` row. **Found and fixed 07-15**, verified by re-reading the branch. The admit-on-approval **frontend brief is fired** to Claude Code — build in flight, **not yet verified**. Method that caught it: Lovable extracts the live catalog (`pg_policies` / `pg_proc`), jAIne judges independently — the author does not grade its own exam.
+Last session: **2026-07-15** — *a long one, and it earned every minute.* Came in to close the admit-on-approval "black hole"; closed that and four live defects behind it. The admit-on-approval **verification audit ran live against the DB** and confirmed the join-code bypass (#1) genuinely closed — then caught a **separate live privilege-escalation** in `complete_household_setup` (caller-supplied `_role` → active kid mints a parent role), fixed. The **admit button shipped** and the admit→kid-default→waiting-screen loop is verified end-to-end. Two more live bugs surfaced by *using the app*: an **admit/deny enum crash** (`'notable'` not in `activity_significance`) and a **`recurrence_day` prod crash** that had quest creation down for real users — both found, fixed, deployed, verified. A **pending-member roster leak** (pending members showing as tappable switch targets) fixed. The through-line, on the record: **three of the defects traced to 07-14 work the log called "shipped."** Every catch after the first came from Scott using the app, not from reasoning at a screenshot.
 
 Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PARKED · 🔵 VALIDATED (no build needed)
 
@@ -9,13 +9,13 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## Where the platform is
 
-**Structurally complete.** Engine, economy, Vault (dual-mode both roles + adult-only rail), Campaigns, Calendar, Briefing/Hub seed, activity-feed spine, Pip onboarding, Lists, invite/join, notifications, PIN recovery — a full product loop is live at theemberhold.com.
+**Structurally complete.** Engine, economy, Vault (dual-mode both roles + adult-only rail), Campaigns, Calendar, Briefing/Hub seed, activity-feed spine, Pip onboarding, Lists, invite/join, notifications, PIN recovery, **and now the full admit-on-approval join flow** — a complete product loop is live at theemberhold.com.
 
 **What's missing is not a module.** Two structural gaps:
 
-> **Security — the authorization-layer findings are being worked, not open-ended.** As of 2026-07-15: findings #5 and #8 were already patched by a June migration; #6 (kid self-approval / ember self-minting) re-audited and CLOSED (blocked by the `a_enforce_quest_update_authority` trigger); #1 (join-code bypass, CRITICAL) closed at the data layer 07-14 and **verification-audited 07-15 against the live DB — confirmed genuinely closed.** That same audit found and fixed a **separate live escalation** in `complete_household_setup` (see below). Remaining: the admit-on-approval **frontend** is in flight (Claude Code), and the **P4×L8 tenant-isolation audit** (the mortal-peril item) is still outstanding. See the critical path.
+> **Security — one gate left before distribution.** As of 2026-07-15: #5 and #8 patched by a June migration; #6 (kid self-approval) CLOSED (blocked by `a_enforce_quest_update_authority`); **#1 (join-code bypass, CRITICAL) fully CLOSED** — data layer, frontend, and live-DB verification all done, plus a separate escalation the audit caught. The remaining gate is the **P4×L8 tenant-isolation audit** (the mortal-peril item). *Caveat carried forward: the 07-14 data layer was verified **secure** by the live audit, but functional bugs (the enum crash) still shipped inside it — verified-secure ≠ verified-functional. Two different passes.*
 
-> **Onboarding ends at setup, not at activation.** A new household lands on a board that says "all quiet" — and, per 07-14, says it *over a live board with open bounties and a fresh completion*. The empty-board doorway fix is doubly earned.
+> **Onboarding ends at setup, not at activation.** A new household lands on a board that says "all quiet" — and, per 07-14, says it *over a live board with open bounties and a fresh completion*. The empty-board doorway fix is doubly earned. Gated behind distribution.
 
 See `north-star.md` for the gate ladder.
 
@@ -25,169 +25,133 @@ See `north-star.md` for the gate ladder.
 
 | # | Item | Blocks |
 |---|---|---|
-| **1** | **Admit-on-approval — verification DONE, frontend IN FLIGHT.** Live-DB audit ran 07-15: join-code bypass confirmed closed, one separate escalation found + fixed. Admit UI + pending/denied routing briefed to Claude Code — **build in flight, unverified.** Visual verifies (queue renders, kid-default selected) are Scott's lane, not Code's. | Distribution. Gate B. |
-| **2** | **P4×L8 — the tenant-isolation audit (Workstream 1)** | Distribution. The mortal-peril item. Hold Alpha exists. |
-| **3** | **Avatar transport** — *generation ✅ · slice ❌ (redo by hand) · upload + picker + split remain.* **Tabled by Scott** — on the board, not a priority; do not push it, note it. | The Guildhall, the delight layer |
-| **4** | **Pip first-run onboarding screens** | Gate D. Activation. Day-8 retention. |
-| **5** | **Auth email branding + deliverability** | First artifact a stranger receives; lands in spam. Thirteen people have already received it. |
-| **6** | **Founding Guildhall build** (Stripe + webhook + entitlement) | Money |
+| **1** | **P4×L8 — the tenant-isolation audit (Workstream 1).** Opus, auto-accept OFF. The mortal-peril item and the last security gate before distribution. Hold Alpha exists — run it as an attack. Free inputs now banked: the 07-15 live-catalog dump + the 25 Supabase linter warnings. **First: confirm the adversarial harness can even reach Lovable Cloud's DB from outside** (see parking-lot open decision) — if not, the audit degrades to policy-reading. | Distribution. Gate B. |
+| **2** | **Pip first-run onboarding screens** + empty-board doorway fix | Gate D. Activation. Day-8 retention. *Gated behind #1 — it's for strangers, and strangers come after the door locks.* |
+| **3** | **Auth email branding + deliverability** | First artifact a stranger receives; lands in spam. Thirteen people have already received it. |
+| **4** | **Avatar transport** — *generation ✅ · slice ❌ (redo by hand) · upload + picker + split remain.* **Tabled by Scott** — on the board, not a priority; do not push it, note it. | The Guildhall, the delight layer |
+| **5** | **Founding Guildhall build** (Stripe + webhook + entitlement) | Money |
+
+**Next-action fork (Scott's call):** the honest sequence is **P4×L8 first** — it's the gate, and tutorial/display/avatars all sit downstream of the distribution it unblocks. **But display/wall mode is the one delight item that does *not* need the gate open** — it's ambient presence for Scott's *own* household, not for strangers — so it's the defensible morale-build to pull forward if a "fun" session is wanted. Tutorial screens genuinely should wait for the audit (they're built for new users who can't arrive until distribution is safe). See parking-lot LATER for display mode's dependencies.
 
 ---
 
-## 🔴 ADMIT-ON-APPROVAL — data layer VERIFIED, escalation FIXED, frontend IN FLIGHT
+## ✅ ADMIT-ON-APPROVAL — SHIPPED & VERIFIED (2026-07-15)
 
-**Data layer (shipped 2026-07-14, Lovable, migration reviewed before commit):** enum `profile_status` = `('active','pending')`; `profiles.status` default `active` is the gate; `current_family_id()` returns **NULL** for any non-active profile, so every family-scoped RLS policy denies a pending member by construction — one fail-closed chokepoint. Join-by-code creates a **pending** profile with `role='kid'` as an inert placeholder and the self-selected role stored as advisory `requested_role`; **no `user_roles` row is written at join.** `enforce_profile_role_change` blocks non-parents from writing `status`/`role` at the trigger layer.
+Finding #1 (join-code bypass) is fully closed: data layer, frontend, live-DB verification, and one adjacent escalation, all done.
 
-**The RPC contract (what the frontend builds against):**
+**Data layer (07-14, Lovable):** enum `profile_status = ('active','pending')`; `current_family_id()` returns NULL for any non-active profile, so every family-scoped RLS policy denies a pending member by construction — one fail-closed chokepoint. Join creates a **pending** profile, `role='kid'` placeholder, self-selected role stored as advisory `requested_role`, **no `user_roles` row at join**. `enforce_profile_role_change` blocks non-parents from writing `status`/`role`.
 
-| RPC | Who | Returns / Effect |
-|---|---|---|
-| `get_pending_membership()` | pending self | `(profile_id, family_id, family_name, requested_role, requested_at)` — for the "waiting for admission" screen |
-| `list_pending_members()` | parent-only | `(profile_id, name, avatar_emoji, requested_role, requested_at)` |
-| `admit_pending_member(_profile_id uuid, _confirmed_role app_role)` | parent-only | flips `status→active`, sets `role = _confirmed_role` (**confirmed role authoritative — request is advisory**), clears `requested_role`, inserts `user_roles`, logs `member_admitted` |
-| `deny_pending_member(_profile_id uuid)` | parent-only | logs `member_denied`, **deletes the pending profile row** so the auth user can retry |
+**The RPC contract:** `get_pending_membership()` (pending self, waiting screen) · `list_pending_members()` (parent) · `admit_pending_member(_profile_id, _confirmed_role)` (parent — confirmed role authoritative, request advisory) · `deny_pending_member(_profile_id)` (parent — deletes pending profile, auth user survives to retry).
 
-**✅ VERIFICATION AUDIT — RAN 2026-07-15, against the live database.** Method: Lovable dumped the live catalog (`pg_proc`, `pg_policies`, trigger defs, grants) read-only; jAIne judged independently in-context. Result per claim:
-- ✅ **NULL-denial total.** Pending → `current_family_id()` NULL → all 47 policies deny. The two `= auth.uid()` self-branches (`profiles` self-UPDATE, `user_roles` self-SELECT) are harmless, fenced by the trigger.
-- ✅ **Trigger coverage.** `enforce_profile_role_change` guards role/status/family on `profiles`. (`rls_forced = f` on every table is expected — forcing only affects the *owner* role, not `authenticated`. Not a finding.)
-- ✅ **SECURITY DEFINER self-checks.** All four pending RPCs — and the wider surface (redemptions, PINs, adult-profile creation, email lookup) — check parent role + family scope internally. Cross-household admit blocked cold.
-- ✅ **Deny half-state (DB side).** Denied user = authenticated, no profile, no pending — identical to a fresh pre-join signup. Clean at the DB; becomes a hard **frontend** requirement (route to join/create, not a dead screen).
+**✅ Verified live (07-15):** NULL-denial total across all 47 policies; trigger coverage sound; all four RPCs self-check parent + family scope; cross-household admit blocked cold. Method: Lovable dumped the live catalog read-only, jAIne judged independently.
 
-**🔴→✅ ESCALATION FOUND + FIXED 2026-07-15 (the audit's real catch):** `complete_household_setup`'s "already has a profile" reconcile branch inserted a `user_roles` row from the **caller-supplied `_role`** with no check against the profile's real role. An active kid could call the RPC with `_role='parent'` and mint themselves a parent role; `has_role()` reads `user_roles`, so that one forged row made them a parent everywhere while their profile still read "kid." Step-1 grant check confirmed it was **live and reachable** — `EXECUTE` was held by `anon, authenticated, service_role, sandbox_exec, postgres`. **Fix (Lovable, reviewed):** the reconcile branch now derives the role from `profiles.role` (trigger-protected), never from `_role`. Create and join branches untouched; signature unchanged. Verified by re-reading the branch, not by "migration succeeded."
+**✅ Frontend shipped (`08229d4`):** `ZonePending` in `Briefing.tsx` extended (not parallel-built) — parent-gated queue over `list_pending_members()`, Admit opens a role confirmation that **defaults to KID** (requested role shown as context only), Deny clears the row. Pending user sees a themed "waiting for admission" screen; the denied-user routing (authed + no profile + no pending → join/create) was fixed, including ripping out a dead `ConfirmedView` path that misread denied users as "confirmed on another device."
 
-**🟡 STILL OPEN — the admit-on-approval frontend (briefed to Claude Code, in flight):**
-- 🟡 **Admit UI.** Reuse the `ZonePending` pattern in `Briefing.tsx`. Parent-gated queue over `list_pending_members()`; Admit opens a role confirmation (**defaults to KID**, requested role shown as context only, promotion is a deliberate tap) → `admit_pending_member`; Deny → `deny_pending_member`, refetch.
-- 🟡 **Waiting + denied routing.** Pending user sees a themed "waiting for admission" screen via `get_pending_membership()`. **The deny guard:** authed + no profile + no pending must fall through to join/create, not a dead screen or spinner.
-- **Verify posture:** Code can confirm the RPCs are wired and the routing logic branches correctly by reading. The four visual verifies (queue renders, kid-default selected, deny clears the row, waiting screen shows) are **Scott's lane** — "shipped" means an actual pending member run through admit *and* deny on a phone, not a green Code report.
+**✅ Admit loop verified end-to-end by Scott:** admitted a real pending member, kid-default held on an Adult request, waiting screen resolved, roster updated. This is *shipped* — a human ran the loop, not a green build.
 
 ---
 
-## 🟢 SHIPPED — 2026-07-15
+## 🟢 SHIPPED — 2026-07-15 (the session's haul)
 
-**Admit-on-approval verification audit — ran live, join-code bypass confirmed closed**
-- ✅ Live-DB extract-and-judge audit executed: Lovable dumped `pg_proc`/`pg_policies`/triggers/grants read-only; jAIne judged independently. Finding #1 (join-code bypass) confirmed **genuinely closed** — join branch writes pending + advisory `requested_role` + no `user_roles` row; all four pending RPCs self-check parent + family scope.
+**Live privilege-escalation in `complete_household_setup` — found & fixed**
+- ✅ Reconcile branch trusted caller-supplied `_role` → an active kid could mint a parent `user_roles` row (escalation via `has_role`, which reads `user_roles` not `profiles.role`). Live + reachable: `EXECUTE` held by `anon, authenticated, service_role, sandbox_exec, postgres`.
+- ✅ Fixed: reconcile now sources role from the trigger-protected `profiles.role`. Verified by re-reading the branch. See `decisions.md`.
 
-**Live privilege-escalation in `complete_household_setup` — found and fixed**
-- ✅ Reconcile branch trusted a caller-supplied `_role` → active kid could mint a parent `user_roles` row (escalation via `has_role`, which reads `user_roles` not `profiles.role`). Live + reachable: `EXECUTE` granted to `anon, authenticated, service_role, sandbox_exec, postgres`.
-- ✅ Fixed: reconcile now sources role from the trigger-protected `profiles.role` column. Create/join branches and signature unchanged; verified by re-reading the function body.
-- **Scar, on the record:** this hole was **shipped live by the 07-14 migration** — the one that was reviewed before commit. Review-before-commit is not verification. The live-DB audit is what caught it. See `decisions.md`.
+**Admit/deny enum crash — found & fixed**
+- ✅ `admit_pending_member` / `deny_pending_member` inserted `activity_log.significance = 'notable'`; the enum only permits `'routine' | 'milestone'`. Every admit/deny failed server-side. Found by Code during live testing, confirmed via network trace.
+- ✅ Fixed to `'milestone'` in both functions. **This shipped inside the 07-14 data layer the security audit had already passed — the audit checked security, not enum validity. Verified-secure ≠ verified-functional.**
+
+**`recurrence_day` prod crash — found (real user) & fixed (`172a07f`)**
+- ✅ Quest creation failed in prod with "Could not find the 'recurrence_day' column" — **core loop down for real users** (May hit it; Scott reproduced). Cause: the 07-14 recurrence rework dropped the column in the DB but the matching frontend removal was **written, stashed, and never committed** — the log said "removed from both frontend forms"; the code disagreed.
+- ✅ The fix was the parked stash. Applied onto a resynced tree (local was 3 commits behind), committed `172a07f`, pushed, verified from outside, deployed, **verified by Scott reproducing-then-not-reproducing on the live app.**
+
+**Pending-member roster leak + switch-target GAP — found (Scott, using the app) & fixed (`b31c92c`)**
+- ✅ Pending members rendered in the Briefing roster *and* the Profile switch picker (the roster is the walk-up picker), making a phantom pending card a tappable switch target with zero confirmation. Cause: `useFamilyMembers` filtered only on `family_id`, never on `status` — and RLS authorizes the *reader*, not the *target row's status*, so a pending row sailed through.
+- ✅ Fixed: `useFamilyMembers` now selects `status` and filters `status='active'`. One hook, both surfaces. Pending members now appear only in the admissions queue. Verified from outside; `b31c92c`.
 
 ---
 
 ## 🟡 PENDING VERIFY
 
-- 🟡 **Admit-on-approval frontend** (above) — briefed to Claude Code, in flight. Visual verifies are Scott's.
-- 🟡 **Recurrence chip legibility.** Anchors are invisible to users — a kid sees "MONTHLY" with no hint it means the 1st. `RECURRENCE_LABEL` enrichment ("Weekly · Mon" / "Monthly · 1st") was scoped and **skipped** (more than a one-line change). Parking-lot follow-up.
-- 🟡 **Lists collapsible sections** — landed (`fb6aa99`), rendered. Not yet exercised across a full session.
+- 🟡 **`b31c92c` roster fix — deploy + eyeball.** Commit is on origin; confirm Lovable deployed and the phantom pending card is gone from the live roster. (Last-mile check, same discipline as the recurrence fix.)
+- 🟡 **Recurrence chip legibility.** Anchors are invisible — a kid sees "MONTHLY" with no hint it means the 1st. `RECURRENCE_LABEL` enrichment ("Weekly · Mon" / "Monthly · 1st") scoped and skipped (exceeds one line). Parking-lot NEXT.
+- 🟡 **Lists collapsible sections** (`fb6aa99`) — landed, not yet exercised across a full session.
 - 🟡 **Cross-device / phone-only signup** — whole confirmation flow on ONE device, cold. Still unproven on fixed code.
-- 🟡 **Phaeaz cold-account retest** — open since the hiatus. Never confirmed.
+- 🟡 **Phaeaz cold-account retest** — open since the hiatus.
 - 🟡 **Min password length 6→8; re-auth on password change ON** — verify persisted.
 
 ---
 
-## 🔴 THREE BOARD BUGS SURFACED 2026-07-14 (captured, not yet fixed)
+## ⬜ TWO BOARD BUGS STILL OPEN (surfaced 2026-07-14)
 
-- ⬜ **The empty-board eulogy is a lie on a live board.** "All quiet at the hold" renders directly above "4 open" and a fresh 2h-old completion. Says quiet while showing activity. This is the doorway-not-eulogy fix, now with evidence.
-- ⬜ **Feed verb drift.** A newly-posted quest shows "New quest: …" in the feed; the 7/12 vocabulary bundle standardized on "QUEST POSTED." Possibly a surface that bundle didn't reach. Verify and align.
-- 🔵 **Campaigns are live in the wild.** A "São Paulo Trip" campaign tag is visible on a real quest card — campaigns are in real use, not just built. (Noted, not a bug.)
+- ⬜ **The empty-board eulogy is a lie on a live board.** "All quiet at the hold" renders directly above "4 open" and a fresh completion. This is the doorway-not-eulogy fix, now with evidence.
+- ⬜ **Feed verb drift.** A newly-posted quest shows "New quest: …"; the 7/12 vocabulary bundle standardized on "QUEST POSTED." A surface that bundle didn't reach. Verify and align.
 
 ---
 
 ## ⬜ OUTSTANDING — security & distribution
 
-- ⬜ **P4×L8 tenant-isolation audit.** Opus, auto-accept OFF. Hold Alpha exists — run it as an attack. **Free input now available:** the 07-15 live-catalog dump + the 25 pre-existing Supabase linter warnings (`SECURITY DEFINER` search_path, function exposure, RLS edges) — hand both to the audit; let it sort real from noise rather than triaging them cold.
-- ⬜ **Auth email branding + deliverability.** Sender is `no-reply@auth.lovable.cloud`; display name is **`Family-Quest-Board`** — scaffolding, a name that exists nowhere in the product. Lands in spam. Templates editable in Lovable Cloud → Emails. Custom sender: DNS at Porkbun (free) + SMTP (Resend free tier). ⚠️ *Inspect any NS-record request before pasting — delegation ≠ adding a TXT record.*
-- ⬜ **Service worker + app-shell cache** — no functional SW. Makes "installable PWA" true instead of aspirational.
-- ⬜ **Backup posture.** Backend is Lovable Cloud; backups/PITR/export/exit are all Lovable's to grant. Code has a Git backup; **the data has none.** Gate B blocker.
-- ⬜ **Orphaned auth users** — `scottydawg@gmail.com`, `scott.draper83+alpha@gmail.com`. Delete.
+- ⬜ **P4×L8 tenant-isolation audit** — see critical path #1. Confirm harness reachability first (parking-lot).
+- ⬜ **Auth email branding + deliverability.** Sender `no-reply@auth.lovable.cloud`; display name **`Family-Quest-Board`** (scaffolding, exists nowhere in the product). Lands in spam. Templates in Lovable Cloud → Emails. Custom sender: DNS at Porkbun (free) + SMTP (Resend free tier). ⚠️ *Inspect any NS-record request before pasting — delegation ≠ a TXT record.*
+- ⬜ **Service worker + app-shell cache** — no functional SW; makes "installable PWA" true instead of aspirational.
+- ⬜ **Backup posture.** Backend is Lovable Cloud; backups/PITR/export are Lovable's to grant. Code has a Git backup; **the data has none.** Gate B blocker. (See parking-lot open decision.)
+- ⬜ **Prod test-object cleanup.** `QA Parent` / `QA Joiner` / household `QA Verify Hold` — created **on the production backend** during 07-15 admit-flow testing (local dev points at the same DB as theemberhold.com — see parking-lot staging-DB decision). Plus older cruft: `Testi`, `testy`, `Daily test`, `iopuyiouh`, and orphaned auth users `scottydawg@gmail.com`, `scott.draper83+alpha@gmail.com`. Data, not code.
 
 ## ⬜ OUTSTANDING — ship-blocking debt
 
-- ⬜ **Avatar transport.** **Tabled by Scott** — a GIMP slog, on the board, not a priority. Full scope preserved in prior status + parking-lot: hand-cut roster, file drop (Haiku), rewrite `HERO_AVATARS`, land `Feast→Hall`, retire `avatar-review.tsx`, invalidate stale `hero:` picks (the re-forge migration), re-lock the free/paid split (the "16/24" arithmetic predates the 48-roster). Do not push; surface when Scott calls it.
-- ⬜ **Pip first-run onboarding screens** (see `decisions.md`) + the empty-board doorway fix.
+- ⬜ **Avatar transport.** **Tabled by Scott.** Full scope in parking-lot: hand-cut roster, file drop (Haiku), rewrite `HERO_AVATARS`, land `Feast→Hall`, retire `avatar-review.tsx`, invalidate stale `hero:` picks (the re-forge migration), re-lock the free/paid split (the 16/24 math predates the 48-roster). Do not push; surface when Scott calls it.
+- ⬜ **Pip first-run onboarding screens** + the empty-board doorway fix. *Gated behind P4×L8.*
 - ⬜ **Vault favorites → real per-profile persistence** — currently `localStorage`.
-- ⬜ **Test-object cleanup** — `Testi`, `testy`, `Daily test`, `iopuyiouh`. Data, not code.
 - ⬜ **Quality — a rating with no consumer.** Direction LOCKED (signal, never an ember modifier). Consumer + kid-visibility open. Binds to the weekly recap.
 
 ## ⬜ OUTSTANDING — polish
 
-- ⬜ **Quick Add default EXPANDED on an empty board.**
-- ⬜ **`TITLE` → `QUEST TITLE`** on the create form.
-- ⬜ **Lists — "5 OPEN · 348 DONE."** A fossil layer. Absurd to a stranger.
-- ⬜ **Pip help discoverability** · **Pip install tutorial** (platform-detected Add-to-Home-Screen card).
-- ⬜ **Reward scarcity limits** · **Cheap Dim-tier starter reward** · **Yearly/monthly event recurrence** · **List suggestions in onboarding**.
+- ⬜ **Quick Add default EXPANDED on an empty board** · **`TITLE` → `QUEST TITLE`** on create · **Lists "5 OPEN · 348 DONE"** fossil counter · **Pip help discoverability** · **Pip install tutorial** · **Reward scarcity limits** · **Cheap Dim-tier starter reward** · **Yearly/monthly event recurrence** · **List suggestions in onboarding**.
 
 ---
 
 ## 🅿️ PARKED
 
-See `parking-lot.md`. Display/wall mode · #8b admin-reporting surface · kid-vs-kid impersonation · kid-auth (declined) · Ranks as a household dial · photo avatars · cosmetic drop #2 (the roster surplus) · Capacitor · recurrence miss-asymmetry · recurrence chip legibility.
+See `parking-lot.md`. Display/wall mode (the defensible morale pull-forward) · #8b admin-reporting · kid-vs-kid impersonation · kid-auth (declined) · Ranks as a household dial · photo avatars · cosmetic drop #2 (the roster surplus) · Capacitor · recurrence miss-asymmetry · recurrence chip legibility.
 
 ---
 
-## 🔵 THE BUILD MODEL — holding
+## 🔴 OPEN RECON RESOLVED THIS SESSION — the walk-up trust boundary
 
-**Claude Code frontend build proven and repeating.** Refuses to guess, stops at scope edges, extends existing helpers rather than authoring parallel ones. That's the behavior we keep wanting; it's now consistent.
+The pending-roster recon (which produced the `b31c92c` fix) also examined the profile-switch / PIN flow. Findings: switching into a PIN-less adult profile **hard-gates** correctly (session never fires ahead of PIN-set success); Cancel returns to the picker (no bypass). **But** the "active member" switch is **cosmetic, not a security boundary** — on a shared device signed into a parent's account, physical possession = parent authority, so a kid holding the unlocked device can set/reset an adult PIN (the server correctly sees a parent session). This is the walk-up kiosk model working as designed, consistent with the 2026-07-10 kid-auth DECLINED decision. **Accepted for household use; logged as a live input to the P4×L8 audit for the distribution-grade version.** See `decisions.md` (NOTED, revisit trigger = P4×L8).
 
-- **Code's lane is TEXT** — anything verifiable by reading. The moment the criterion is "does this look right," it's outside the lane.
-- **New this session — the live-DB audit method.** For data-layer security verification: Lovable (which owns Lovable Cloud) extracts the live catalog read-only; an independent agent judges. Solves both "local tools can't reach Lovable Cloud's DB" and "the author shouldn't grade its own exam." See `decisions.md`.
-- **Model routing:** Haiku for recon/greps/mechanical edits · Sonnet for build jobs with latitude · **Opus for the tenant-isolation audit only.**
-- **One writer at a time.**
-- **Lane split for migrations:** data-layer changes go through **Lovable** (owns the DB, proven path); frontend goes through **Code**.
-- **Still unproven:** whether Lovable *runs* an externally-pushed migration. The avatar `hero:` reset remains the cheap first test — and it's tabled.
+---
+
+## 🔵 THE BUILD MODEL — holding, and stress-tested today
+
+**Claude Code frontend build proven and repeating.** Today: resynced before touching a stale tree, stashed unrelated WIP instead of discarding it, caught its own codegen side-effect (`routeTree.gen.ts`) and restored it before staging, verified every push from outside, and stopped at scope edges for review. When auto-accept was accidentally left ON for the admit-button build, the result was still clean — the review simply moved from before-the-write to after — because the job was small and well-fenced. The lesson held: auto-accept OFF for security/`supabase/` work is about preserving the *review seam*, not distrust.
+
+- **Code's lane is TEXT** — anything verifiable by reading. Visual success criteria are Scott's.
+- **The live-DB audit method** (Lovable extracts read-only, an independent agent judges) is now the standard for data-layer security verification. See `decisions.md`.
+- **Model routing:** Haiku (recon/greps/mechanical) · Sonnet (build jobs with latitude) · **Opus (the tenant-isolation audit only).**
+- **One writer at a time.** Data-layer → Lovable; frontend → Code.
+- **Still unproven:** whether Lovable *runs* an externally-pushed migration (the avatar `hero:` reset remains the cheap first test — tabled).
 
 ---
 
 ## ✅ SHIPPED — 2026-07-14
 
-**Admit-on-approval data layer** — enum + pending gate + fail-closed `current_family_id()` chokepoint + join-branch pending profile + four RPCs + trigger-layer self-promotion block. All 23 members backfilled to active. *(Verification-audited 07-15 — see above; the audit also caught the reconcile-branch escalation.)*
-
-**The hub open-bounty count now tells the truth**
-- ✅ Hub showed "8 open," board/kid profiles showed 4. Cause: the board gates on `due_date <= today` (correctly hiding future-dated recurring instances); the Briefing omitted the gate.
-- ✅ Fixed by routing all three surfaces through one shared predicate: `isOpenBountyVisible(quest, role, today = todayIsoDate())` in `src/lib/quest-helpers.ts`. Verified in pixels: hub, board, kid drill-in all read 4.
-
-**Recurrence reworked to fixed calendar anchors**
-- ✅ `handle_quest_approval` rewritten: weekly = Monday of the following week; monthly = the 1st; daily = tomorrow. `recurrence_day` removed end-to-end (trigger, both INSERT lists, create form, edit sheet, column dropped). Grep clean.
-- ✅ Live re-anchor: 8 rows before / 8 after, 7 re-anchored, 0 dupes, 0 orphans. Past-due monthlies left in place.
-- **Reason it mattered:** relative recurrence *drifts* — a late-approved quest walks its own due date forward. That's the human-admin-dependent rot Emberhold exists to beat, living in the recurrence engine.
-
----
+**Admit-on-approval data layer** (verified 07-15). **Hub open-bounty count** now matches the board via one shared predicate `isOpenBountyVisible()`. **Recurrence reworked to fixed calendar anchors** (weekly=Monday, monthly=the 1st, daily=tomorrow); `recurrence_day` dropped from DB/trigger — *frontend removal completed 07-15 (`172a07f`) after it turned out to have been stashed, not shipped.*
 
 ## ✅ SHIPPED — 2026-07-12 (day)
 
-**Claude Code proven as a build lane**
-- ✅ Feed vocabulary bundle landed live (`c9069a6`) — Dim/Warm/Hot/Blazing ramp from `ember_delta`; `BOUNTY POSTED` → `QUEST POSTED`. Code promoted a private `feedHeat()` to a shared helper rather than duplicating.
-- ✅ `vault.tsx` TIER_LABEL dedup (`7132605`) · Lists collapsible sections (`fb6aa99`).
-
-**Auth**
-- ✅ Email confirmation required; holding-state signup flow live; password reset verified; min length 6→8; re-auth on password change ON.
-
-**Hold Alpha — the instrument**
-- ✅ A second isolated household (`Ember Better Self` / Tucker + Dale) with its own owner, roster, quests, reward, approved completion, minted embers, and `activity_log` rows. P4×L8 can be run as an attack.
-
-**The real user base**
-- 🔵 13 accounts exist, not four. In the app for two weeks, signed in as recently as 3 days ago.
-
----
+Claude Code proven as a build lane (feed vocabulary bundle `c9069a6`; `vault.tsx` dedup `7132605`; Lists collapsible `fb6aa99`). Auth: email confirmation required, holding-state signup, password reset verified, min length 6→8. Hold Alpha built (second isolated household — the P4×L8 instrument). 13 real accounts confirmed, not four.
 
 ## ✅ SHIPPED — 2026-07-11
 
-Engine — daily respawn verified; quest lifecycle verified end-to-end. Vocabulary — `OPEN BOUNTY` chip killed via grep audit; `XP` eliminated from install prompt. Render — safe-area inset fix. Avatars — roster regenerated: 48 characters, 19 sheets, ~600px each; playbook rewritten. Claude Code stood up (native Windows); **Lovable ↔ GitHub sync connected** — the first backup the codebase ever had.
-
----
+Engine — daily respawn verified; lifecycle verified end-to-end. Vocabulary — `OPEN BOUNTY` chip killed; `XP` eliminated from install prompt. Render — safe-area inset fix. Avatars — roster regenerated (48 characters, 19 sheets, ~600px each). Claude Code stood up; **Lovable ↔ GitHub sync connected** — the codebase's first backup.
 
 ## ✅ SHIPPED — 2026-07-10
 
-Engine — adult quest auto-approval · daily recurring board fix · edit-quest form parity. Copy — XP killed as user-facing vocabulary. Vault kid view — dual-mode catalog/curated. Vault adult view — three zones. Couples reward rail (`reward.audience`) — first schema change of the run. Quest audience filter + badges + copy. Security — over-broad anon EXECUTE grant on a data-mutating RPC revoked. Docs — master spec current; `north-star.md` created; migrated to this repo.
-
----
+Engine — adult auto-approval · daily board fix · edit-form parity. Copy — XP killed. Vault kid view (dual-mode) + adult view (three zones) + couples rail (`reward.audience`). Quest audience filter + badges. Security — over-broad anon EXECUTE grant revoked. Docs migrated to this repo; `north-star.md` created.
 
 ## ✅ SHIPPED — earlier (foundation)
 
-- **2026-07-03** — Avatar Overhaul designed (Feast→Hall). *Rename never landed in code — found 7/12, still outstanding via avatar transport.*
-- **2026-06-29 (eve)** — Lists v1, shopping-list import, invite share + deep link, notification bell, PIN/password recovery, collapsible avatar picker, Avatar Style Spec.
-- **2026-06-29 (AM)** — Activity feed spine, feed on the Briefing, monthly recurrence + audience flag, Parent/Family → Adult/Hold sweep.
-- **2026-06-28** — Brand marks, Open Bounties strip, multi-day events, FAB-becomes-submit, avatar roster v1, Pip onboarding, Combat→Forge.
-- **2026-06-27** — Campaigns, Calendar, the Briefing, member identity colors, login rewrite, juice pass 1.
-- **2026-06-26** — The Vault, starter quest library, fail-closed PIN, Parent Quest Log.
-- **Foundation** — the Engine, household/roles/classes, Ranks, profile, quest detail, `+` FAB, brand.
+- **2026-07-03** — Avatar Overhaul designed (Feast→Hall). *Rename never landed in code — still outstanding via avatar transport.*
+- **2026-06-29 → 06-26** — Lists v1, invite/deep-link, notifications, PIN recovery, collapsible picker · activity feed spine · monthly recurrence + audience · Campaigns, Calendar, Briefing · the Vault, PIN, Quest Log.
+- **Foundation** — the Engine, household/roles/classes, Ranks, quest detail, `+` FAB, brand.
