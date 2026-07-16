@@ -1,7 +1,7 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-07-14** — *a foundation-deepening session, and three things actually shipped.* Admit-on-approval closed at the **data layer** (pending-member gate, fail-closed chokepoint, admit/deny RPCs) · the hub/board open-bounty **count mismatch** fixed and de-duplicated to one shared predicate · **recurrence reworked** from relative dates to fixed calendar anchors (weekly=Monday, monthly=the 1st), `recurrence_day` removed end-to-end. Two loose ends left deliberately on the admit-on-approval work — see the critical path.
+Last session: **2026-07-15** — *the admit-on-approval verification audit finally ran — live against the database — and it earned its keep.* The join-code bypass (#1) is confirmed **genuinely closed**. But the audit surfaced a **separate, live privilege-escalation** the 07-14 migration shipped: `complete_household_setup`'s reconcile branch trusted a caller-supplied `_role`, letting an active kid mint themselves a parent `user_roles` row. **Found and fixed 07-15**, verified by re-reading the branch. The admit-on-approval **frontend brief is fired** to Claude Code — build in flight, **not yet verified**. Method that caught it: Lovable extracts the live catalog (`pg_policies` / `pg_proc`), jAIne judges independently — the author does not grade its own exam.
 
 Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PARKED · 🔵 VALIDATED (no build needed)
 
@@ -13,9 +13,9 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 **What's missing is not a module.** Two structural gaps:
 
-> **Security — the authorization-layer findings are being worked, not open-ended.** As of 2026-07-13: findings #5 and #8 were already patched by a June migration; #6 (kid self-approval / ember self-minting) re-audited and CLOSED (blocked by the `a_enforce_quest_update_authority` trigger); #1 (join-code bypass, CRITICAL) decided as admit-on-approval and now **closed at the data layer** (2026-07-14). Remaining: the admit-on-approval **frontend** does not exist yet, and the **pending-member verification audit has not been run**. See the critical path.
+> **Security — the authorization-layer findings are being worked, not open-ended.** As of 2026-07-15: findings #5 and #8 were already patched by a June migration; #6 (kid self-approval / ember self-minting) re-audited and CLOSED (blocked by the `a_enforce_quest_update_authority` trigger); #1 (join-code bypass, CRITICAL) closed at the data layer 07-14 and **verification-audited 07-15 against the live DB — confirmed genuinely closed.** That same audit found and fixed a **separate live escalation** in `complete_household_setup` (see below). Remaining: the admit-on-approval **frontend** is in flight (Claude Code), and the **P4×L8 tenant-isolation audit** (the mortal-peril item) is still outstanding. See the critical path.
 
-> **Onboarding ends at setup, not at activation.** A new household lands on a board that says "all quiet" — and, per this session, says it *over a live board with open bounties and a fresh completion*. The empty-board doorway fix is now doubly earned.
+> **Onboarding ends at setup, not at activation.** A new household lands on a board that says "all quiet" — and, per 07-14, says it *over a live board with open bounties and a fresh completion*. The empty-board doorway fix is doubly earned.
 
 See `north-star.md` for the gate ladder.
 
@@ -25,7 +25,7 @@ See `north-star.md` for the gate ladder.
 
 | # | Item | Blocks |
 |---|---|---|
-| **1** | **Admit-on-approval — the two loose ends.** Data layer is in. **(a)** No parent-facing admit UI exists — a parent cannot admit a new member today. **(b)** The verification/attack-sim audit was written and never run. The hole is *clamped, not stitched, and not proven.* | Distribution. Gate B. |
+| **1** | **Admit-on-approval — verification DONE, frontend IN FLIGHT.** Live-DB audit ran 07-15: join-code bypass confirmed closed, one separate escalation found + fixed. Admit UI + pending/denied routing briefed to Claude Code — **build in flight, unverified.** Visual verifies (queue renders, kid-default selected) are Scott's lane, not Code's. | Distribution. Gate B. |
 | **2** | **P4×L8 — the tenant-isolation audit (Workstream 1)** | Distribution. The mortal-peril item. Hold Alpha exists. |
 | **3** | **Avatar transport** — *generation ✅ · slice ❌ (redo by hand) · upload + picker + split remain.* **Tabled by Scott** — on the board, not a priority; do not push it, note it. | The Guildhall, the delight layer |
 | **4** | **Pip first-run onboarding screens** | Gate D. Activation. Day-8 retention. |
@@ -34,17 +34,9 @@ See `north-star.md` for the gate ladder.
 
 ---
 
-## 🔴 ADMIT-ON-APPROVAL — data layer SHIPPED, two loose ends OPEN
+## 🔴 ADMIT-ON-APPROVAL — data layer VERIFIED, escalation FIXED, frontend IN FLIGHT
 
-**Shipped 2026-07-14 (Lovable, migration reviewed before commit):**
-
-- New enum `public.profile_status` = `('active','pending')`.
-- `profiles.status profile_status NOT NULL DEFAULT 'active'` — the gate. `profiles.requested_role app_role NULL` — the joiner's advisory pick, never a grant.
-- **The chokepoint:** `current_family_id()` returns **NULL** for any non-active profile. Every family-scoped RLS policy already routes through this helper, so a pending member is denied on reads and writes **across the whole schema by construction** — one seam, fail-closed everywhere.
-- Join-by-code now creates a **pending** profile; **no `user_roles` row is written at join.** The self-selected role is stored as `requested_role` only.
-- `enforce_profile_role_change` blocks non-parents from writing `status` or `role` — self-promotion is stopped at the **trigger layer**, not just policy.
-- Create-a-household path unchanged: creator lands `active` / `parent` with a `user_roles` row.
-- All 23 existing members backfilled to `active`. No one locked out.
+**Data layer (shipped 2026-07-14, Lovable, migration reviewed before commit):** enum `profile_status` = `('active','pending')`; `profiles.status` default `active` is the gate; `current_family_id()` returns **NULL** for any non-active profile, so every family-scoped RLS policy denies a pending member by construction — one fail-closed chokepoint. Join-by-code creates a **pending** profile with `role='kid'` as an inert placeholder and the self-selected role stored as advisory `requested_role`; **no `user_roles` row is written at join.** `enforce_profile_role_change` blocks non-parents from writing `status`/`role` at the trigger layer.
 
 **The RPC contract (what the frontend builds against):**
 
@@ -52,39 +44,39 @@ See `north-star.md` for the gate ladder.
 |---|---|---|
 | `get_pending_membership()` | pending self | `(profile_id, family_id, family_name, requested_role, requested_at)` — for the "waiting for admission" screen |
 | `list_pending_members()` | parent-only | `(profile_id, name, avatar_emoji, requested_role, requested_at)` |
-| `admit_pending_member(_profile_id uuid, _confirmed_role app_role)` | parent-only | flips `status→active`, sets `role = _confirmed_role` (**confirmed role is authoritative — request is advisory**), clears `requested_role`, inserts `user_roles`, logs `member_admitted` |
+| `admit_pending_member(_profile_id uuid, _confirmed_role app_role)` | parent-only | flips `status→active`, sets `role = _confirmed_role` (**confirmed role authoritative — request is advisory**), clears `requested_role`, inserts `user_roles`, logs `member_admitted` |
 | `deny_pending_member(_profile_id uuid)` | parent-only | logs `member_denied`, **deletes the pending profile row** so the auth user can retry |
 
-Activity verbs added: `member_admitted` (notable), `member_denied`.
+**✅ VERIFICATION AUDIT — RAN 2026-07-15, against the live database.** Method: Lovable dumped the live catalog (`pg_proc`, `pg_policies`, trigger defs, grants) read-only; jAIne judged independently in-context. Result per claim:
+- ✅ **NULL-denial total.** Pending → `current_family_id()` NULL → all 47 policies deny. The two `= auth.uid()` self-branches (`profiles` self-UPDATE, `user_roles` self-SELECT) are harmless, fenced by the trigger.
+- ✅ **Trigger coverage.** `enforce_profile_role_change` guards role/status/family on `profiles`. (`rls_forced = f` on every table is expected — forcing only affects the *owner* role, not `authenticated`. Not a finding.)
+- ✅ **SECURITY DEFINER self-checks.** All four pending RPCs — and the wider surface (redemptions, PINs, adult-profile creation, email lookup) — check parent role + family scope internally. Cross-household admit blocked cold.
+- ✅ **Deny half-state (DB side).** Denied user = authenticated, no profile, no pending — identical to a fresh pre-join signup. Clean at the DB; becomes a hard **frontend** requirement (route to join/create, not a dead screen).
 
-**🔴 STILL OPEN — the honest status:**
+**🔴→✅ ESCALATION FOUND + FIXED 2026-07-15 (the audit's real catch):** `complete_household_setup`'s "already has a profile" reconcile branch inserted a `user_roles` row from the **caller-supplied `_role`** with no check against the profile's real role. An active kid could call the RPC with `_role='parent'` and mint themselves a parent role; `has_role()` reads `user_roles`, so that one forged row made them a parent everywhere while their profile still read "kid." Step-1 grant check confirmed it was **live and reachable** — `EXECUTE` was held by `anon, authenticated, service_role, sandbox_exec, postgres`. **Fix (Lovable, reviewed):** the reconcile branch now derives the role from `profiles.role` (trigger-protected), never from `_role`. Create and join branches untouched; signature unchanged. Verified by re-reading the branch, not by "migration succeeded."
 
-- ⬜ **No admit UI.** The RPCs exist; nothing calls them. A parent cannot admit anyone. The queue pattern to reuse is `ZonePending` in `Briefing.tsx`. **Frontend default must be KID** — show the requested role as context, never pre-select parent, make promotion a deliberate tap (safe-direction bias, applied to permissions).
-- ⬜ **Verification audit never ran.** The attack-sim prompt was written this session and set aside when the count-mismatch work pulled focus. Must prove: every family-scoped policy denies on NULL from `current_family_id()`; no GRANT lets a non-parent write `status`/`role` around the trigger; admit/deny hard-check parent role internally (SECURITY DEFINER runs as owner — a missing internal check = anyone can call them); no leftover RPC path writes `status='active'` or a `user_roles` row on the join branch. **"The migration reports success" is the claim we agreed not to trust on a security fix.**
-- 🟡 **deny→delete leaves a dangling auth user.** `deny_pending_member` deletes the profile but not `auth.users`. A denied person can re-run join and re-queue (harmless — still gated). Confirm no half-state where they log in, `get_pending_membership()` returns nothing, and the app dumps them somewhere undefined. Check when wiring the waiting screen.
-
-**Recommended next-session order:** audit first, then build the UI. Building a frontend on an unproven security fix is building on a claim.
+**🟡 STILL OPEN — the admit-on-approval frontend (briefed to Claude Code, in flight):**
+- 🟡 **Admit UI.** Reuse the `ZonePending` pattern in `Briefing.tsx`. Parent-gated queue over `list_pending_members()`; Admit opens a role confirmation (**defaults to KID**, requested role shown as context only, promotion is a deliberate tap) → `admit_pending_member`; Deny → `deny_pending_member`, refetch.
+- 🟡 **Waiting + denied routing.** Pending user sees a themed "waiting for admission" screen via `get_pending_membership()`. **The deny guard:** authed + no profile + no pending must fall through to join/create, not a dead screen or spinner.
+- **Verify posture:** Code can confirm the RPCs are wired and the routing logic branches correctly by reading. The four visual verifies (queue renders, kid-default selected, deny clears the row, waiting screen shows) are **Scott's lane** — "shipped" means an actual pending member run through admit *and* deny on a phone, not a green Code report.
 
 ---
 
-## 🟢 SHIPPED — 2026-07-14
+## 🟢 SHIPPED — 2026-07-15
 
-**The hub open-bounty count now tells the truth**
-- ✅ Hub showed "8 open," board and kid profiles showed 4. Cause: the board gates on `due_date <= today` (correctly hiding future-dated recurring instances); the Briefing omitted the gate and counted quests nobody could claim.
-- ✅ Fixed by routing all three surfaces through **one shared predicate**: `isOpenBountyVisible(quest, role, today = todayIsoDate())` in `src/lib/quest-helpers.ts` — sole source of truth for status + assignment + audience + the date gate. `todayIsoDate()` defines the day-boundary string once. Verified in pixels: hub, board, and kid drill-in all read 4.
-- ✅ The board is the honest surface by design — a done or future-dated recurring quest should not appear (it's a "what needs doing" surface, not a "what exists in the DB" surface).
+**Admit-on-approval verification audit — ran live, join-code bypass confirmed closed**
+- ✅ Live-DB extract-and-judge audit executed: Lovable dumped `pg_proc`/`pg_policies`/triggers/grants read-only; jAIne judged independently. Finding #1 (join-code bypass) confirmed **genuinely closed** — join branch writes pending + advisory `requested_role` + no `user_roles` row; all four pending RPCs self-check parent + family scope.
 
-**Recurrence reworked to fixed calendar anchors**
-- ✅ `handle_quest_approval` rewritten: weekly next-due = `date_trunc('week', COALESCE(due_date, CURRENT_DATE)) + interval '1 week'` (Postgres week starts **Monday** — anchored by construction); monthly = `date_trunc('month', …) + interval '1 month'` (the **1st**); daily unchanged.
-- ✅ `recurrence_day` **removed end-to-end**: trigger reads, both function INSERT lists, the create form field + payload, the quest-log edit sheet, and the column itself (`DROP COLUMN`). Grep for `recurrence_day` in `src/` returns zero (types.ts regenerates). The "day of month" picker (1–31 + "Last day") is gone — anything bespoke is a **calendar** event, not a recurring quest (the membrane).
-- ✅ **Live-data re-anchor:** 8 live recurring rows before, 8 after. 7 re-anchored (4 weekly Wed/Fri/Sat → Monday; 1 future monthly 08-09 → 08-01), 0 archived as duplicates, 0 rows lost their live instance. Past-due monthlies **left in place** — undone work stays on the board rather than vanishing to next month.
-- ✅ Board eyeballed: WEEKLY/MONTHLY chips clean, one of each title, no doubles.
-- **Reason it mattered:** relative recurrence *drifts* — a quest approved late walks its own due date forward, so the due date depended on when an adult happened to approve. That's the human-admin-dependent rot Emberhold exists to beat, and it was living in the recurrence engine.
+**Live privilege-escalation in `complete_household_setup` — found and fixed**
+- ✅ Reconcile branch trusted a caller-supplied `_role` → active kid could mint a parent `user_roles` row (escalation via `has_role`, which reads `user_roles` not `profiles.role`). Live + reachable: `EXECUTE` granted to `anon, authenticated, service_role, sandbox_exec, postgres`.
+- ✅ Fixed: reconcile now sources role from the trigger-protected `profiles.role` column. Create/join branches and signature unchanged; verified by re-reading the function body.
+- **Scar, on the record:** this hole was **shipped live by the 07-14 migration** — the one that was reviewed before commit. Review-before-commit is not verification. The live-DB audit is what caught it. See `decisions.md`.
 
 ---
 
 ## 🟡 PENDING VERIFY
 
+- 🟡 **Admit-on-approval frontend** (above) — briefed to Claude Code, in flight. Visual verifies are Scott's.
 - 🟡 **Recurrence chip legibility.** Anchors are invisible to users — a kid sees "MONTHLY" with no hint it means the 1st. `RECURRENCE_LABEL` enrichment ("Weekly · Mon" / "Monthly · 1st") was scoped and **skipped** (more than a one-line change). Parking-lot follow-up.
 - 🟡 **Lists collapsible sections** — landed (`fb6aa99`), rendered. Not yet exercised across a full session.
 - 🟡 **Cross-device / phone-only signup** — whole confirmation flow on ONE device, cold. Still unproven on fixed code.
@@ -93,7 +85,7 @@ Activity verbs added: `member_admitted` (notable), `member_denied`.
 
 ---
 
-## 🔴 THREE BOARD BUGS SURFACED THIS SESSION (captured, not yet fixed)
+## 🔴 THREE BOARD BUGS SURFACED 2026-07-14 (captured, not yet fixed)
 
 - ⬜ **The empty-board eulogy is a lie on a live board.** "All quiet at the hold" renders directly above "4 open" and a fresh 2h-old completion. Says quiet while showing activity. This is the doorway-not-eulogy fix, now with evidence.
 - ⬜ **Feed verb drift.** A newly-posted quest shows "New quest: …" in the feed; the 7/12 vocabulary bundle standardized on "QUEST POSTED." Possibly a surface that bundle didn't reach. Verify and align.
@@ -103,7 +95,7 @@ Activity verbs added: `member_admitted` (notable), `member_denied`.
 
 ## ⬜ OUTSTANDING — security & distribution
 
-- ⬜ **P4×L8 tenant-isolation audit.** Opus, auto-accept OFF. Hold Alpha exists — run it as an attack.
+- ⬜ **P4×L8 tenant-isolation audit.** Opus, auto-accept OFF. Hold Alpha exists — run it as an attack. **Free input now available:** the 07-15 live-catalog dump + the 25 pre-existing Supabase linter warnings (`SECURITY DEFINER` search_path, function exposure, RLS edges) — hand both to the audit; let it sort real from noise rather than triaging them cold.
 - ⬜ **Auth email branding + deliverability.** Sender is `no-reply@auth.lovable.cloud`; display name is **`Family-Quest-Board`** — scaffolding, a name that exists nowhere in the product. Lands in spam. Templates editable in Lovable Cloud → Emails. Custom sender: DNS at Porkbun (free) + SMTP (Resend free tier). ⚠️ *Inspect any NS-record request before pasting — delegation ≠ adding a TXT record.*
 - ⬜ **Service worker + app-shell cache** — no functional SW. Makes "installable PWA" true instead of aspirational.
 - ⬜ **Backup posture.** Backend is Lovable Cloud; backups/PITR/export/exit are all Lovable's to grant. Code has a Git backup; **the data has none.** Gate B blocker.
@@ -129,19 +121,35 @@ Activity verbs added: `member_admitted` (notable), `member_denied`.
 
 ## 🅿️ PARKED
 
-See `parking-lot.md`. Display/wall mode · #8b admin-reporting surface · kid-vs-kid impersonation · kid-auth (declined) · Ranks as a household dial · photo avatars · cosmetic drop #2 (the roster surplus) · Capacitor · **recurrence miss-asymmetry** (new) · **recurrence chip legibility** (new).
+See `parking-lot.md`. Display/wall mode · #8b admin-reporting surface · kid-vs-kid impersonation · kid-auth (declined) · Ranks as a household dial · photo avatars · cosmetic drop #2 (the roster surplus) · Capacitor · recurrence miss-asymmetry · recurrence chip legibility.
 
 ---
 
 ## 🔵 THE BUILD MODEL — holding
 
-**Claude Code frontend build proven and repeating.** Three times this session Code refused to guess, stopped at a scope edge instead of overreaching (skipped the label enrichment, flagged it), and extended an existing helper rather than authoring a parallel one. That's the behavior we keep wanting; it's now consistent.
+**Claude Code frontend build proven and repeating.** Refuses to guess, stops at scope edges, extends existing helpers rather than authoring parallel ones. That's the behavior we keep wanting; it's now consistent.
 
 - **Code's lane is TEXT** — anything verifiable by reading. The moment the criterion is "does this look right," it's outside the lane.
+- **New this session — the live-DB audit method.** For data-layer security verification: Lovable (which owns Lovable Cloud) extracts the live catalog read-only; an independent agent judges. Solves both "local tools can't reach Lovable Cloud's DB" and "the author shouldn't grade its own exam." See `decisions.md`.
 - **Model routing:** Haiku for recon/greps/mechanical edits · Sonnet for build jobs with latitude · **Opus for the tenant-isolation audit only.**
-- **One writer at a time.** Enforced this session by sequencing (count fix → recon → recurrence migration → frontend cleanup), never overlapping writes.
-- **Lane split for migrations:** data-layer changes go through **Lovable** (owns the DB, proven path); frontend goes through **Code**. A CRITICAL security fix is not the guinea pig for the still-unproven external-push migration.
+- **One writer at a time.**
+- **Lane split for migrations:** data-layer changes go through **Lovable** (owns the DB, proven path); frontend goes through **Code**.
 - **Still unproven:** whether Lovable *runs* an externally-pushed migration. The avatar `hero:` reset remains the cheap first test — and it's tabled.
+
+---
+
+## ✅ SHIPPED — 2026-07-14
+
+**Admit-on-approval data layer** — enum + pending gate + fail-closed `current_family_id()` chokepoint + join-branch pending profile + four RPCs + trigger-layer self-promotion block. All 23 members backfilled to active. *(Verification-audited 07-15 — see above; the audit also caught the reconcile-branch escalation.)*
+
+**The hub open-bounty count now tells the truth**
+- ✅ Hub showed "8 open," board/kid profiles showed 4. Cause: the board gates on `due_date <= today` (correctly hiding future-dated recurring instances); the Briefing omitted the gate.
+- ✅ Fixed by routing all three surfaces through one shared predicate: `isOpenBountyVisible(quest, role, today = todayIsoDate())` in `src/lib/quest-helpers.ts`. Verified in pixels: hub, board, kid drill-in all read 4.
+
+**Recurrence reworked to fixed calendar anchors**
+- ✅ `handle_quest_approval` rewritten: weekly = Monday of the following week; monthly = the 1st; daily = tomorrow. `recurrence_day` removed end-to-end (trigger, both INSERT lists, create form, edit sheet, column dropped). Grep clean.
+- ✅ Live re-anchor: 8 rows before / 8 after, 7 re-anchored, 0 dupes, 0 orphans. Past-due monthlies left in place.
+- **Reason it mattered:** relative recurrence *drifts* — a late-approved quest walks its own due date forward. That's the human-admin-dependent rot Emberhold exists to beat, living in the recurrence engine.
 
 ---
 
