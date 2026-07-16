@@ -11,11 +11,76 @@ WHY: [the reasoning, including rejected alternatives]
 REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
+---
+
 # APPEND TO `docs/decisions.md`
 
-*Paste these at the top of the current-decisions section. `decisions.md` is append-only.*
+*Paste these at the top of the current-decisions section (below the format header, above the 2026-07-14 block). `decisions.md` is append-only.*
 
 ---
+
+## 2026-07-15
+
+```
+DECISION: A SECURITY DEFINER function that grants or reconciles a user_roles row derives the role
+from the trigger-protected profiles.role column — NEVER from a caller-supplied parameter.
+DATE: 2026-07-15
+WHY: The 07-14 admit-on-approval migration — reviewed before commit — shipped a LIVE privilege
+     escalation. complete_household_setup's "already has a profile" reconcile branch inserted a
+     user_roles row from the caller-supplied _role param, unchecked against the profile's real role.
+     Because the whole authorization model routes through has_role(), which reads user_roles (not
+     profiles.role), an active kid calling complete_household_setup(_role => 'parent', …) minted
+     themselves a parent role everywhere — while profiles.role still read "kid." Nothing caught it:
+     enforce_profile_role_change guards writes to profiles, this wrote user_roles; the "deny direct
+     role inserts" policy doesn't apply because SECURITY DEFINER runs as owner. The 07-15 live-DB
+     audit confirmed it was reachable — EXECUTE was held by anon, authenticated, service_role,
+     sandbox_exec, postgres.
+     WHY profiles.role is the safe source: enforce_profile_role_change blocks a non-parent from
+     changing it, so that column only ever reflects what a real parent granted. A caller parameter
+     carries no such protection. The invariant the whole schema rests on — "only a parent-checked
+     function writes user_roles" — must not be broken by trusting caller input for the role value.
+     Rejected: deleting the reconcile branch entirely — kept it for legitimate self-heal of a
+     missing role row, but re-sourced it from profiles.role.
+     FIX (Lovable, reviewed, verified by re-reading the branch): reconcile now
+     `INSERT ... SELECT auth_user_id, p2.role FROM profiles p2 WHERE p2.id = auth_user_id`.
+     Create and join branches and the signature unchanged.
+     THE SCAR: this is the second wound of Finding #1 (kid self-declaring parent), which the 07-14
+     data layer was supposed to have closed in the same pass — and it re-opened through a DIFFERENT
+     door (the reconcile branch) than the one that was hardened (the join branch). Closing one path
+     to escalation does not close the class. Audit every SECURITY DEFINER writer of user_roles as a
+     class, not one function at a time.
+REPLACES: Nothing — new rule. Adjacent to the (correctly closed) join-code bypass #1; this is a
+     separate escalation the same feature carried.
+STATUS: LOCKED
+```
+
+```
+DECISION: Data-layer security fixes are verified against the LIVE database, not against the
+migration's success report or a pre-commit review. The method: the DB owner extracts, an
+independent agent judges.
+DATE: 2026-07-15
+WHY: The escalation above was shipped by a migration that ran successfully AND was reviewed before
+     commit. Both are claims about intent; neither is verification of the deployed state. Two facts
+     forced the method: (1) Lovable Cloud's Postgres is not reachable by local tools, so the live
+     truth sits behind Lovable's wall — Lovable is the only agent already inside it; (2) Lovable
+     wrote the fix, so asking Lovable to audit it is the author grading its own exam — the same
+     "self-report is a claim" failure family already on the books (2026-07-11, 2026-07-12).
+     THE SPLIT: Lovable runs read-only introspection (pg_proc, pg_policies, trigger defs, grant
+     surface) and pastes the RAW catalog back — camera, not judge, explicitly told not to summarize
+     or fix. A separate agent (jAIne, in-context) runs the audit against that text adversarially.
+     Live truth AND an independent judge, for the price of one read. As a bonus it moots the
+     stale-local-clone problem for the audit — production is the artifact, not the clone.
+     Generalizes the standing law: migration files (and pre-commit reviews) are INTENT; the live
+     database is TRUTH. The gap opens whenever a policy is hand-patched in the SQL editor without a
+     migration — then the file lies with a straight face.
+     Watch item, minor: the "raw dump = truth" pipe has a person/agent in it — the extraction agent
+     left its own scratch reasoning in one dump. Harmless here (final SQL was consistent), but the
+     camera can editorialize; read what comes back, don't assume it's inert.
+REPLACES: Nothing — new operating rule for data-layer security verification. Complements the
+     auto-accept and night-eligibility rules (2026-07-12).
+STATUS: LOCKED
+```
+
 
 2026-07-14
 
