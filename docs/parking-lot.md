@@ -13,12 +13,13 @@
 
 ## Inbox (untriaged)
 
-*(empty — triaged 2026-07-14)*
+*(empty — triaged 2026-07-15)*
 
 ---
 
 ## OPEN DECISIONS (unresolved — waiting on Scott)
 
+- **⚠️ Staging / dev database — do we need one before beta?** *(new 2026-07-15)* Local dev points at the **same Supabase backend as production** (theemberhold.com). Confirmed the hard way: Code created live test accounts (`QA Parent`/`QA Joiner`/household `QA Verify Hold`) on the prod DB while exercising the admit flow, because there's nowhere else for them to go. This means every local-dev test writes to the same tables as thirteen real users' data. Fine at Alpha; a real Gate-B concern once strangers are on it — test data, destructive test actions, and adversarial-audit writes all land in prod. *Does a separate staging/dev DB (or at least a seed/teardown convention) come before distribution?* Related to the P4×L8 harness-reachability question below.
 - **⚠️ Backend ownership + data backup.** The backend is **Lovable Cloud**, not a Supabase project Scott owns. There is no separate dashboard. **Backups, plan tier, PITR, data export, and the ability to leave are all Lovable's to grant.** The code has a Git backup; **the data has none.** A live structural risk and a Gate B blocker. *What is the exit path if Lovable Cloud is the wrong long-term home?*
 - **Does the P4×L8 adversarial script even run on Lovable Cloud?** The harness assumes a project URL + anon key pointable at the DB from outside the app. `supabase-js` is initialized *somewhere* in the repo — check there first. If those credentials aren't usable externally, the audit degrades to policy-reading and Gate B's exit criterion (*"cross-tenant access provably impossible"*) becomes unprovable by design. **Answer this before running the audit.**
 - **⚠️ The free/paid avatar split — and its arithmetic is now stale.** "16 free / 24 paid" was locked against a **44**-character roster. The roster is **48**. The math no longer closes, the selection was never made, and the old split predates a cast nobody has looked at yet. **Re-lock the numbers, then cast.** *This is a product decision and must never be handed to an agent as part of avatar transport.*
@@ -26,7 +27,7 @@
 - **Quality — the two open halves.** Direction LOCKED (a signal, never an ember modifier). Still open: (1) is it visible to the KID, or adult-only? (2) What consumes it — the weekly recap, presumably, which is parked behind beta.
 - **Mascot name** — Cinder (kid vote) vs Holt (lore). Pressing, since the mascot speaks — and is about to speak a lot more in the first-run screens.
 - **Ranks as a household dial** — soften the sibling-ladder into private progress. jAIne has a lean; Scott hasn't called it.
-- **Display mode's position on the ladder** — simultaneously "the unproven core bet" and "fenced to post-launch." Both defensible; they can't both be true forever. See `north-star.md`.
+- **Display mode's position on the ladder** — simultaneously "the unproven core bet" and "fenced to post-launch." Both defensible; they can't both be true forever. **Note (2026-07-15): it's also the one delight item that doesn't need the security gate open** — it's for Scott's own household, not strangers — which makes it the defensible morale pull-forward if a fun session is wanted before P4×L8. See `north-star.md`.
 - **Unify `quest.audience` and `reward.audience`?** — two parallel flags today, deliberately not unified. A sober-daylight refactor call *only if it earns its keep*.
 
 ---
@@ -41,7 +42,7 @@
 ## NEXT (soon — off the critical path)
 
 - **`avatar-review.tsx` — retire or rebuild.** A leftover review page that hand-duplicates the roster in its own local array. It is a second source of truth for the cast, and it will drift. *Kill it unless it's earning something.*
-- **Audit what else from 2026-07-03 never landed.** `Feast` → `Hall` was LOCKED and sat unshipped for ten days. It was found by accident, during a recon for something else. **Grep the LOCKED decisions against the codebase.** *This is a Haiku job and it is cheap.*
+- **Audit what else from prior sessions never landed.** `Feast` → `Hall` was LOCKED and sat unshipped for ten days, found by accident. **2026-07-15 reinforced this hard:** three separate 07-14 "shipped" claims turned out to be design-complete-not-landed (the admit/deny enum bug, the reconcile escalation, and the `recurrence_day` frontend removal that was *stashed, not committed* — and crashed quest creation in prod). See the LOCKED decision "07-14 batch was logged from INTENT, not landed code." **Grep every LOCKED decision against the codebase.** *Haiku job, cheap, and now overdue.*
 - **Recurrence chip legibility — "Weekly · Mon" / "Monthly · 1st".** Recurrence now anchors to fixed dates (weekly=Monday, monthly=the 1st), but the anchors are invisible to users — a kid sees a bare "MONTHLY" chip with no hint it means the 1st. `RECURRENCE_LABEL` is a plain constant; surfacing the anchor needs conditional render at the chip sites (`QuestCard`, `quest.$id`, `quest-log`). Scoped and skipped during the recurrence cleanup because it exceeds a one-line change. *Cheap, and exactly the ambient legibility the thesis runs on.*
 - **Vault favorites → real per-profile persistence** — `localStorage` won't survive the shared-wall model, and favoriting is load-bearing.
 - **Quick Add defaults expanded on an empty board** — zero quests means the user has never seen one. Same state-driven pattern as the Vault's catalog/curated flip.
@@ -52,7 +53,7 @@
 
 ## LATER (backlog)
 
-- **Display / wall / kiosk mode** — the ambient-presence thesis. Rides on the realtime layer (unscoped) + the feed spine (built) + the engine loop-fixes (shipped). Also carries the optional kid picture-lock. *The regenerated roster at ~600px per character finally makes this visually viable; the old 170px assets did not.*
+- **Display / wall / kiosk mode** — the ambient-presence thesis. Rides on the realtime layer (unscoped) + the feed spine (built) + the engine loop-fixes (shipped). Also carries the optional kid picture-lock. *The regenerated roster at ~600px per character finally makes this visually viable; the old 170px assets did not.* **The one delight item not gated behind P4×L8** — see OPEN DECISIONS.
 - **#8b — admin/reporting surface** — *parked behind the beta.* Redemption history, reward performance, weekly recap, Adventure Log, ops glance. Six unrelated things sharing a room. **Note: quality's consumer lives in here, which means quality can't ship until at least part of this does.**
 - **Weekly recap** — the first real consumer of the activity feed. **Also the consumer of quality.**
 - **Other feed consumers** (reads off `activity_log`) — full in-app feed view, richer notification layer, the Adventure Log, a family message board.
@@ -68,9 +69,15 @@
 
 ## KILLED / SUPERSEDED
 
+**2026-07-15**
+- ~~**`recurrence_day` frontend references**~~ — **REMOVED (`172a07f`).** The 07-14 DB drop finally matched by the frontend removal that had been stashed, not committed. Was crashing quest creation in prod.
+- ~~**Pending-member roster leak / phantom switch target**~~ — **FIXED (`b31c92c`).** `useFamilyMembers` now filters `status='active'`.
+- ~~**Admit/deny enum crash (`'notable'`)**~~ — **FIXED.** Changed to `'milestone'` in both RPCs.
+- ~~**Walk-up profile-switch as a possible escalation**~~ — **RESOLVED as a deliberate accepted risk** (NOTED in `decisions.md`), not a bug. Client/server agree; the seam is physical-device trust, revisit at P4×L8.
+
 **2026-07-14**
 - ~~**`recurrence_day` / monthly day-of-month picker**~~ — **REMOVED.** Monthly is always the 1st; anything bespoke is a calendar event, not a recurring quest. Column dropped, picker gone, trigger rewritten. See `decisions.md`.
-- ~~**Join-code policy as an open call**~~ — **DECIDED** as admit-on-approval (lean-on-profiles, data layer shipped). Moved to `decisions.md`.
+- ~~**Join-code policy as an open call**~~ — **DECIDED** as admit-on-approval (lean-on-profiles, data layer shipped). Moved to `decisions.md`. *(Fully shipped + verified 07-15.)*
 
 **2026-07-12**
 - ~~**Auth email branding as a "NEXT / off critical path" item**~~ — **PROMOTED to the critical path.** It is the first artifact a stranger receives, it precedes the app itself, it lands in spam, and thirteen people have already received it. The reasoning that deferred it ("nobody's walking through that door yet") was built on a headcount that was wrong by nine.
