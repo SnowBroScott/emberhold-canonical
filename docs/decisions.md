@@ -13,6 +13,34 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
 
 
+---
+
+DECISION: The "active member" switch is a convenience layer, not a security boundary. On a shared
+device signed into a parent's account, physical possession = parent authority. Accepted for the
+walk-up model; flagged as a live input to the P4×L8 / distribution gate.
+DATE: 2026-07-15
+WHY: Recon on the profile-switch / PIN flow (the same pass that produced the b31c92c roster fix)
+     confirmed client and server AGREE on parent identity — no escalation mismatch. set_profile_pin's
+     has_role(parent) check and the client's viewerIsParent both read the real signed-in auth.uid();
+     switching into a PIN-less adult profile hard-gates (setActiveMemberId fires only after the PIN
+     RPC resolves); Cancel returns to the picker with no bypass. All SAFE.
+     THE SEAM: neither check consults which profile is locally "active." On a shared device where the
+     real login is a parent's own account (the standard case for the no-login walk-up model), a kid
+     physically holding that already-unlocked device — while the UI shows "acting as kid" — can tap a
+     PIN-less adult tile, get the set-PIN dialog, and successfully set that adult's PIN, because the
+     server correctly sees a parent session. Same root enables the "Forgot PIN?" clear-and-reset. The
+     "who's acting" switch provides no cryptographic isolation; it's cosmetic.
+     WHY ACCEPTED: this is the walk-up kiosk model working AS DESIGNED — its trust boundary is
+     physical possession of an unlocked device, not per-profile identity. Directly consistent with the
+     2026-07-10 kid-auth DECLINED decision, which already reasoned that impersonation is a
+     physical-access problem, not an auth problem. For a household where an unlocked parent phone in a
+     kid's hands is already game-over, the downstream PIN dance is not the real boundary. Rejected:
+     bolting a confirm()/re-auth onto this one flow tonight — that's piecemeal patching of a property
+     the whole model shares, and the over-correcting failure mode. The distribution-grade version
+     ("acting-as provides zero isolation on a less-trusted device") must be judged holistically by the
+     tenant-isolation audit, not one dialog at a time.
+REPLACES: Nothing — records a seam implied by the 2026-07-10 kid-auth decision.
+STATUS: NOTED — revisit trigger: the P4×L8 audit, or any move toward untrusted-device distribution.
 
 ---
 
