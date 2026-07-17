@@ -15,6 +15,41 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 
 ---
 
+DECISION: The roster / switch-picker "no members" bug was a missing Data-API GRANT on the live DB — not a code defect. Live-schema drift is now a NAMED, REPEATING failure mode: when the repo is provably clean and the app still breaks, drift is the FIRST suspect, not the last.
+DATE: 2026-07-16
+WHY: The board Roster and the profile switch picker showed "No one in the household yet" for The W Drapers while Hold Ranks correctly showed all four members with real ember totals. Three theories died against the evidence, in order:
+     (1) jAIne's NULL-legacy-rows hypothesis — a live read (via Lovable, read-only) confirmed all four profiles are status='active'. The 07-14 backfill worked.
+     (2) The schema-drift-in-the-backfill theory — the 07-14 migration's `NOT NULL DEFAULT 'active'` plus an explicit belt-and-suspenders UPDATE is airtight as written; if it ran as filed, no pre-existing row could be anything but 'active'.
+     (3) Hypothesis C (wrong session / wrong family) — Scott's screenshots showed the São Paulo campaign at 83%, the real join code (DQADRL), and real per-member ember totals. The session unquestionably resolved the W Draper family_id. If it were the wrong family, Ranks would have been empty too. It wasn't.
+     Ranks-full + Roster-empty on the SAME session and SAME family narrows to the one thing that differs between those two surfaces: the query path.
+     ROOT CAUSE (Lovable, live): the `public` tables carried ZERO Data-API grants for the `authenticated` role. Every signed-in query — roster, quest-assignment picker — was rejected with `permission denied for table profiles` BEFORE RLS ever evaluated. Ranks survived because it reads the `family_xp` VIEW, which predates the grant hole and carries its own access — which is why Ranks looking fine told us nothing about the grant state. Fix: restored SELECT/INSERT/UPDATE/DELETE to `authenticated` and ALL to `service_role` across all 14 tables; RLS still gates who sees which rows. Roster and picker now populate correctly, live, with all four members.
+     WHY THIS IS THE HEADLINE: the defect lived in live DB state that NO migration file describes — the exact class master-spec already flags (`recurrence_day`, the `monthly` enum, both added out of band). This is the FOURTH instance. Both Code and jAIne were structurally doomed to miss it: both read the repo, the repo was clean, the truth was in the grant surface. The signature is now known and worth naming — code provably clean + still broken = suspect live-schema drift FIRST, before re-reading the same clean code a fifth time.
+     THE RECORD, UNSENTIMENTAL: jAIne led hard on NULL legacy rows (wrong); called `b31c92c` a deploy landmine on that basis (wrong — active rows pass an active filter, so `b31c92c` was innocent all along; the correct reason to hold its deploy was only "don't ship what you can't explain," which held); and floated a NULL-path security asymmetry (wrong — see the P4×L8 note below). Three theories; the data killed two outright and the grant finding retired the third. TRUST-THE-LANE was correct here: Lovable had live-DB eyes neither Code nor jAIne had, and it found what neither could from the repo.
+REPLACES: Nothing — new finding. Generalizes the live-schema-drift failure mode (2026-07-14: `recurrence_day`, the `monthly` enum) into a named first-suspect rule.
+STATUS: LOCKED (finding + rule).
+
+---
+
+DECISION: The Data-API grant surface is a named P4×L8 audit line item. A grant hole that silently DENIED just surfaced; the audit must confirm there is no sibling hole that silently ALLOWS.
+DATE: 2026-07-16
+WHY: The roster fix restored grants broadly — SELECT/INSERT/UPDATE/DELETE to `authenticated`, ALL to `service_role`, across all 14 tables. RLS still constrains row visibility (load-bearing, confirmed by Lovable and consistent with the code), so this is not an alarm — the hole that existed FAILED CLOSED (denied everything). But "grants were missing entirely and got restored broadly" is exactly the kind of live DB-state change the audit should see the FINAL STATE of, not take on faith. Named line item for P4×L8: what Data-API grants does `authenticated` actually hold on each of the 14 tables, and does RLS fully constrain every one of them? A hole that denies is benign; a sibling hole that ALLOWS is the finding.
+     CHECKED-NEGATIVE, same session: jAIne hypothesized a NULL-handling asymmetry — NULL status treated as "grant access" on one path (`current_family_id()`) while "exclude" on another (the roster filter). Code read both: `current_family_id()` returns NULL for any non-active caller, and every family-scoped RLS policy compares `family_id = current_family_id()`, which is NULL for any real family_id → fail-closed, access denied. The roster filter also excludes non-active. Both paths AGREE. No asymmetry, no escalation vector through that function — and even in the worst-case drift scenario (a row somehow NULL live), `current_family_id()` still fails closed. Logged as a checked, no-gap finding for the P4×L8 pile.
+REPLACES: Nothing — adds to the banked P4×L8 inputs (the 07-15 live-catalog dump, the 25 Supabase linter warnings).
+STATUS: NOTED — feeds the P4×L8 audit.
+
+---
+
+DECISION: "All quiet at the hold" is CORRECT behavior, not a bug. The line reports the ADULT'S ACTION QUEUE — "nothing needs your seal" — not household inactivity.
+DATE: 2026-07-16
+WHY: status.md carried "the empty-board eulogy is a lie on a live board" as an open bug — "ALL QUIET AT THE HOLD" rendering directly above "N open" and a fresh completion. It is not a lie. It is a TRIAGE line: it means zero items demand the adult right now — no pending admits, no approvals waiting, no alerts. Open bounties are posted work waiting for a KID to claim (state, not a demand on the adult); a logged completion needs no seal. On the boards where this was flagged, the adult's action queue was genuinely empty, so the line was true. It reports demand-on-YOU, not activity-in-the-house — and that is exactly the right thing for an adult's board to lead with.
+     This does NOT touch the separate, still-live Pip first-run concern: a brand-NEW household landing on an empty board needs a DOORWAY ("post your first quest with +"), not silence. That's an onboarding-activation gap (LOCKED 2026-07-12, gated behind distribution), not this line being wrong. Two different problems that happened to share a screen; jAIne conflated them and kept re-flagging a resolved item off stale canon.
+REPLACES: The "empty-board eulogy is a lie on a live board" open bug in status.md (⬜ → resolved, working-as-intended).
+STATUS: LOCKED.
+
+---
+
+---
+
 DECISION: The "active member" switch is a convenience layer, not a security boundary. On a shared
 device signed into a parent's account, physical possession = parent authority. Accepted for the
 walk-up model; flagged as a live input to the P4×L8 / distribution gate.
