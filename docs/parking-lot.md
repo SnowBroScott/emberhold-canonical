@@ -3,7 +3,7 @@
 **What might be.** Captured, not committed. One place for every stray idea, so nothing derails the build.
 
 > Decisions live in `decisions.md`. Status lives in `status.md`. **This doc holds only what hasn't been decided yet.**
-> *Complete dated replacement each session. Last: 2026-07-17.*
+> *Complete dated replacement each session. Last: 2026-07-18.*
 
 ## How this works
 - **Inbox** — the dump zone. Capture and move on.
@@ -14,7 +14,7 @@
 
 ## Inbox (untriaged)
 
-*(empty — triaged 2026-07-17)*
+*(empty — triaged 2026-07-18)*
 
 ---
 
@@ -35,8 +35,9 @@
 
 ## NOW (this is the next work)
 
-- **Hand-cut the 48-avatar roster in GIMP.** Ellipse-select, fixed 1:1, snapped to the gold rim, biased 2–3px inward. **TABLED by Scott — surface it, don't push it.** *(The wall makes the case louder — the roster avatars are what make the tiles look genuinely good — but still tabled.)*
-- **Cast while cutting.** Cut from ~57 generated portraits into 48 slots; the casting decision happens while Scott is looking at them. The surplus is already paid for.
+- **Hand-process the 48-avatar roster — CUT-METHOD SOLVED 2026-07-18.** Not a cut — a **fill**: the app clips every avatar into a circular frame, so the only failure mode is white corners peeking past the mask. Ellipse-select inscribed in the square (corner-to-corner) → invert → fill corners `#1A110B` (the spec's dark, no alpha) → flatten → scale 512×512 → export as the slot name. Do NOT select-by-color (kills grey hair, eye-glints); target corners by shape. Dark-on-dark seam means pixel-perfect alignment isn't required. Proven on the two hardest cases (white-haired elder, fire-everywhere dragon). **Still TABLED by Scott — surface, don't push.**
+- **Cast while cutting.** Cut from ~57 generated portraits into 48 slots; the casting decision happens while Scott is looking at them — the one part that can't batch. The surplus is already paid for. **Name each `.xcf` as its slot** (`forge-01.xcf` … `hall-12.xcf`) so the batch script just swaps `.xcf`→`.png`; the slot IS the cast, made durable.
+- **Batch export script — READY TO WRITE on Scott's word.** Once casting's done, a headless GIMP Script-Fu (or ImageMagick one-liner) does fill → flatten → scale 512 → export across all 48 in one run — no one-by-one. jAIne writes it when Scott says the roster's cut. Reusable for later recuts/additions.
 
 ---
 
@@ -61,9 +62,10 @@
 
 - **Retire identity-first role labels — "Parent/Kid," especially "Kid."** The one identity-first, literal, flat-English word in an otherwise function-first themed vocabulary. Ages badly. The real distinction is **approver vs. submitter** — an authority model already implemented correctly; "Adult/Kid" is only the skin. A display-string sweep, not a data migration (the `parent/kid` enum stays under the hood). Wide surface, 13 people with the current model in muscle memory. Its own deliberate session, ideally bundled with another vocab pass. **Adjacent to "Flat / peer holds" below — labels half vs. permission-model half.**
 
-- **Display / wall / kiosk mode — BUILT FOR OWN-HOLD 2026-07-17.** *(Was: "design prototyped, not wired." Now: feature-complete for Scott's own hold — see `status.md` for the full built ledger and `decisions.md` for the trust model.)* What's shipped: the on-ramp (entry → PIN → agenda/calendar selector), idle drift-home, responsive tiles, exit, the full propose tier (claim/turn-in/redeem), Vault-in-popup (affordable-only, audience-filtered, empty-state message), ~10s decoupled poll, seamless ticker, view-only tappable event detail with member-color pills. **The three laws held and drove the build** (spatial law predicted the Vault-in-tile and the picker-vs-no-picker split; legibility-at-distance drove tile scaling; the accordion stayed three-zone after the Vault was correctly pulled out). **PROMOTION NOTE:** the three laws proved themselves in a real build. When display mode graduates from fenced-delight to distribution roadmap (post-beta, or Gate-E-flat), promote the three laws to `decisions.md` / `master-spec.md`. Still fenced for the STRANGERS-grade version; what remains:
+- **Display / wall / kiosk mode — v1 FOR OWN-HOLD (propose tier 2026-07-17 · adult-verified turn-in commit 2026-07-18).** *(Was "design prototyped, not wired.")* See `status.md` for the full built ledger and `decisions.md` for the trust model. Propose tier + on-ramp/idle/exit/ticker/poll/event-detail shipped 07-17; adult-verified turn-in commit (mint) building 07-18 (🟡 glass-verify pending). **The three laws held and drove the 07-17 build** (spatial → Vault-in-tile + picker split; legibility-at-distance → tile scaling; three-zone accordion preserved). **PROMOTION NOTE:** when display graduates from fenced-delight to distribution roadmap (post-beta, or Gate-E-flat), promote the three laws to `decisions.md` / `master-spec.md`. Still fenced for the STRANGERS-grade version; what remains:
+  - **Wall redemption/spend commit — future build, NOT yet scoped.** v1 commit covers quest turn-in (mint) only. Redemption-commit (approve a spend from the wall) has **no surface to attach to** — recon found no pending-redemptions view on the wall (turn-ins have one; redemptions don't). That surface must be built first. Same adult-verify model applies; keep it OFF the wall until deliberately built.
   - **Deployment gremlins** — old iPad mini: Safari version, PWA display-mode behavior, screen-sleep (Guided Access / never-sleep + dock), 4:3 ~1024×768. Real, deferred.
-  - **P4×L8 on the wall's write surface** — `wall_request_redemption` household-scope (see decisions + status critical path).
+  - **P4×L8 on the wall's write surface** — `wall_request_redemption` household-scope, plus (07-18) the commit-attribution class (`approved_by` client-asserted, `decided_by` session-locked). See decisions + status critical path.
   - **Favorites on the wall** — deferred to per-profile persistence (see NEXT).
   - **The idle-return-to-ambient timer** is BUILT; the resting state is the named config (Bounties collapsed / Hearth expanded / Ranks collapsed / left = launch choice).
 
@@ -81,6 +83,12 @@
 ---
 
 ## KILLED / SUPERSEDED
+
+**2026-07-18**
+- ~~**Identity-bound wall commit (tap SnowDad → SnowDad's own PIN → decided_by = proven adult)**~~ — **WALKED BACK to adult-verify.** Recon showed identity-bound attribution is a data-layer P4×L8 build (`approve_redemption` hardcodes `decided_by=auth.uid()`; `approved_by` is client-asserted with no server tie). The actual threat is a kid self-committing, which adult-verify fully stops. See decisions.
+- ~~**SnowDad Vault spendable = 0 as a bug**~~ — **RESOLVED as test cruft.** Debit-side: three June test self-redemptions (150) > earnings (106), clamped. Cleaned up. See status + decisions (two real findings logged: `parent_self_redeem` feed blind spot, silent overdraw clamp).
+- ~~**"Scott sets every status" doc rule + close-out compliance checkpoint**~~ — **DISCARDED, never was canon.** 07-17 over-correction that misdiagnosed sloppiness. Model restored: jAIne sets statuses as judgment, Scott overrules. See status.
+- ~~**Automated / hand-cut avatar circles**~~ — **SUPERSEDED by fill-corners method** (app clips the circle; fill `#1A110B`, don't cut). See NOW.
 
 **2026-07-17**
 - ~~**Wall calendar event detail (parked, bundle with color pills)**~~ — **SHIPPED.** Both existed on the phone (`EventDetail` + `memberColor()`); the wall now reuses them — tappable pills → in-place view-only detail sheet, member-colored pills. Edit/Delete suppressed on the wall.
