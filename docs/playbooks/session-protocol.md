@@ -84,6 +84,12 @@ Docs are regenerated **once, at session end** — never as running updates throu
 
 **"Shipped" means a completed end-to-end loop.** Not a screen rendering in a screenshot. Not assets banked on a phone. Design-complete ≠ shipped, and the docs must say so plainly, because the gap is where projects quietly rot.
 
+### Sync before reading — the Code-job open
+
+A Claude Code recon is only as good as the tree it read. **Before Code reads the codebase, it syncs to `origin/main` — a fresh `git pull` (or a clean clone). A local working clone is a disposable scratch checkout, never a source of truth.**
+
+Why this is a hard rule, not a suggestion: a stale local clone fails *silently*. It doesn't error — it answers from an old tree and makes the recon confidently wrong. Learned 2026-07-17: a recon opened by concluding "wall/display mode is never built" because the clone was 78 commits behind origin, and only self-corrected because it thought to check origin. Same failure shape as `raw.githubusercontent.com` serving stale content over the GitHub API, same resolution: **the authoritative source wins, the cache never does.** For docs, the API beats the CDN. For code, `origin/main` beats the local clone. Code still keeps a working tree (it needs one to grep and trace imports); what's forbidden is *trusting* a tree that hasn't been synced this session. Step zero of every recon: pull. *(LOCKED, decisions.md 2026-07-17.)*
+
 ### Verify from outside — the Code-job close
 
 A Claude Code job is not done when the agent says it's done. It's done when the artifact is **observable from outside the agent.**
