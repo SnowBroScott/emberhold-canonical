@@ -12,7 +12,53 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
 
+DECISION: Claude Code recon syncs to origin/main BEFORE reading. A local working clone is a disposable scratch checkout, never a source of truth.
+DATE: 2026-07-17
+WHY: For roughly a week, every Code recon silently read a STALE local clone and had to `git pull` mid-task to reach reality. The 2026-07-17 ticker recon opened by concluding "wall/display mode is never built" — false; the clone was 78 commits behind origin — and only self-corrected because the agent thought to check origin. A stale working copy fails SILENTLY: it does not error, it answers from an old tree and makes the recon confidently wrong. This is the same failure shape as raw.githubusercontent serving stale content over the GitHub API, and the same resolution: the authoritative source wins, the cache never does. For docs, the API beats the CDN. For code, origin/main beats the local clone. Code still keeps a working tree (it needs one to grep and trace imports across files); what's forbidden is TRUSTING a tree that hasn't been synced this session. Step zero of every recon: pull. Formalizes what was already de facto true — we work off live origin, not local — and which Scott had flagged across several prior chats before it was captured. The capture debt was itself the failure: a known operational truth, left "fine and okay" and unlogged, returned as a false shock a week later.
+REPLACES: Nothing — new rule. Makes explicit an existing practice.
+STATUS: LOCKED
 
+---
+
+DECISION: The wall / display mode is a PROPOSE-only surface. It never mints, spends, approves, or edits. On a shared surface, committer authority is re-proven per action (PIN), never granted to a cosmetic member tile.
+DATE: 2026-07-17
+WHY: The wall runs as ONE shared parent-authenticated session wearing cosmetic member tiles (consistent with kid-auth DECLINED 2026-07-10 and the walk-up trust boundary NOTED 2026-07-15 — the "active member" switch is convenience, not a security boundary). It follows that every action a member tile can take is a PROPOSE action: claiming a bounty and turning in a quest submit to the existing adult approval queue (no mint); redeeming a reward creates a PENDING request (no debit — verified: the existing flow debits only via approve_redemption, and member_spendable = sum(approved earnings) − sum(approved redemptions)); calendar events are VIEW-ONLY (EventDetail's Edit/Delete are suppressed on the wall, because canEdit() is always true under the shared parent session and destructive edits must not sit on an open kiosk). The membrane, applied to a wall: it SHOWS and PROPOSES; it does not touch household data or currency without the commit gate. See the companion PIN-gates-the-ledger decision for where the line falls precisely.
+REPLACES: Nothing — new; formalizes the wall's trust model built 2026-07-17.
+STATUS: LOCKED
+
+---
+
+DECISION: "Adult" and "kid" are PERMISSION TIERS, not family relationships — committer vs. proposer. On the wall, the PIN gates exactly one thing: embers minting or being spent. Everything else is open.
+DATE: 2026-07-17
+WHY: Worked out from a live observation — an adult's quest turn-in on the wall landed in AWAITING APPROVAL instead of auto-clearing as it does on the phone. The reframe: "adult" is the committer tier (trusted to approve/mint/spend/self-clear/enter display mode) and "kid" is the proposer tier (initiate only). This authority model ALREADY EXISTS in the codebase (approver vs. submitter); "adult/kid" is only the skin (see the parking-lot role-label-retirement note, which already named this). THE WALL-SPECIFIC CAVEAT is the load-bearing part: on an AUTHENTICATED surface (the phone) the tier travels with the session — the account IS provably that adult — so auto-approval is safe. On a SHARED surface (the wall) the tile only CLAIMS a tier; anyone in the room can tap the "SnowDad" tile, including a kid. So committer trust cannot be granted to a cosmetic tile — it must be RE-PROVEN per commit, and the only proof on the wall is the PIN. Scott's line, agreed: the PIN is required if and only if the action MINTS or SPENDS embers (the one irreversible, real-value event). Browsing, tapping tiles, opening the Vault, viewing a quest, turning in for the queue — all open, none move value. This tightens the earlier propose-vs-commit framing to a sharper test: does it touch the ember ledger? If yes → PIN. If no → open. Consequence: the wall's adult-turn-in-queues behavior is likely CORRECT (the membrane refusing committer trust to an unauthenticated tile), and the right build is PIN-on-mint (an authenticated adult commits directly from the wall), NOT auto-approve-because-the-tile-says-adult. Candidate for promotion to master-spec (the authority model is design truth, not build state) once verified.
+REPLACES: Nothing — reframes existing "adult/kid" language as a permission model; tightens the 2026-07-17 propose/commit wall framing to "PIN gates the ledger."
+STATUS: NOTED — wants a recon of how the existing approver/submitter model gates each action before it's LOCKED / promoted to master-spec.
+
+---
+
+DECISION: wall_request_redemption — a thin SECURITY DEFINER proxy that inserts a PENDING redemption on behalf of a picked member. No debit, no approval. Named P4×L8 audit input.
+DATE: 2026-07-17
+WHY: The existing redemption INSERT RLS requires requested_by = auth.uid(), which correctly blocks a kid-profile insert under the wall's shared parent session. Rather than weaken that policy, the wall routes redemption through wall_request_redemption — a SECURITY DEFINER RPC that inserts a pending row on behalf of a picked household member, with no debit and no approval. Same on-behalf shape as claim/turn-in, which needed no new path (the parent-role RLS exemption already permits a parent session to claim/submit for any member — confirmed by the 2026-07-17 recon). SECURITY DEFINER bypasses RLS by design, so the function body carries the entire safety burden. THE AUDIT LINE ITEM: confirm the RPC enforces household scope on the picked member_id — a caller must not be able to pass an out-of-household member. Inert on Scott's own hold; a distribution-grade concern. This is the SECOND bespoke SECURITY DEFINER write on the P4×L8 surface, alongside the 2026-07-16 Data-API grant finding — audit them as a class, per the 2026-07-15 "audit every SECURITY DEFINER writer as a class" rule.
+REPLACES: Nothing — adds to the banked P4×L8 inputs.
+STATUS: NOTED — feeds the P4×L8 audit.
+
+---
+
+DECISION: The wall Vault lives inside the member popup (behind the tile tap), affordable-only, audience-filtered. Data freshness is interval polling (~10s), decoupled from the feed ticker — never realtime.
+DATE: 2026-07-17
+WHY: Two settled wall calls, bundled because both were worked out and agreed this session.
+     VAULT PLACEMENT: The Vault is person-scoped and it SPENDS — the opposite of the glanceable, household, stateless accordion zones (Bounties / Hearth / Ranks). Bolting it in as a fourth accordion zone was the wrong shape (it broke the idle-timer's three-zone resting state, and "Rewards" was off-vocabulary flat English — it is "the Vault" everywhere). Correct home: the member popup, reached by the tile tap that ESTABLISHES whose embers are in play, so no "who's redeeming?" picker is needed there (the tap already answered it — the same three-laws logic that put a picker on bounty-claim, where the household banner has no tile-tap). The popup shows the member's spendable balance (member_spendable) and a Vault button that swaps the popup body to that member's rewards. The wall Vault shows ONLY affordable rewards (member_spendable ≥ cost), mirroring the phone Vault's curated view — on a wall, "what can this member get right now" is the correct at-a-glance filter, not the full catalog. Audience-filtered via the existing reward.audience flag. Empty state (balance below cheapest reward) shows a warm, on-theme "go earn" nudge, not a blank panel. (Favorites deferred: per-member favorites can't be read from one shared login's localStorage — see per-profile-persistence in parking-lot; the empty-state message becomes a two-case branch once favorites exist.)
+     DATA FRESHNESS: The wall stays current via a fixed ~10s poll (the PendingWaitingScreen ~8s pattern), NOT a Supabase realtime/websocket subscription — a wall needs ambient freshness, not sub-second push, and the websocket lifecycle is cost with no benefit here. ("Live" was loose shorthand; corrected to interval polling.) HARD RULE: the data poll and the feed ticker's scroll animation are INDEPENDENT clocks and must never gate each other. Coupling the poll to "after one feed rotation" was explicitly rejected — it makes staleness scale with feed length, so freshness gets WORSE when the household is busiest. (Ticker seamless-loop is a doubled strip animating to one copy's width — geometry, not remount; the poll swaps inner items in place and never remounts the animated node.)
+REPLACES: The short-lived "Rewards" accordion zone (built and removed same session); any "live"/"realtime" wording for the wall.
+STATUS: LOCKED
+
+---
+
+DECISION: There is no member "class" color system. Member color is memberColor() identity color.
+DATE: 2026-07-17
+WHY: Recon correction. "Color pills by class (Forge/Garden/Keep/Hall)" — repeated in the 2026-07-16 parking-lot wall-calendar note and in jAIne's framing — describes a system that does not exist. Forge/Garden/Keep/Hall live only in the avatar-art roster categories (avatar-review.tsx, itself flagged dead/leftover) and in starter-quest categories (starter-quests.ts); neither is a stored member trait, neither drives any color. What actually colors members is memberColor() in src/lib/calendar-colors.ts: name-override for the four core folk, else stored profiles.color, else a deterministic hash into an 8-hue jewel-tone palette. Same visual outcome intended, correct mechanism. Already wired end-to-end into the calendar (month-grid dots, day-list pills, EventDetail accent) and, as of 2026-07-17, the wall's event pills.
+REPLACES: The "class color" framing in the 2026-07-16 wall-calendar parking-lot note.
+STATUS: LOCKED
 ---
 
 DECISION: The roster / switch-picker "no members" bug was a missing Data-API GRANT on the live DB — not a code defect. Live-schema drift is now a NAMED, REPEATING failure mode: when the repo is provably clean and the app still breaks, drift is the FIRST suspect, not the last.
