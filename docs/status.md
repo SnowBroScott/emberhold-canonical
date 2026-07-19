@@ -1,11 +1,11 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-07-18** — *doc-protocol repair, a ledger cleanup, and the wall's v1 commit capstone.* Opened by catching that 07-17's botched wrap had spawned an over-correction — a "Scott sets every status" rule + a compliance checkpoint — that mistook sloppiness for the cure and would have stripped jAIne's judgment from the model. Verified by live reconciliation that the poison **never reached canon** (the addendum + START-HERE were inert scratch, never committed); restored the model (jAIne sets statuses as reasoned judgment out loud, Scott overrules) and committed the catch-up — the six 07-17 decisions, plus the sync-to-origin rule folded into `session-protocol`. Then a live defect: **SnowDad's Vault spendable read 0** despite 106 lifetime. Bisected against Cade/May (both correct) → isolated to SnowDad, not global, not adults-as-a-class. Root cause **debit-side, not phantom**: three June *test* self-redemptions (total 150) exceeded current earnings (106), and `member_spendable` clamps to 0 — the quests that funded them were pruned during testing, orphaning the redemptions. Cleaned up (3 redemption rows + 1 `activity_log` row deleted; spendable reconciled to 106). Two real findings fell out (see the 07-18 resolved section). Avatar **cut-method solved** — fill corners `#1A110B`, the app clips to a circle, no cutting; batch script pending casting. And the capstone: **the wall's adult-verified turn-in commit** — conceptualized identity-bound, then walked back to adult-verify once recon showed identity-bound attribution is a data-layer P4×L8 build; a frontend-only Lovable build is running now. That takes the wall to **v1 for own-hold — pending the commit glass-verify.**
+Last session: **2026-07-18 (evening)** — *avatar transport shipped, and a three-item QA burn-down.* The long-tabled Gate-A roster item came off the shelf and landed end-to-end: 48-avatar roster live, tier-tagged free/founder (16/32), founder gate built and dormant, re-forge run on the glass. Around it: three QA fixes shipped (Ranks per-member completed-quest expand, phone + wall; calendar month view now shows the whole visible month past + future, phone + wall; the "hero" vocab leak in the wall's claim picker killed). One QA item (#5 "hold admin role") reclassified as distribution-era support tooling, not a home-hold fix. One live defect found and fixed twice over: invalidated avatar picks were rendering their raw id as large text (the "ugly number") — a render-fallback ("the floor") is building at close to render a clean placeholder instead. Two real open findings surfaced (re-forge reach across the 13; render fallback pending glass-verify) plus four new P4×L8 audit inputs from the gate's new DB objects.
 
-Last session (prior): **2026-07-17** — *came in to "finish the wall display"; left with the wall feature-complete for Scott's own hold.* The full interaction layer got built in one long session: the display-mode on-ramp (profile entry → adult PIN → agenda/calendar launch selector), idle drift-home to a named resting state, responsive avatar tiles, an exit affordance (hold lockup → PIN → out), the **complete propose tier** (claim a bounty · turn in a quest · request a reward), the Vault relocated into the member popup (affordable-only, audience-filtered, motivating empty state), a decoupled ~10s data poll, a seamless feed ticker, and tappable view-only calendar event detail with member-color pills. **The membrane held through all of it** — the wall proposes; it never mints, spends, approves, or edits. Two recons paid rent: one confirmed on-behalf claim/turn-in needs no new data path (the parent-role RLS exemption already covers it), one caught that the canonical docs still described the wall as *fenced / never built* — the docs had diverged from the live codebase on a load-bearing surface (a fresh Code clone was 78 commits behind origin; see the local-clone rule, LOCKED in decisions.md 2026-07-17). *Close-out note: the first wrap attempt was sloppy (truncated status, wrong decisions format) and was rolled back. A follow-on over-correction — a "Scott sets every status" rule plus a compliance checkpoint — mistook the disease (sloppiness) for the cure (stripping jAIne's judgment) and was discarded, never canon. Resolved 2026-07-18: the six 07-17 decisions are committed with statuses set (jAIne's call, as always), and the sync-to-origin rule is folded into session-protocol.*
+Last session (prior): **2026-07-18 (day)** — *doc-protocol repair, a ledger cleanup, and the wall's v1 commit capstone.* Opened by catching that 07-17's botched wrap had spawned an over-correction — a "Scott sets every status" rule + a compliance checkpoint — that mistook sloppiness for the cure and would have stripped jAIne's judgment from the model. Verified by live reconciliation that the poison never reached canon; restored the model and committed the catch-up (the six 07-17 decisions + the sync-to-origin rule folded into session-protocol). Then a live defect: SnowDad's Vault spendable read 0 despite 106 lifetime — root-caused to debit-side test cruft (three June self-redemptions of 150 > 106 earnings, clamped to 0), cleaned up. And the capstone: the wall's adult-verified turn-in commit, walked back from identity-bound to adult-verify once recon showed identity-bound attribution is a data-layer P4×L8 build.
 
-Last session (prior): **2026-07-16** — *came in to close pending-verifies; the discipline earned its rent inside five minutes.* Session opened by eyeballing `b31c92c` on the live app per the "log lies until a human uses it" rule — and the eyeball caught a **roster regression on the real family board** (The W Drapers): board Roster and switch picker showed "No one in the household yet" while Ranks correctly showed all four members. Ran it as a **read-only diagnosis** (Code, auto-off, Sonnet): refuted the working-tree theory, confirmed the data is clean (all four profiles `status='active'` via a live read), and confirmed jAIne's hypothesized NULL security asymmetry does NOT exist (both paths fail-closed). Real root cause found by **Lovable, live**: the `public` tables carried **zero Data-API grants for `authenticated`** — every signed-in query died at the permission layer before RLS. Grants restored across all 14 tables; roster now populates live. **The fourth live-schema-drift instance** — the defect was in DB state no migration file describes. Separately: shipped the **pending-member routing fix** (`28ab40d`) from the prior turn's brief, and **resolved "all quiet at the hold"** as working-as-intended, not a bug. Through-line: the session-open "eyeball it first" discipline caught a live bug on the real family board *before* any new work started, and trust-the-lane (Lovable had live-DB eyes Code and jAIne didn't) found what neither could.
+Last session (prior): **2026-07-17** — *came in to "finish the wall display"; left with the wall feature-complete for Scott's own hold.* Full interaction layer built in one session (on-ramp, idle drift-home, responsive tiles, exit affordance, the complete propose tier, the Vault-in-popup, ~10s poll, seamless ticker, tappable calendar detail). The membrane held throughout — the wall proposes; it never mints, spends, approves, or edits.
 
 Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PARKED · 🔵 VALIDATED (no build needed)
 
@@ -13,15 +13,15 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## Where the platform is
 
-**Structurally complete, plus an ambient wall for the home hold.** Engine, economy, Vault (dual-mode both roles + adult-only rail), Campaigns, Calendar, Briefing/Hub seed, activity-feed spine, Pip onboarding, Lists, invite/join, notifications, PIN recovery, the full admit-on-approval join flow, the hardened pending→admission routing path — **and now the wall/display mode** (feature-complete for own-hold, see below). A complete product loop is live at theemberhold.com.
+**Structurally complete, plus an ambient wall for the home hold, plus a live 48-avatar roster with a dormant founder gate.** Engine, economy, Vault (dual-mode both roles + adult-only rail), Campaigns, Calendar, Briefing/Hub seed, activity-feed spine, Pip onboarding, Lists, invite/join, notifications, PIN recovery, the full admit-on-approval join flow, the wall/display mode (v1 own-hold), and now the tiered avatar system. A complete product loop is live at theemberhold.com.
 
 **What's missing is not a module.** Two structural gaps:
 
-> **Security — one gate left before distribution.** #5 and #8 patched by a June migration; #6 (kid self-approval) CLOSED (blocked by `a_enforce_quest_update_authority`); #1 (join-code bypass, CRITICAL) fully CLOSED — data layer, frontend, and live-DB verification, plus a separate escalation the audit caught. The remaining gate is the **P4×L8 tenant-isolation audit** (the mortal-peril item). *Caveats carried forward: the 07-14 data layer was verified **secure** by the live audit, but functional bugs still shipped inside it — verified-secure ≠ verified-functional. And 2026-07-16 added a fourth live-schema-drift instance (a missing Data-API grant) — the migration files do not fully describe the live DB, so the audit reads the live grant surface, not the repo. **New 2026-07-17 input:** the wall added a second bespoke SECURITY DEFINER write (`wall_request_redemption`) — a named audit line item (see the wall section and critical path #1).*
+> **Security — one gate left before distribution.** #1 (join-code bypass, CRITICAL) fully CLOSED; #5, #6, #8 all closed. The remaining gate is the **P4×L8 tenant-isolation audit** (the mortal-peril item). *Caveats carried forward: verified-secure ≠ verified-functional; live-schema-drift means the audit reads the live grant surface, not the repo. New inputs from the wall (`wall_request_redemption`, commit-attribution class) and now from the avatar gate (see below).*
 
-> **Onboarding ends at setup, not at activation.** A new household lands on a board with no doorway to the first quest. Gated behind distribution. *(Distinct from the "all quiet" line, which is correct — see below.)*
+> **Onboarding ends at setup, not at activation.** A new household lands on a board with no doorway to the first quest. Gated behind distribution.
 
-See `north-star.md` for the gate ladder. **Ladder shift (2026-07-17):** display/wall mode was fenced as a post-strangers retention feature. It is now **built for Scott's own hold** as the sanctioned fenced-delight morale pull-forward (needs no security gate — it's for the home hold, not strangers). It remains fenced *for distribution* — the strangers-grade version still wants deployment hardening and the P4×L8 pass on its new write surface.
+See `north-star.md` for the gate ladder.
 
 ---
 
@@ -29,199 +29,156 @@ See `north-star.md` for the gate ladder. **Ladder shift (2026-07-17):** display/
 
 | # | Item | Blocks |
 |---|---|---|
-| **1** | **P4×L8 — the tenant-isolation audit (Workstream 1).** Opus, auto-accept OFF. The mortal-peril item and the last security gate before distribution. Hold Alpha exists — run it as an attack. Free inputs banked: the 07-15 live-catalog dump + the 25 Supabase linter warnings + the 07-16 Data-API grant surface (a hole that silently DENIED; confirm no sibling hole silently ALLOWS) + (07-17) `wall_request_redemption`, a SECURITY DEFINER RPC — confirm it enforces household scope on the picked member_id + **(new 07-18) commit-decider attribution — `approve_redemption` hardcodes `decided_by = auth.uid()` (session-locked) and quest-approval's `approved_by` is a client-asserted field with NO server-side tie to a proof event (correct on the phone only by accident of one-session-one-adult). Audit the commit-attribution surface as a class.** First: confirm the adversarial harness can even reach Lovable Cloud's DB from outside (see parking-lot open decision) — if not, the audit degrades to policy-reading. | Distribution. Gate B. |
-| **2** | **Pip first-run onboarding screens** + empty-board doorway fix | Gate D. Activation. Day-8 retention. *Gated behind #1 — it's for strangers, and strangers come after the door locks.* |
-| **3** | **Auth email branding + deliverability** | First artifact a stranger receives; lands in spam. Thirteen people have already received it. |
-| **4** | **Avatar transport** — generation ✅ · slice ❌ (redo by hand) · upload + picker + split remain. **Tabled by Scott** — on the board, not a priority; do not push it, note it. | The Guildhall, the delight layer |
-| **5** | **Founding Guildhall build** (Stripe + webhook + entitlement) | Money |
+| **1** | **P4×L8 — the tenant-isolation audit (Workstream 1).** Opus, auto-accept OFF. The mortal-peril item and the last security gate before distribution. Hold Alpha exists — run it as an attack. Banked inputs: 07-15 live-catalog dump · 25 linter warnings · 07-16 Data-API grant surface · `wall_request_redemption` household-scope · commit-attribution class (`approved_by` client-asserted, `decided_by` session-locked) · **(new 07-18 evening) the founder-gate DB objects — see the four inputs below.** First: confirm the adversarial harness can reach Lovable Cloud's DB from outside (parking-lot open decision) — if not, the audit degrades to policy-reading. | Distribution. Gate B. |
+| **2** | **Pip first-run onboarding screens** + empty-board doorway fix | Gate D. Activation. *Gated behind #1.* |
+| **3** | **Auth email branding + deliverability** | First artifact a stranger receives; lands in spam. Thirteen already received it. |
+| **4** | **Avatar transport — ✅ SHIPPED 2026-07-18 (evening).** Roster live, tiered, gate dormant, re-forge run. Remaining avatar work is downstream: the paywall flip (two data changes, when Scott's ready) and Stripe checkout (= #5 below). | — |
+| **5** | **Founding Guildhall build** (Stripe + webhook + entitlement write) | Money. The gate is the cosmetic half; this is the "a stranger can actually buy in" half. Decoupled from the gate on purpose. |
 
-**Next-action fork (Scott's call):** the honest sequence is **P4×L8 first** — it's the gate, and tutorial/avatars all sit downstream of the distribution it unblocks. The wall is now *built* for the home hold, so the old "fun morale pull-forward" slot it occupied is spent. The remaining contained win off the Opus path is **the auth email** — lower stakes, no Opus window, real users on the wrong end of it right now. See parking-lot for the strangers-grade wall's remaining dependencies.
+**Next-action fork (Scott's call):** honest sequence remains **P4×L8 first** — it's the gate, everything downstream sits behind the distribution it unblocks. The contained non-Opus win is still **the auth email**.
 
 ---
 
-## 🟢 THE WALL / DISPLAY MODE — v1 FOR OWN-HOLD (propose tier 2026-07-17 · adult-verified turn-in commit 2026-07-18 🟡)
+## 🟢 SHIPPED / RESOLVED — 2026-07-18 (evening)
 
-A single new file: `src/routes/_authenticated/wall.tsx`. Mountable ambient display; ~90% reuse of existing surfaces. **Trust model (2026-07-17 propose-only → 2026-07-18 + adult-verified commit):** the wall proposes freely; as of the v1 commit build an adult present at the wall can also commit a quest turn-in (the mint) behind a **server-verified adult PIN**. The PIN proves *a committer is present* (kids have none), NOT identity — `approved_by` records the session-owner adult, honest under adult-verify. Provable per-adult attribution is explicitly deferred to the P4×L8 commit-attribution hardening. **Spend/redemption-commit stays OFF the wall** (no pending-redemptions surface exists yet). Full trust model + the RPCs live in decisions.md (2026-07-17 + 2026-07-18, committed).
+**Avatar transport — shipped end-to-end.**
+- ✅ 48-roster (`forge/garden/keep/hall` 01–12) copied into `src/assets/avatars/`, committed (`Add 48-avatar roster…`), pushed, GitHub→Lovable sync confirmed. Old `avatar-01…21` left in place (untouched, not deleted — still referenced by `avatar-review.tsx`).
+- ✅ Catalog rewritten to the 48; every avatar tier-tagged **free/founder** per the 16/32 split (4 free + 8 founder per class).
+- ✅ `families.is_founder` boolean added (default false, none backfilled). Household-level entitlement; never per-member (honors the seam rule).
+- ✅ Global gate stored as a **DB value** — `public.system_flags.founder_gate_enabled` (seeded false), read via `founder_gate_enabled()`. **The flip is a one-line UPDATE, not a build.** Household read via `my_household_is_founder()`.
+- ✅ Picker shows all 48; founder tiles render locked (dim + ember-lit lock badge, disabled) ONLY when gate ON and household not founder. Gate OFF today → nothing locked, all selectable. Locked-state UI built dormant so the future flip Just Works.
+- ✅ **Re-forge:** 28/28 existing profiles invalidated (26 old `hero:NN`, 2 non-hero) → routed to `/reforge-avatar` on next authenticated nav, single-prompt pick with an on-theme "re-forged" line. **Scott ran it live** — forced to re-pick on refresh, then set the rest of his hold manually.
+- ✅ Roster art verified on the glass (Scott's eyes): all four class columns read correctly, the wide luminosity band cohered (chibi → painterly on one floor). `keep-10` (free) is the lowest-quality export (near-black) — Scott running with it; rework only if it fails on real glass.
 
-**✅ Built + human-verified this session (Scott's eyes on every surface — jAIne cannot see):**
-- ✅ **On-ramp** — profile-screen Display Mode entry (adult-gated) → adult PIN → launch selector (Agenda / Calendar, ephemeral per-launch choice, persisted nowhere) → wall mounts in the chosen resting state.
-- ✅ **Idle drift-home** — any deviation (zone expanded, view toggled) decays back to the named resting config after a quiet idle (~60s, tunable). This is what makes it a *display*, not a left-on tablet.
-- ✅ **Responsive tiles** — "Who's on the Hearth" tiles scale to container; hold together down to 4:3 ~1024×768; scaling freed room for member NAMES to show, not just faces.
-- ✅ **Exit affordance** — hold lockup (top-left) → "Leave display mode?" → adult PIN → out. Mirror of entry.
-- ✅ **Propose tier — claim + turn-in.** From Open Bounties: claim routes through a "Who's claiming this?" member picker (the banner has no tile-tap to source identity, so the pick IS the identity step — Law #1). Turn-in flows through the tapped tile (identity already established) and submits to the existing adult queue. No new data path — the parent-role RLS exemption already permits on-behalf claim/submit (07-17 recon).
-- ✅ **Propose tier — redemption.** Vault lives inside the member popup (behind the tile tap): shows member's spendable balance + a Vault button that swaps the popup body to that member's rewards. **Affordable-only** (member_spendable ≥ cost), **audience-filtered** (adult/kid via `reward.audience`), **motivating empty state** ("No rewards in reach yet — complete a quest…"). Redeeming calls `wall_request_redemption` → PENDING request in the adult queue → **embers only leave on adult approval** (no wall debit; the existing flow debits only via `approve_redemption`).
-- ✅ **~10s interval poll**, decoupled from the ticker. Silent in-place refresh; never remounts the ticker; open popups survive a refresh. NOT realtime/websocket.
-- ✅ **Seamless feed ticker** — doubled strip, animates to one copy's width (geometry fix: the earlier `min-w-full` broke the −50% relationship). No flicker, no clipped first/last item.
-- ✅ **Calendar event detail + color pills** — wall event pills are now tappable → open the existing `EventDetail` sheet in place; pills carry `memberColor()` (identity color, NOT a "class" system — that was a myth; correct mechanism is `memberColor()` in `src/lib/calendar-colors.ts`). **View-only on the wall:** Edit/Delete suppressed (canEdit() is always true under the shared parent session; destructive edits must not sit on an open kiosk).
+**QA burn-down — three shipped, verified on the glass:**
+- ✅ **Ranks: expand a member → their completed quests.** Phone + wall; shared component carried both in one cycle. Read-only. *(QA #1)*
+- ✅ **Calendar month view shows the whole visible month, past + future.** Phone + wall; shared query, one fix covered both. Was clamping today-forward. *(QA #3)*
+- ✅ **Wall "hero" vocab leak killed.** Off-vocabulary word removed from the wall's open-bounty claim picker; copy-only, identifiers untouched. *(QA #2)*
 
-- 🟡 **Adult-verified turn-in commit (v1 — building 2026-07-18, glass test pending).** In the member popup's awaiting-approval list, an Approve control opens a PIN prompt (reuses the exit-PIN pattern); a correct **session-owner** adult PIN commits the approval and mints. Adult-verify, not identity-verify: the PIN proves a committer is physically present (kids have none), not *which* adult — `approved_by` = session owner, overriding the cosmetic active-member default (which would wrongly stamp the tapped kid as approver). Frontend-only: reuses `verify_profile_pin` (server-side, identity-scoped) + the existing approval path; **zero data-layer change.** Building in Lovable now.
-
-**🟡 The one loop still worth walking on real glass:** the **full end-to-end membrane loop** — claim → turn-in → **approve on a SEPARATE device** → confirm the wall reflects it AND that the wall never offered an approve/mint/spend/edit control at any point. Individual pieces are verified; the single uninterrupted round-trip on the mounted iPad is the honest last check. Not blocking.
-
-**🅿️ Still fenced for the DISTRIBUTION-grade wall:**
-- Deployment on the real iPad mini — Safari version, PWA display-mode behavior, screen-sleep (Guided Access / never-sleep + dock), 4:3 ~1024×768. Real, deferred.
-- P4×L8 pass on `wall_request_redemption` (household-scope check) — see critical path #1.
-- Favorites on the wall — deferred to per-profile persistence (the wall's Vault is affordable-only precisely because per-member favorites can't be read from one shared login's localStorage). The empty-state message becomes a two-case branch once favorites exist. See parking-lot.
+**QA #5 reclassified** — "hold admin role" clarified as a cross-hold super-admin / tier-2 support role (reach into a family's hold to fix members/events/feed). Cross-tenant → distribution-era (Gate C–E), not a home-hold QA item. Residual ambiguity flagged (in-hold admin tier vs cross-hold super-admin are different builds); Scott to bring concrete examples. Parked. See `decisions.md`.
 
 ---
 
 ## 🟡 PENDING VERIFY
 
-- 🟡 **Routing fix (`28ab40d`) — live repro.** Sign out from a pending account's waiting screen, sign back in, confirm you land on the waiting screen (NOT the setup form) with a clean single-entry history; confirm the waiting screen auto-advances into the app the moment a parent admits (no manual refresh/relogin). Code traced and closed it mechanically and confirmed the backend seam (a pending user re-calling `complete_household_setup` hits the reconcile branch, which ignores caller params and can't escalate or hop households — no P4×L8 finding). A green build isn't confirmation; needs the human repro.
-- 🟡 **Recurrence chip legibility.** Anchors are invisible — a kid sees "MONTHLY" with no hint it means the 1st. `RECURRENCE_LABEL` enrichment ("Weekly · Mon" / "Monthly · 1st") scoped and skipped (exceeds one line). Parking-lot NEXT.
+- 🟡 **Avatar render fallback ("the floor") — building at close.** Frontend-only: any unresolved/invalid avatar pick renders a clean ember-lit placeholder, NEVER the raw key. Fixes the confirmed ugly-number render. **Glass test:** pull up a not-yet-re-forged member, confirm a clean placeholder not a number, and check the **wall** specifically (always-on surface where it was worst). Report was to list every render site touched + whether they share one fallback path.
+- 🟡 **Founder tier-tag verification needs a gate-on moment.** With the gate OFF you cannot see free vs founder — all look selectable. The ONLY way to confirm the 16/32 tagging landed is to briefly flip the gate ON, confirm exactly **32 lock / 16 open**, flip back OFF. A mis-tag is a silent revenue leak or a locked-out freebie. Not urgent; can't be done gate-off.
+- 🟡 **Routing fix (`28ab40d`) — live repro.** Sign out from a pending account's waiting screen, sign back in, confirm you land on the waiting screen (not setup) and auto-advance on admission.
+- 🟡 **Recurrence chip legibility.** `RECURRENCE_LABEL` enrichment ("Weekly · Mon" / "Monthly · 1st") scoped, skipped (exceeds one line). Parking-lot NEXT.
 - 🟡 **Lists collapsible sections** (`fb6aa99`) — landed, not yet exercised across a full session.
-- 🟡 **Cross-device / phone-only signup** — whole confirmation flow on ONE device, cold. Still unproven on fixed code.
+- 🟡 **Cross-device / phone-only signup** — whole confirmation flow on ONE device, cold. Still unproven.
 - 🟡 **Phaeaz cold-account retest** — open since the hiatus.
 - 🟡 **Min password length 6→8; re-auth on password change ON** — verify persisted.
-- 🟡 **Wall adult-verified turn-in commit (building 2026-07-18).** Glass test: in a member popup, an awaiting-approval quest shows an Approve control → tapping it demands a PIN → a wrong / kid attempt (no adult PIN) mints nothing → a correct **session-owner** PIN commits and the balance moves → confirm `approved_by` lands as the session-owner adult, NOT the tapped tile → propose tier + exit-PIN unchanged. A green build isn't confirmation; needs the human repro.
-- 🟡 **Wall — full end-to-end membrane loop** (see the wall section) — claim → turn-in → approve on a separate device; confirm the wall never exposed a commit control it shouldn't (spend/redemption/edit).
+- 🟡 **Wall adult-verified turn-in commit** (built 07-18 day). Glass test: awaiting-approval quest → Approve → PIN → wrong/kid attempt mints nothing → correct session-owner PIN commits and balance moves → `approved_by` lands as session-owner, not the tapped tile.
+- 🟡 **Wall — full end-to-end membrane loop** — claim → turn-in → approve on a separate device; confirm the wall never exposed a commit control it shouldn't.
+
+---
+
+## ⬜ OPEN FINDINGS — from the avatar session
+
+- ⬜ **Re-forge reach across the 13 households (real defect, later fix).** Re-forge only prompts the member who logs in; other members' picks are invalidated but nobody re-prompts them — they render the fallback placeholder (once the floor ships) until an adult manually fixes each. Invisible from the owner seat (Scott speed-fixed all four). A rough first impression when this rolls to testers. Options: prompt each member on next active session, OR a hold-owner "N hearthmates need re-forging" nudge. **A calm, later decision — matters when re-forge reaches the 13, not before.** The floor (above) defuses the ugliness in the meantime.
 
 ---
 
 ## ⬜ ONE BOARD BUG STILL OPEN (surfaced 2026-07-14)
 
-- ⬜ **Feed verb drift.** A newly-posted quest shows "New quest: …"; the 7/12 vocabulary bundle standardized on "QUEST POSTED." A surface that bundle didn't reach. Verify and align. *(Moved to parking-lot polish burn-down; kept here as the last of the pair.)*
-
-> **Resolved 2026-07-16 — the "empty-board eulogy" is NOT a bug.** "ALL QUIET AT THE HOLD" reports the adult's **action queue** ("nothing needs your seal"), not household inactivity. Open bounties are posted work waiting for a kid; a logged completion needs no seal. On the boards where it was flagged, the queue was genuinely empty, so the line was true. See `decisions.md`. *(The separate new-household **doorway** gap — an empty board needs "post your first quest with +" — is real, LOCKED 2026-07-12, and gated behind distribution. Different problem, same screen.)*
+- ⬜ **Feed verb drift.** A newly-posted quest shows "New quest: …"; the 7/12 bundle standardized on "QUEST POSTED." A surface that bundle didn't reach. Verify and align.
 
 ---
 
-## 🟢 SHIPPED / RESOLVED — 2026-07-18
+## 🟢 SHIPPED — 2026-07-18 (day)
 
-**Doc-protocol repair + catch-up committed.** 07-17's botched wrap had spawned an over-correction ("Scott sets every status" + a compliance checkpoint) that misdiagnosed sloppiness as the disease and would have stripped jAIne's status-setting judgment. Reconciled live: the over-correction lived only in uncommitted scratch (the addendum + `START-HERE`), never in canon. Restored the model, committed the six 07-17 decisions, folded the sync-to-origin rule into `session-protocol`. The lesson kept from 07-17 is "don't be sloppy" (fetch live in full, don't truncate, match format, state the spec call) — NOT "jAIne can't set statuses."
+**Doc-protocol repair + catch-up committed.** 07-17's over-correction ("Scott sets every status" + a compliance checkpoint) reconciled as never-canon; model restored (jAIne sets statuses as judgment, Scott overrules); six 07-17 decisions committed; sync-to-origin rule folded into `session-protocol`.
 
-**SnowDad Vault spendable = 0 — diagnosed & cleaned up (data, not code).**
-- ✅ Symptom: SnowDad read 0 spendable against 106 lifetime; Ranks looked healthy (Ranks reads `family_xp`, the lifetime view — same view that masked the 07-16 roster hole; **Ranks-looks-fine tells us nothing about the wallet**). Bisected against Cade (30, correct) and May (350, correct) → isolated to SnowDad, not global, not adults-as-a-class.
-- ✅ Root cause **debit-side, not phantom**: `member_spendable = GREATEST(approved_earnings − approved_redemptions, 0)`. SnowDad had three June self-redemptions (Skip a chore 75, Extra screen time 25, Pick dinner 50 = 150) exceeding 106 earnings → clamped to 0. Test cruft: the funding quests were pruned during testing, orphaning the redemptions.
-- ✅ Cleanup ran (Lovable, confirm-before-delete, auto-off): 3 redemption rows + 1 orphaned `activity_log` row deleted; SnowDad spendable reconciled to 106 = lifetime; May/Cade unchanged (blast-radius check clean).
+**SnowDad Vault spendable = 0 — diagnosed & cleaned (data, not code).** Debit-side test cruft: three June self-redemptions (150) > 106 earnings → `member_spendable` clamped to 0. 3 redemption rows + 1 orphaned `activity_log` row deleted; reconciled to 106. Two real findings logged (below).
 
-**Two real findings surfaced by the cleanup (logged, not yet fixed — see decisions.md):**
-- ⬜ **`parent_self_redeem` doesn't write `activity_log` — feed blind spot.** Two of SnowDad's three redemptions had no feed row; the one that did was written by a later path and keyed `object_id` to the *reward* id, not the redemption. The redemption→feed path has no single correct write. On the **wall** the feed ticker is load-bearing, so this is a real gap, not cosmetic. NOTED.
-- ⬜ **`member_spendable` silently clamps overdraw to 0** (P4×L8 input). 150 spent against 106 was allowed and hidden. Open question: did the redemption pre-check run, or does `parent_self_redeem` skip the balance gate? A parent isn't a threat to their own hold, but "the spend path doesn't enforce the balance" is audit-grade. NOTED.
+**Two findings from the cleanup (logged, not yet fixed):**
+- ⬜ **`parent_self_redeem` doesn't write `activity_log` — feed blind spot.** On the wall the ticker is load-bearing, so this is real. NOTED.
+- ⬜ **`member_spendable` silently clamps overdraw to 0** (P4×L8 input). 150 spent against 106 was allowed and hidden. NOTED.
 
-**Wall adult-verified turn-in commit — build running (🟡 pending glass-verify).** See the wall section + PENDING VERIFY. Conceptual arc this session: identity-bound PIN-on-mint → recon (`verify_profile_pin` is server-side AND identity-scoped ✓, but decider attribution is a data-layer P4×L8 build) → walked back to **adult-verify** → frontend-only Lovable build. Not shipped until Scott runs the glass test.
-
----
-
-## 🟢 SHIPPED — 2026-07-16 (roster grant fix + routing)
-
-**Roster / switch-picker "no members" — root-caused & fixed (Lovable, live)**
-- ✅ Board Roster and profile switch picker showed empty for The W Drapers while Ranks showed all four. Root cause: `public` tables had **zero Data-API grants for `authenticated`** — every signed-in query rejected with `permission denied for table profiles` BEFORE RLS evaluated. Ranks survived because it reads the `family_xp` VIEW (predates the hole). Fixed: SELECT/INSERT/UPDATE/DELETE restored to `authenticated`, ALL to `service_role`, across all 14 tables; RLS still gates rows. Roster + picker now populate live with all four members.
-- ✅ **Fourth live-schema-drift instance** — defect lived in live DB state no migration describes (like `recurrence_day`, the `monthly` enum). Named rule logged: code provably clean + still broken = suspect drift FIRST. See `decisions.md`.
-- ✅ Diagnosis discipline held: three theories (NULL legacy rows / backfill drift / wrong-session) all died against a read-only Code diagnosis + a live data read + Scott's screenshots. `b31c92c` confirmed **innocent** of this bug — active rows pass an active filter.
-- ⬜ **P4×L8 input (new):** the grant surface is now a named audit line item — a hole that DENIED surfaced; confirm no sibling that ALLOWS. `current_family_id()` NULL-handling checked and confirmed fail-closed (no asymmetry). See `decisions.md`.
-
-**Pending→admission routing — fixed (`28ab40d`), 🟡 pending live repro**
-- ✅ A pending member on re-login was landing on the create/join setup form; the waiting screen was only reachable via browser Back (`[waiting] → [setup]` history). Cause: `signIn()` couldn't distinguish "no profile yet" from "pending admission" (the pending member's own row is RLS-hidden from themselves), so it fell to `finish-setup`; compounded by push-not-replace redirects.
-- ✅ Fixed: `signIn()` checks `get_pending_membership()` before falling to setup; a stage-level guard bounces off `finish-setup` to `/board` (replace) if the DB disagrees; both auth redirects now use `replace`; the waiting screen polls `get_pending_membership()` (~8s) and auto-advances via `router.invalidate()` on admission — killing the sign-out/sign-in loop. Join-flow toast now states the two-step gate ("Email verified. Now a parent needs to admit you…").
-- ✅ Security seam checked, nothing to log: a pending user re-calling `complete_household_setup` hits the reconcile branch, which ignores caller params — no escalation, no household hop.
-
-**"All quiet at the hold" — resolved as working-as-intended.** See the board-bug note above and `decisions.md`.
+**Wall adult-verified turn-in commit** — built (🟡 glass-verify pending, above).
 
 ---
 
 ## ⬜ OUTSTANDING — security & distribution
 
-- ⬜ **P4×L8 tenant-isolation audit** — see critical path #1. Confirm harness reachability first (parking-lot). Banked inputs: 07-15 live-catalog dump · 25 linter warnings · the Data-API grant surface (07-16) · **`wall_request_redemption` household-scope check (07-17).**
-- ⬜ **Auth email branding + deliverability.** Sender `no-reply@auth.lovable.cloud`; display name **`Family-Quest-Board`** (scaffolding, exists nowhere in the product). Lands in spam. Templates in Lovable Cloud → Emails. Custom sender: DNS at Porkbun (free) + SMTP (Resend free tier). ⚠️ *Inspect any NS-record request before pasting — delegation ≠ a TXT record.*
-- ⬜ **Service worker + app-shell cache** — no functional SW; makes "installable PWA" true instead of aspirational.
-- ⬜ **Backup posture.** Backend is Lovable Cloud; backups/PITR/export are Lovable's to grant. **No direct Supabase access — all backend routes through Lovable.** Code has a Git backup; **the data has none.** Gate B blocker. (See parking-lot open decision.)
-- ⬜ **Prod test-object cleanup.** `QA Parent` / `QA Joiner` / household `QA Verify Hold` — created **on the production backend** during 07-15 admit-flow testing (local dev points at the same DB as theemberhold.com — see parking-lot staging-DB decision). Plus older cruft: `Testi`, `testy`, `Daily test`, `iopuyiouh`, and orphaned auth users `scottydawg@gmail.com`, `scott.draper83+alpha@gmail.com`. *(2026-07-16 may have added a `+ca@gmail.com` pending/test account and the "Testies"/"Testicular" test hold during the routing repro — sweep those too.)* Data, not code. *(2026-07-18: SnowDad's three orphaned test redemptions swept as part of the spendable fix — and surfaced a data-hygiene pattern for the sweep: **deleting a quest does not clean up redemptions it funded**, so a dev account accrues debit cruft that clamps spendable. Reconcile, don't just delete.)*
+- ⬜ **P4×L8 tenant-isolation audit** — critical path #1. Confirm harness reachability first. Banked inputs list above.
+- ⬜ **NEW P4×L8 inputs — the founder-gate DB objects (gate is OFF, nothing on fire; log for the audit):**
+  - **`system_flags` WRITE access — confirm before the gate ever matters.** The build report covered read, not write. If an authenticated household user can UPDATE that table, a random user could flip the global paywall. Only `service_role` should write it.
+  - **`founder_gate_enabled()` grants EXECUTE to anon — likely over-broad.** Same pattern Scott revoked three weeks ago (over-broad anon EXECUTE). A logged-out user has no household and can't pick an avatar; probably tighten to authenticated.
+  - **Two new SECURITY DEFINER reads** — `founder_gate_enabled()`, `my_household_is_founder()` — confirm household scope where relevant.
+  - **`families.is_founder`** — confirm read/write scope; it's the entitlement Stripe will eventually write.
+- ⬜ **Auth email branding + deliverability.** Sender `no-reply@auth.lovable.cloud`; display name `Family-Quest-Board`. Lands in spam. Custom sender: DNS at Porkbun + SMTP (Resend). ⚠️ *Inspect any NS-record request before pasting.*
+- ⬜ **Service worker + app-shell cache** — makes "installable PWA" true.
+- ⬜ **Backup posture.** Data has no backup; Lovable's to grant. Gate B blocker.
+- ⬜ **Prod test-object cleanup.** `QA Parent` / `QA Joiner` / `QA Verify Hold`, older cruft, orphaned auth users, the `+ca@gmail.com` / "Testies" test hold. Data-hygiene pattern noted: **deleting a quest does not clean up redemptions it funded** — reconcile, don't just delete.
 
 ## ⬜ OUTSTANDING — ship-blocking debt
 
-- ⬜ **Avatar transport.** **Tabled by Scott.** Full scope in parking-lot: hand-cut roster, file drop (Haiku), rewrite `HERO_AVATARS`, land `Feast→Hall`, retire `avatar-review.tsx`, invalidate stale `hero:` picks (the re-forge migration), re-lock the free/paid split (the 16/24 math predates the 48-roster). Do not push; surface when Scott calls it.
-- ⬜ **Pip first-run onboarding screens** + the empty-board doorway fix. *Gated behind P4×L8.*
-- ⬜ **Vault favorites → real per-profile persistence** — currently `localStorage`. **Now doubly load-bearing:** the wall's affordable-only Vault deliberately defers favorites *because* localStorage can't serve per-member on a shared wall. Build as the phone-Vault's per-profile persistence job; the wall inherits it free. (On the wall it's an on-behalf write — likely a `wall_toggle_favorite` proxy, another SECURITY DEFINER surface / P4×L8 line. Build phone-first, not backwards through the wall.)
+- ⬜ **Pip first-run onboarding screens** + empty-board doorway fix. *Gated behind P4×L8.*
+- ⬜ **Vault favorites → real per-profile persistence** — currently `localStorage`. Doubly load-bearing (the wall's Vault is affordable-only because of this). Build phone-first; the wall inherits it. On the wall it's an on-behalf write (`wall_toggle_favorite`, another SECURITY DEFINER / P4×L8 line).
 - ⬜ **Quality — a rating with no consumer.** Direction LOCKED (signal, never an ember modifier). Consumer + kid-visibility open. Binds to the weekly recap.
+
+*(Avatar transport removed from this list — SHIPPED 2026-07-18 evening.)*
 
 ## ⬜ OUTSTANDING — polish
 
-- ⬜ **Feed verb drift** (see board bug above) · **Quick Add default EXPANDED on an empty board** · **`TITLE` → `QUEST TITLE`** on create · **Lists "5 OPEN · 348 DONE"** fossil counter · **Pip help discoverability** · **Pip install tutorial** · **Reward scarcity limits** · **Cheap Dim-tier starter reward** (*now also relevant to the wall's empty-Vault state — a reachable floor reward shrinks the empty case*) · **Yearly/monthly event recurrence** · **List suggestions in onboarding** · **Wall ticker speed** (tune-by-eye legibility knob, not a rebuild) · **Wall calendar event-pill member color: dot-vs-full-tint** (both-ways look when revisited).
+- ⬜ **Feed verb drift** (board bug above) · **Quick Add default EXPANDED on empty board** · **`TITLE` → `QUEST TITLE`** on create · **Lists "5 OPEN · 348 DONE"** fossil counter · **Pip help discoverability** · **Pip install tutorial** · **Reward scarcity limits** · **Cheap Dim-tier starter reward** (shrinks the wall's empty-Vault case) · **Yearly/monthly event recurrence** · **Multi-day calendar events** (QA #7 — parked, data-layer build) · **Calendar alerts** (QA #6 — needs push-vs-in-app decision; push is fenced) · **List suggestions in onboarding** · **Wall ticker speed** · **Wall calendar event-pill member color: dot-vs-full-tint**.
 
 ---
 
 ## 🅿️ PARKED
 
-See `parking-lot.md`. **Favorites on the wall** (two-case empty-state branch, awaits per-profile persistence) · role-label retirement — "Parent/Kid," esp. "Kid" (new 07-16) · #8b admin-reporting · kid-vs-kid impersonation · kid-auth (declined) · photo avatars · cosmetic drop #2 (the roster surplus) · Capacitor · flat/peer holds · recurrence chip legibility · **the "how Scott & jAIne work" collaboration profile** (Scott's own Claude instructions/profile — a sober-daylight artifact, deliberately its own session, NOT a project doc).
+See `parking-lot.md`. **QA #5 super-admin / tier-2 support role** (new 07-18) · **Re-forge reach across the 13** (new 07-18) · Favorites on the wall · role-label retirement ("Parent/Kid," esp. "Kid") · #8b admin-reporting · kid-vs-kid impersonation · kid-auth (declined) · photo avatars · cosmetic drop #2 (the roster surplus) · Capacitor · flat/peer holds · recurrence chip legibility · the "how Scott & jAIne work" collaboration profile.
 
 ---
 
 ## 🔴 WALK-UP TRUST BOUNDARY — recon on record (2026-07-15, extended 2026-07-17)
 
-Switching into a PIN-less adult profile **hard-gates** correctly (session never fires ahead of PIN-set success); Cancel returns to the picker (no bypass). **But** the "active member" switch is **cosmetic, not a security boundary** — on a shared device signed into a parent's account, physical possession = parent authority, so a kid holding the unlocked device can set/reset an adult PIN (the server correctly sees a parent session). This is the walk-up kiosk model working as designed, consistent with the 2026-07-10 kid-auth DECLINED decision. **The wall (2026-07-17) is this boundary applied to a display:** cosmetic member tiles on one shared parent session, propose actions unguarded, commit actions behind the real adult PIN; `wall_request_redemption` is logged as a live P4×L8 input for the distribution-grade version. Accepted for household use. See `decisions.md` (NOTED, revisit trigger = P4×L8; plus the 2026-07-17 wall trust-model + RPC entries, committed).
+Switching into a PIN-less adult profile hard-gates correctly. The "active member" switch is cosmetic, not a security boundary — physical possession of an unlocked parent session = parent authority. The wall applies this to a display: cosmetic tiles on one shared parent session, propose actions unguarded, commit actions behind the real adult PIN. Accepted for household use. See `decisions.md` (NOTED, revisit trigger = P4×L8).
 
 ---
 
-## 🔵 THE BUILD MODEL — holding, stress-tested again
+## 🔵 THE BUILD MODEL — holding
 
-**Claude Code diagnosis + Lovable live-DB fix, both proven.** 2026-07-16 exercised the full split cleanly: Code ran a read-only diagnosis (auto-off, Sonnet), refused to guess the data it couldn't see, and handed back the one query that would settle it — then Lovable, the only lane with live-DB eyes, found the grant hole neither Code nor jAIne could see from the repo. **2026-07-17 added two more proofs:** recon-first before the wall's claim/turn-in build confirmed no new data path was needed (saved a wrong build), and recon before the calendar build found event-detail + color already existed (turned a "build" into a small wire-up). Recon-first is the reason the wall session's builds mostly one-shot.
-
-- **Code's lane is TEXT** — anything verifiable by reading. Visual success criteria are Scott's. **Live DB state is Lovable's** — the repo doesn't contain it.
-- **The docs are not the live codebase — and can diverge silently.** The canonical docs described the wall as fenced/never-built while a full wall shipped in the live repo. The session-open "verify status against reality" step exists for exactly this; on 2026-07-17 it fired. **New corollary (LOCKED 2026-07-17, folded into session-protocol 2026-07-18):** Code recon syncs to origin/main first — a stale local clone is never authoritative (a fresh clone was 78 commits behind and initially concluded "wall never built").
-- **The live-DB audit method** (Lovable extracts/reads read-only, an independent agent judges) is the standard for data-layer verification. See `decisions.md`.
-- **Model routing:** Haiku (recon/greps/mechanical) · Sonnet (build + diagnosis with latitude) · **Opus (the tenant-isolation audit only).**
+- **Code's lane is TEXT** — anything verifiable by reading. Visual success criteria are Scott's. **Live DB state is Lovable's.**
+- **The docs are not the live codebase — and can diverge silently.** Session-open "verify status against reality" is the bilge pump. Code recon syncs to origin/main first (LOCKED 07-17, folded into session-protocol 07-18).
+- **Model routing:** Haiku (recon/mechanical) · Sonnet (build + diagnosis) · **Opus (the tenant-isolation audit only).**
 - **One writer at a time.** Data-layer / live-DB → Lovable; frontend → Code.
-- **Still unproven:** whether Lovable *runs* an externally-pushed migration (the avatar `hero:` reset remains the cheap first test — tabled).
 
 ---
 
 ## ✅ ADMIT-ON-APPROVAL — SHIPPED & VERIFIED (2026-07-15)
 
-Finding #1 (join-code bypass) is fully closed: data layer, frontend, live-DB verification, and one adjacent escalation, all done.
-
-**Data layer (07-14, Lovable):** enum `profile_status = ('active','pending')`; `current_family_id()` returns NULL for any non-active profile, so every family-scoped RLS policy denies a pending member by construction — one fail-closed chokepoint. Join creates a **pending** profile, `role='kid'` placeholder, self-selected role stored as advisory `requested_role`, **no `user_roles` row at join**. `enforce_profile_role_change` blocks non-parents from writing `status`/`role`.
-
-**The RPC contract:** `get_pending_membership()` (pending self, waiting screen) · `list_pending_members()` (parent) · `admit_pending_member(_profile_id, _confirmed_role)` (parent — confirmed role authoritative, request advisory) · `deny_pending_member(_profile_id)` (parent — deletes pending profile, auth user survives to retry).
-
-**✅ Verified live (07-15):** NULL-denial total across all 47 policies; trigger coverage sound; all four RPCs self-check parent + family scope; cross-household admit blocked cold. Method: Lovable dumped the live catalog read-only, jAIne judged independently.
-
-**✅ Frontend shipped (`08229d4`):** `ZonePending` in `Briefing.tsx` extended — parent-gated queue over `list_pending_members()`, Admit opens a role confirmation that **defaults to KID** (requested role shown as context only), Deny clears the row. Pending user sees a themed "waiting for admission" screen; denied-user routing fixed. *(2026-07-16 hardened the pending re-login path on top of this — see above.)*
-
-**✅ Admit loop verified end-to-end by Scott:** admitted a real pending member, kid-default held on an Adult request, waiting screen resolved, roster updated. Shipped — a human ran the loop.
+Finding #1 (join-code bypass) fully closed: data layer, frontend, live-DB verification, one adjacent escalation. Enum `profile_status = ('active','pending')`; `current_family_id()` returns NULL for non-active → every family-scoped RLS policy denies a pending member by construction. Full RPC contract + verification on record.
 
 ---
 
-## 🟢 SHIPPED — 2026-07-15 (the session's haul)
+## 🟢 SHIPPED — 2026-07-16 (roster grant fix + routing)
 
-**Live privilege-escalation in `complete_household_setup` — found & fixed.** Reconcile branch trusted caller-supplied `_role` → an active kid could mint a parent `user_roles` row. Fixed: reconcile sources role from the trigger-protected `profiles.role`. See `decisions.md`.
+Roster/switch-picker "no members" root-caused to zero Data-API grants for `authenticated` (fourth live-schema-drift instance); grants restored across 14 tables. Pending→admission routing fixed (`28ab40d`, 🟡 pending live repro). "All quiet at the hold" resolved working-as-intended.
 
-**Admit/deny enum crash — found & fixed.** `admit_pending_member` / `deny_pending_member` inserted `significance = 'notable'`; enum only permits `'routine' | 'milestone'`. Fixed to `'milestone'`. Shipped inside the 07-14 data layer the audit had passed — verified-secure ≠ verified-functional.
+## 🟢 SHIPPED — 2026-07-15
 
-**`recurrence_day` prod crash — found (real user) & fixed (`172a07f`).** Quest creation failed in prod ("Could not find the 'recurrence_day' column") — core loop down. The 07-14 frontend removal had been stashed, never committed. Applied the stash, committed, verified from outside, Scott reproduced-then-couldn't.
-
-**Pending-member roster leak + switch-target — found (Scott) & fixed (`b31c92c`).** Pending members rendered in the roster and switch picker. `useFamilyMembers` now selects `status` and filters `status='active'`. Verified from outside.
-
----
-
-## 🟡 (07-15 carry) — nothing outstanding; all four haul items verified.
-
----
-
-## ⬜ TWO BOARD BUGS (surfaced 2026-07-14) — now ONE
-
-- ~~**empty-board eulogy**~~ — RESOLVED 07-16 (working-as-intended). See above.
-- ⬜ **Feed verb drift** — still open. See the open-bug note above.
-
----
+Live privilege-escalation in `complete_household_setup` fixed. Admit/deny enum crash fixed. `recurrence_day` prod crash fixed (`172a07f`). Pending-member roster leak fixed (`b31c92c`).
 
 ## ✅ SHIPPED — 2026-07-14
 
-**Admit-on-approval data layer** (verified 07-15). **Hub open-bounty count** now matches the board via one shared predicate `isOpenBountyVisible()`. **Recurrence reworked to fixed calendar anchors** (weekly=Monday, monthly=the 1st, daily=tomorrow); `recurrence_day` dropped from DB/trigger — *frontend removal completed 07-15 (`172a07f`).*
+Admit-on-approval data layer. Hub open-bounty count unified. Recurrence reworked to fixed calendar anchors.
 
-## ✅ SHIPPED — 2026-07-12 (day)
+## ✅ SHIPPED — 2026-07-12
 
-Claude Code proven as a build lane (feed vocabulary bundle `c9069a6`; `vault.tsx` dedup `7132605`; Lists collapsible `fb6aa99`). Auth: email confirmation required, holding-state signup, password reset verified, min length 6→8. Hold Alpha built (second isolated household — the P4×L8 instrument). 13 real accounts confirmed, not four.
+Claude Code proven as a build lane. Auth hardening (email confirmation, holding-state signup, password reset, min length 6→8). Hold Alpha built (the P4×L8 instrument). 13 real accounts confirmed.
 
 ## ✅ SHIPPED — 2026-07-11
 
-Engine — daily respawn verified; lifecycle verified end-to-end. Vocabulary — `OPEN BOUNTY` chip killed; `XP` eliminated from install prompt. Render — safe-area inset fix. Avatars — roster regenerated (48 characters, 19 sheets, ~600px each). Claude Code stood up; **Lovable ↔ GitHub sync connected** — the codebase's first backup.
+Engine daily respawn verified. Vocabulary cleanup. Safe-area inset fix. Avatar roster regenerated (48 characters, 19 sheets). Lovable ↔ GitHub sync connected.
 
 ## ✅ SHIPPED — 2026-07-10
 
-Engine — adult auto-approval · daily board fix · edit-form parity. Copy — XP killed. Vault kid view (dual-mode) + adult view (three zones) + couples rail (`reward.audience`). Quest audience filter + badges. Security — over-broad anon EXECUTE grant revoked. Docs migrated to this repo; `north-star.md` created.
+Engine auto-approval + daily board fix + edit-form parity. XP killed. Vault kid/adult/couples-rail. Quest audience filter. Over-broad anon EXECUTE grant revoked. Docs migrated; `north-star.md` created.
 
 ## ✅ SHIPPED — earlier (foundation)
 
-- **2026-07-03** — Avatar Overhaul designed (Feast→Hall). *Rename never landed in code — still outstanding via avatar transport.*
-- **2026-06-29 → 06-26** — Lists v1, invite/deep-link, notifications, PIN recovery, collapsible picker · activity feed spine · monthly recurrence + audience · Campaigns, Calendar, Briefing · the Vault, PIN, Quest Log.
+- **2026-07-03** — Avatar Overhaul designed (Feast→Hall). *Rename confirmed still present on the live member editor 2026-07-18 — queued for the Haiku sweep.*
+- **2026-06-29 → 06-26** — Lists v1, invite/deep-link, notifications, PIN recovery, activity feed spine, monthly recurrence + audience, Campaigns, Calendar, Briefing, the Vault, PIN, Quest Log.
