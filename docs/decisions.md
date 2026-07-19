@@ -12,7 +12,28 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
 
+---
+DECISION: Founder avatar gate — DB-value gate + household entitlement flag, reusing the Guildhall seam
+DATE: 2026-07-18
+WHY: Building a bespoke gating system was unnecessary — the Founding Guildhall entitlement flag was always going to exist, so the gate reads it instead of inventing a parallel one. Mechanism: a global gate stored as a flippable DB value (system_flags.founder_gate_enabled, seeded false, read via founder_gate_enabled()) + a per-household entitlement (families.is_founder, boolean, default false, read via my_household_is_founder()). Picker rule: an avatar is selectable if tier=free OR gate OFF OR household is_founder. Gate is OFF now, so everything's selectable and nothing renders locked. Household-level only, never per-kid (honors the seam rule). Cosmetic-only (membrane-safe — never touches embers/quests/approvals). Decouples from Stripe: the flag exists now; the checkout that writes it is a later build. The flip later = two one-line data changes (grandfather existing holds to is_founder=true, then set the gate true), not a build session. Rejected: (a) a code-constant gate — would need a redeploy to flip, and Lovable chose the DB-value approach which is strictly better; (b) any per-member gating — violates the household-only seam rule; (c) a separate "founder catalog" — a WHERE clause on tier beats a second system.
+REPLACES: The stale "16 free / 24 paid" split arithmetic (locked against a 44-roster)
+STATUS: [proposed LOCKED]
 
+---
+
+DECISION: Free/founder avatar split re-locked at 16/32
+DATE: 2026-07-18
+WHY: The old "16 free / 24 paid" predated the 48-roster and was stale arithmetic. Scott set the new split by hand — sorting the 48 cut, slot-named files into Roster Free (16) and Roster Founders (32), a clean 4-free + 8-founder per class across forge/garden/keep/hall. The folders were the casting; the split is a Scott product decision closed by his action, never handed to an agent. Encoded in the catalog as explicit free/founder tier tags per file. Rejected: leaving the split to an agent as part of transport (the split is taste, not mechanics — it stays Scott's).
+REPLACES: "16 free / 24 paid" (stale, 44-roster era)
+STATUS: [proposed LOCKED]
+
+---
+
+DECISION: QA "#5 hold admin role" reclassified as a distribution-era super-admin / tier-2 support role
+DATE: 2026-07-18
+WHY: Raised as a home-hold QA item; on clarification it means someone who can reach into a household to manage members/events/feed — cross-hold support authority. That's cross-tenant and only needed once strangers' holds exist to support, so it belongs on the distribution ladder near Gate C–E, not in a home-hold QA pass. It is NOT a bug and NOT a quick fix. Residual ambiguity flagged and left open in parking-lot: (a) an in-hold admin tier above parent vs (b) a cross-hold super-admin are different builds — Scott to bring concrete examples before it's scoped. Rejected: treating it as a QA-session one-liner (it's a workstream), and building it now (it's post-strangers, gated behind the P4×L8 distribution gate).
+REPLACES: Nothing — reclassification of an open QA item
+STATUS: [proposed NOTED / PARKED]
 ---
 DECISION: Wall commit is ADULT-VERIFY, not identity-verify. An adult present at the wall commits a quest turn-in (the mint) behind a server-verified adult PIN that proves a committer is PRESENT, not WHICH adult. approved_by records the session-owner adult. Provable per-adult attribution is deferred to the P4×L8 commit-attribution hardening.
 DATE: 2026-07-18
