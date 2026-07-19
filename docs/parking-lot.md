@@ -3,7 +3,7 @@
 **What might be.** Captured, not committed. One place for every stray idea, so nothing derails the build.
 
 > Decisions live in `decisions.md`. Status lives in `status.md`. **This doc holds only what hasn't been decided yet.**
-> *Complete dated replacement each session. Last: 2026-07-18.*
+> *Complete dated replacement each session. Last: 2026-07-18 (evening).*
 
 ## How this works
 - **Inbox** — the dump zone. Capture and move on.
@@ -14,93 +14,93 @@
 
 ## Inbox (untriaged)
 
-*(empty — triaged 2026-07-18)*
+*(empty — triaged 2026-07-18 evening)*
 
 ---
 
 ## OPEN DECISIONS (unresolved — waiting on Scott)
 
-- **⚠️ Staging / dev database — do we need one before beta?** Local dev points at the **same Supabase backend as production**. Every local-dev test writes to the same tables as real users' data. Fine at Alpha; a real Gate-B concern once strangers are on it. Related to the P4×L8 harness-reachability question below.
-- **⚠️ Backend ownership + data backup.** Backend is **Lovable Cloud**, not a Supabase project Scott owns. **No direct Supabase access.** Backups, PITR, export, and the ability to leave are all Lovable's to grant. Code has a Git backup; **the data has none.** A Gate B blocker. *What's the exit path if Lovable Cloud is the wrong long-term home?*
-- **Does the P4×L8 adversarial script even run on Lovable Cloud?** The harness assumes a project URL + anon key pointable at the DB from outside. If those aren't usable externally, the audit degrades to policy-reading and Gate B's exit criterion becomes unprovable by design. **Answer before running the audit.** *(2026-07-17: two SECURITY DEFINER writes are now named inputs — the 07-16 Data-API grant surface and `wall_request_redemption`'s household-scope check.)*
-- **⚠️ The free/paid avatar split — arithmetic is stale.** "16 free / 24 paid" was locked against a 44-character roster; the roster is 48. Re-lock the numbers, then cast. *A product decision — never handed to an agent as part of avatar transport.*
-- **What happens to the thirteen existing `hero:` picks.** A roster swap silently remaps everyone unless stale ids are invalidated. Direction clear (invalidate + re-choose, framed as a re-forge). Open: does re-choosing get a Pip-voiced moment or just a reset?
+- **⚠️ Staging / dev database — do we need one before beta?** Local dev points at the same Supabase backend as production. Fine at Alpha; a real Gate-B concern once strangers are on it.
+- **⚠️ Backend ownership + data backup.** Backend is Lovable Cloud; no direct Supabase access. Backups/PITR/export/exit are Lovable's to grant. Data has no backup. A Gate B blocker. *What's the exit path if Lovable Cloud is the wrong long-term home?*
+- **Does the P4×L8 adversarial script even run on Lovable Cloud?** If a project URL + anon key aren't pointable at the DB from outside, the audit degrades to policy-reading. **Answer before running the audit.** Named inputs now include the wall's two SECURITY DEFINER writes AND the founder-gate DB objects (see below).
+- **QA #5 — in-hold admin tier vs cross-hold super-admin.** Reclassified 07-18 as distribution-era support tooling (see decisions.md), but a residual ambiguity is open: does Scott want (a) a permission tier *inside* a hold, above parent, that manages that hold's quests/embers/members/feed — or (b) a cross-hold super-admin that reaches into any family's hold for tier-2 support? Different builds; (a) changes the role model, (b) is cross-tenant / P4×L8. **Waiting on concrete examples from Scott before scoping.**
+- **The founder paywall flip — timing only, mechanism is built.** Not a build decision; a *when* decision. When Scott's ready: (1) grandfather — set every existing household `families.is_founder = true`; (2) flip — `system_flags.founder_gate_enabled = true`. Both are one-line data changes via Lovable, no build. Selling to *new* strangers still needs Stripe (critical-path #5), decoupled on purpose. **Not flipped 07-18 — Scott chose to sleep on it; nothing time-sensitive.**
 - **Quality — the two open halves.** Direction LOCKED (signal, never an ember modifier). Open: (1) visible to the kid or adult-only? (2) what consumes it (the weekly recap, parked behind beta).
 - **Mascot name** — Cinder (kid vote) vs Holt (lore). Pressing, since the mascot speaks in the first-run screens.
-- **Ranks as a household dial** — soften the sibling-ladder into private progress. jAIne has a lean; Scott hasn't called it. *(Ranks is also a wall accordion zone now — a second surface for the same data.)*
-- **Display mode's position on the ladder — PARTIALLY RESOLVED 2026-07-17.** Was "simultaneously the unproven core bet and fenced to post-launch." **The unproven half is now largely answered: it's BUILT for Scott's own hold and it works** — the ambient-presence thesis has a working, interactive artifact, not just a description. What remains genuinely fenced is the DISTRIBUTION-grade version (deployment hardening + P4×L8 on its write surface). The tension is smaller now: not "will it work," but "when does the strangers-grade version graduate off the fence." Per north-star, still first off the fence if Gate E comes back flat on day-8 retention.
+- **Ranks as a household dial** — soften the sibling-ladder into private progress. jAIne has a lean; Scott hasn't called it. *(Ranks is a wall accordion zone AND now has per-member completed-quest expand — a richer surface for the same data.)*
+- **Display mode's position on the ladder — PARTIALLY RESOLVED 2026-07-17.** The unproven half is answered (built for own-hold, it works). What's genuinely fenced is the distribution-grade version (deployment hardening + P4×L8 on its write surface). Still first off the fence if Gate E comes back flat on day-8.
 - **Unify `quest.audience` and `reward.audience`?** — two parallel flags, deliberately not unified. A sober-daylight refactor call *only if it earns its keep*.
 
 ---
 
 ## NOW (this is the next work)
 
-- **Hand-process the 48-avatar roster — CUT-METHOD SOLVED 2026-07-18.** Not a cut — a **fill**: the app clips every avatar into a circular frame, so the only failure mode is white corners peeking past the mask. Ellipse-select inscribed in the square (corner-to-corner) → invert → fill corners `#1A110B` (the spec's dark, no alpha) → flatten → scale 512×512 → export as the slot name. Do NOT select-by-color (kills grey hair, eye-glints); target corners by shape. Dark-on-dark seam means pixel-perfect alignment isn't required. Proven on the two hardest cases (white-haired elder, fire-everywhere dragon). **Still TABLED by Scott — surface, don't push.**
-- **Cast while cutting.** Cut from ~57 generated portraits into 48 slots; the casting decision happens while Scott is looking at them — the one part that can't batch. The surplus is already paid for. **Name each `.xcf` as its slot** (`forge-01.xcf` … `hall-12.xcf`) so the batch script just swaps `.xcf`→`.png`; the slot IS the cast, made durable.
-- **Batch export script — READY TO WRITE on Scott's word.** Once casting's done, a headless GIMP Script-Fu (or ImageMagick one-liner) does fill → flatten → scale 512 → export across all 48 in one run — no one-by-one. jAIne writes it when Scott says the roster's cut. Reusable for later recuts/additions.
+- **The floor — avatar render fallback (BUILDING at 07-18 close, 🟡 glass-verify pending).** Any unresolved/invalid pick renders a clean ember-lit placeholder, never the raw key. Verify on the glass (a not-yet-re-forged member shows a placeholder, not a number; check the wall). See status.md PENDING VERIFY.
+- **Founder tier-tag verification (needs a gate-on moment).** Briefly flip the gate ON → confirm exactly 32 lock / 16 open → flip back OFF. The only check that can't be done gate-off. See status.md.
+
+*(Avatar cutting/casting/batch-export — DONE. The 48 were cut, cast by slot-name, and transported 07-18. Removed from NOW.)*
 
 ---
 
 ## NEXT (soon — off the critical path)
 
-- **`avatar-review.tsx` — retire or rebuild.** A leftover review page that hand-duplicates the roster; a second source of truth that will drift. *(2026-07-17 note: this file is also the ONLY home of the "Forge/Garden/Keep/Hall" HeroGroup vocabulary, which is avatar-art categorization — NOT a member trait and NOT a color system. See the class-color correction in decisions.)* Kill it unless it's earning something.
-- **Audit what else from prior sessions never landed.** `Feast` → `Hall` was LOCKED and sat unshipped ten days. **Grep every LOCKED decision against the codebase.** *Haiku job, cheap, overdue.* **(2026-07-17 reinforced the inverse too: the DOCS can lie about the CODE — the wall shipped while the docs called it fenced. Cross-check runs both directions now: unshipped decisions AND undocumented shipped work.)*
-- **Recurrence chip legibility — "Weekly · Mon" / "Monthly · 1st".** Anchors invisible to users. Needs conditional render at the chip sites. Cheap; exactly the ambient legibility the thesis runs on.
-- **Vault favorites → real per-profile persistence** — `localStorage` won't survive the shared-wall model. **The wall already exposed this:** its Vault is affordable-only precisely because per-member favorites can't be read from one shared login's localStorage. Build as the phone-Vault's per-profile persistence job → the wall inherits it free. **On the wall this is an on-behalf write** (like `wall_request_redemption`), so a `wall_toggle_favorite` proxy is likely needed — another SECURITY DEFINER surface, another P4×L8 line. Build it in the phone-first direction, not backwards through the wall.
-- **Wall Vault empty-state message — becomes a two-case branch once persistent favorites ship.** The curated popup Vault can be empty for two independent reasons: (1) **affordability** — balance below the cheapest reward → nudge toward earning (current message, keep it); (2) **no favorites selected yet** → nudge toward favoriting in the full Vault. Same warm on-theme pattern, but the copy must point at the correct verb per cause (don't tell a rich-but-unfavorited kid to go do chores). If both true, likely lead with earn. Not buildable until favorites persistence exists; captured so "keep the empty message" doesn't ship the wrong verb.
+- **Haiku sweep (queued, read-only, after transport settled):** grep repo for `Feast` → swap any user-facing hit to `Hall` (**confirmed live on the member editor 07-18**, not just the dev page as docs claimed); grep every LOCKED decision against the codebase (the "did it land" cross-check); retire/rebuild `avatar-review.tsx` (second source of roster truth, and the only home of the Forge/Garden/Keep/Hall HeroGroup vocab — kill unless earning something; note it still references the old `avatar-01…21` files).
+- **Re-forge reach across the 13 (real finding — see status.md).** When the re-forge rolls to real testers, only the logging-in member is prompted; the rest render the fallback until manually fixed. Options: prompt each member on next active session, or a hold-owner "N hearthmates need re-forging" nudge. A calm, later decision.
+- **Recurrence chip legibility — "Weekly · Mon" / "Monthly · 1st".** Anchors invisible. Cheap conditional render.
+- **Vault favorites → real per-profile persistence** — `localStorage` won't survive the shared-wall model. Build phone-first; the wall inherits it (as a `wall_toggle_favorite` on-behalf write — another SECURITY DEFINER / P4×L8 line).
+- **Wall Vault empty-state — two-case branch once persistent favorites ship** (affordability vs no-favorites; correct verb per cause).
 - **Quick Add defaults expanded on an empty board.**
-- **A cheap Dim-tier starter reward** — the menu floors at 25, so a new kid can't cash out until they've earned 25. **Doubly important now:** the wall's affordable-only Vault shows an empty state below the floor; a reachable starter reward shrinks that empty case. Also what the Pip first-run "stock the Vault" screen should seed.
-- **Wall event-pill member color — dot-vs-full-tint.** Event pills now carry `memberColor()` (SHIPPED 2026-07-17). Open refinement: full-tint vs. a class-colored dot for legibility-at-distance. A "see it both ways" when wall polish resumes. *(Note the mechanism: memberColor identity color, NOT a class system — the "class" framing was a myth, corrected in decisions.)*
-- **Wall ticker speed** — a tune-by-eye legibility knob now that the loop is seamless. Not a rebuild.
-- **Remaining polish burn-down** — `TITLE`→`QUEST TITLE` · Pip install tutorial + help discoverability · Quick Picks dropdown · reward scarcity limits · yearly/monthly event recurrence · Lists "348 DONE" fossil counter · **feed verb drift** ("New quest: …" vs the standardized "QUEST POSTED").
+- **A cheap Dim-tier starter reward** — the menu floors at 25; shrinks the wall's empty-Vault case; seeds the Pip "stock the Vault" screen.
+- **Wall event-pill member color — dot-vs-full-tint** legibility-at-distance refinement.
+- **Wall ticker speed** — tune-by-eye legibility knob, not a rebuild.
+- **Multi-day calendar events (QA #7).** Events spanning day boundaries (Fri 5pm → Sat 3pm). Data-layer + rendering build; the event model likely assumes single-day. Real, its own prompt.
+- **Calendar alerts (QA #6).** The useful version ("ping me before") needs scheduled push, which is fenced. A lighter in-app-reminder version might ride the existing notification layer. Decide push-vs-in-app before building.
+- **Remaining polish burn-down** — `TITLE`→`QUEST TITLE` · Pip install tutorial + help discoverability · reward scarcity limits · yearly/monthly event recurrence · Lists "348 DONE" fossil counter · feed verb drift ("New quest: …" vs "QUEST POSTED").
 
 ---
 
 ## LATER (backlog)
 
-- **The "how Scott & jAIne work" collaboration profile.** *(new 2026-07-17)* Not a project doc and not project instructions — **Scott's own Claude instructions / personal profile**, so every cold session in every project starts from the best possible footing. Encodes the WORKING RELATIONSHIP (register, lane-discipline, the "surface the instinct then test it" loop, the "don't stroke my ego" rule, tersity, recon-first) into something durable that survives the fact that jAIne is reconstructed fresh each session. The project's canonical repo does this for the PROJECT; this does it for the COLLABORATION. **Its own deliberate session — a sober-daylight artifact, NOT a drive-by, and explicitly not started mid-build.** Carries over the exercise Scott already ran with Copilot (professional side).
+- **The "how Scott & jAIne work" collaboration profile.** Scott's own Claude instructions / personal profile, so every cold session starts from the best footing. Encodes the working relationship (register, lane-discipline, recon-first, the "surface the instinct then test it" loop, no-ego-stroking, tersity). Its own deliberate sober-daylight session — NOT a drive-by, NOT a project doc. *(Adjacent-relevant 07-18: the session-close protocol miss reinforced why durable, in-context rules beat "jAIne remembers." The close-out law is being baked into project instructions directly for the same reason.)*
 
-- **Retire identity-first role labels — "Parent/Kid," especially "Kid."** The one identity-first, literal, flat-English word in an otherwise function-first themed vocabulary. Ages badly. The real distinction is **approver vs. submitter** — an authority model already implemented correctly; "Adult/Kid" is only the skin. A display-string sweep, not a data migration (the `parent/kid` enum stays under the hood). Wide surface, 13 people with the current model in muscle memory. Its own deliberate session, ideally bundled with another vocab pass. **Adjacent to "Flat / peer holds" below — labels half vs. permission-model half.**
+- **Retire identity-first role labels — "Parent/Kid," especially "Kid."** The one identity-first word in a function-first vocabulary. The real distinction is approver vs. submitter. A display-string sweep, not a data migration. Its own deliberate session, ideally bundled with another vocab pass (e.g. the Feast→Hall sweep).
 
-- **Display / wall / kiosk mode — v1 FOR OWN-HOLD (propose tier 2026-07-17 · adult-verified turn-in commit 2026-07-18).** *(Was "design prototyped, not wired.")* See `status.md` for the full built ledger and `decisions.md` for the trust model. Propose tier + on-ramp/idle/exit/ticker/poll/event-detail shipped 07-17; adult-verified turn-in commit (mint) building 07-18 (🟡 glass-verify pending). **The three laws held and drove the 07-17 build** (spatial → Vault-in-tile + picker split; legibility-at-distance → tile scaling; three-zone accordion preserved). **PROMOTION NOTE:** when display graduates from fenced-delight to distribution roadmap (post-beta, or Gate-E-flat), promote the three laws to `decisions.md` / `master-spec.md`. Still fenced for the STRANGERS-grade version; what remains:
-  - **Wall redemption/spend commit — future build, NOT yet scoped.** v1 commit covers quest turn-in (mint) only. Redemption-commit (approve a spend from the wall) has **no surface to attach to** — recon found no pending-redemptions view on the wall (turn-ins have one; redemptions don't). That surface must be built first. Same adult-verify model applies; keep it OFF the wall until deliberately built.
-  - **Deployment gremlins** — old iPad mini: Safari version, PWA display-mode behavior, screen-sleep (Guided Access / never-sleep + dock), 4:3 ~1024×768. Real, deferred.
-  - **P4×L8 on the wall's write surface** — `wall_request_redemption` household-scope, plus (07-18) the commit-attribution class (`approved_by` client-asserted, `decided_by` session-locked). See decisions + status critical path.
-  - **Favorites on the wall** — deferred to per-profile persistence (see NEXT).
-  - **The idle-return-to-ambient timer** is BUILT; the resting state is the named config (Bounties collapsed / Hearth expanded / Ranks collapsed / left = launch choice).
+- **Display / wall / kiosk mode — v1 FOR OWN-HOLD.** See status.md for the built ledger, decisions.md for the trust model. Still fenced for the STRANGERS-grade version:
+  - **Wall redemption/spend commit — future build, not yet scoped.** No pending-redemptions surface on the wall to attach to; that must be built first. Same adult-verify model. Keep OFF the wall until deliberately built.
+  - **Deployment gremlins** — old iPad mini: Safari version, PWA display-mode behavior, screen-sleep, 4:3 ~1024×768.
+  - **P4×L8 on the wall's write surface** — `wall_request_redemption` + the commit-attribution class.
+  - **Favorites on the wall** — deferred to per-profile persistence.
 
-- **#8b — admin/reporting surface** — *parked behind the beta.* Redemption history, reward performance, weekly recap, Adventure Log, ops glance. **Quality's consumer lives here** — quality can't ship until part of this does.
-- **Weekly recap** — the first real consumer of the activity feed. Also the consumer of quality.
+- **#8b — admin/reporting surface** — parked behind beta. Redemption history, reward performance, weekly recap, Adventure Log, ops glance. Quality's consumer lives here. *(Distinct from QA #5's support-role clarification — #8b is in-hold reporting; #5 is cross-hold support authority.)*
+- **Weekly recap** — first real consumer of the activity feed + quality.
 - **Other feed consumers** — full in-app feed view, richer notifications, the Adventure Log, a family message board.
-- **Photo → stylized-hero pipeline** — the long-term answer to "I want it to be *me*." Never a bare photo in the circle.
-- **Cosmetic drop #2 — the roster surplus.** ~57 portraits for 48 slots; the overflow is a Guildhall tollbooth item that already exists. *Don't build the winter DLC before the base game.*
+- **Photo → stylized-hero pipeline** — the long-term "I want it to be *me*." Never a bare photo in the circle.
+- **Cosmetic drop #2 — the roster surplus.** ~57 portraits generated for 48 slots; the overflow is a Guildhall tollbooth item that already exists. *Don't build the winter DLC before the base game.*
 - **"Spin for a quest"** — random weighted quest assignment, kid-initiated. Deep future.
 - **Capacitor / app-store path** — assessed viable; hinges on whether payment rails are ever needed. Currently: no.
 - **List → quest hook** — deferred to the parked `objectives[]` / multi-step-quest model.
-- **Flat / peer holds** — roommates, couples with no owner-above-peer. Vocabulary leaves room; the permission model doesn't. *Labels half = role-label retirement above; this is the permission-model half.*
+- **Flat / peer holds** — roommates, couples with no owner-above-peer. Vocabulary leaves room; the permission model doesn't.
 - **iCal import** — never ask anyone to abandon their work calendar. Import theirs instead.
 
 ---
 
 ## KILLED / SUPERSEDED
 
-**2026-07-18**
-- ~~**Identity-bound wall commit (tap SnowDad → SnowDad's own PIN → decided_by = proven adult)**~~ — **WALKED BACK to adult-verify.** Recon showed identity-bound attribution is a data-layer P4×L8 build (`approve_redemption` hardcodes `decided_by=auth.uid()`; `approved_by` is client-asserted with no server tie). The actual threat is a kid self-committing, which adult-verify fully stops. See decisions.
-- ~~**SnowDad Vault spendable = 0 as a bug**~~ — **RESOLVED as test cruft.** Debit-side: three June test self-redemptions (150) > earnings (106), clamped. Cleaned up. See status + decisions (two real findings logged: `parent_self_redeem` feed blind spot, silent overdraw clamp).
-- ~~**"Scott sets every status" doc rule + close-out compliance checkpoint**~~ — **DISCARDED, never was canon.** 07-17 over-correction that misdiagnosed sloppiness. Model restored: jAIne sets statuses as judgment, Scott overrules. See status.
-- ~~**Automated / hand-cut avatar circles**~~ — **SUPERSEDED by fill-corners method** (app clips the circle; fill `#1A110B`, don't cut). See NOW.
+**2026-07-18 (evening)**
+- ~~**"What happens to the thirteen existing `hero:` picks" (open decision)**~~ — **RESOLVED.** Re-forge shipped: invalidate + route to `/reforge-avatar`, single-prompt pick with an on-theme "re-forged" line. 28/28 profiles invalidated. Spawned a new finding — **re-forge reach across the 13** (see NEXT / status.md).
+- ~~**"The free/paid avatar split — arithmetic is stale" (open decision)**~~ — **RESOLVED at 16/32.** Scott set it by hand, sorting the 48 cut files into two folders (16 free / 32 founder, 4+8 per class). The folders were the casting. See decisions.md.
+- ~~**Re-forge Pip-moment sub-question** (does re-choosing get a voiced moment or a silent reset)~~ — **RESOLVED:** single-prompt with a short on-theme line, shipped.
+- ~~**"Founder gate as bespoke gating system"**~~ — **SUPERSEDED by the entitlement-seam design** (DB-value gate + `families.is_founder`, reusing the Guildhall flag). See decisions.md.
+- ~~**"A session wrap / summary doc"**~~ — **NEVER A REAL ARTIFACT; DISCARDED.** jAIne invented a combined "wrap" file and buried decision blocks + instructions inside it — a session-close protocol violation on three counts. Corrected: close = four named deliverables in four fixed formats (status/parking-lot as files, decisions as a bare in-chat block, master-spec call stated), no wrapper. The close-out law is being baked into project instructions.
+
+**2026-07-18 (day)**
+- ~~Identity-bound wall commit~~ — walked back to adult-verify.
+- ~~SnowDad Vault spendable = 0 as a bug~~ — resolved as test cruft.
+- ~~"Scott sets every status" doc rule + compliance checkpoint~~ — discarded, never canon.
+- ~~Automated / hand-cut avatar circles~~ — superseded by fill-corners; now fully moot (transport shipped).
 
 **2026-07-17**
-- ~~**Wall calendar event detail (parked, bundle with color pills)**~~ — **SHIPPED.** Both existed on the phone (`EventDetail` + `memberColor()`); the wall now reuses them — tappable pills → in-place view-only detail sheet, member-colored pills. Edit/Delete suppressed on the wall.
-- ~~**"Color wall event pills by class (Forge/Garden/Keep/Hall)"**~~ — **CORRECTED & SHIPPED as memberColor.** No class-color system exists; the mechanism is `memberColor()` identity color. See decisions.
-- ~~**"Live" / realtime wall data**~~ — **CORRECTED to interval polling (~10s), decoupled from the ticker.** Realtime/websocket explicitly rejected. See decisions.
-- ~~**"Rewards" accordion zone on the wall**~~ — **REMOVED same session.** Off-vocabulary and mis-scoped (person-scoped/spending surface in a household-glanceable column); the Vault moved into the member popup. See decisions.
-- **Wall interaction layer (claim/turn-in/redeem/on-ramp/idle/exit/ticker/poll/event-detail)** — BUILT this session. Moved from "prototyped, not wired" to feature-complete for own-hold. See status + decisions.
+- ~~Wall calendar event detail / class-color pills / realtime data / Rewards accordion~~ — shipped-or-corrected (see git history).
+- Wall interaction layer — BUILT.
 
-**2026-07-16**
-- ~~Pending members bounced onto setup form on re-login~~ — FIXED (`28ab40d`). *🟡 pending live repro.*
-- ~~Roster / switch-picker "no members" bug~~ — FIXED (Lovable, live — Data-API grant hole).
-- ~~"All quiet at the hold" as an empty-board bug~~ — RESOLVED working-as-intended.
-- ~~Wall-display design session~~ — superseded: the design was built out 2026-07-17.
-
-**2026-07-15 / 07-14 / 07-12** — *(preserved from prior revisions: recurrence_day removal, pending-member leak fix, admit/deny enum crash, walk-up escalation resolved, recurrence rework, join-code → admit-on-approval, auth email promoted to critical path, automated avatar cropping DECLINED, vocabulary pass, Pip onboarding-as-tour superseded. See git history.)*
+**2026-07-16 / 07-15 / 07-14 / 07-12** — *(preserved from prior revisions: roster grant hole, pending-member routing, "all quiet" resolved, privilege-escalation fixes, recurrence rework, join-code → admit-on-approval, auth email promoted, automated avatar cropping DECLINED, vocabulary pass. See git history.)*
