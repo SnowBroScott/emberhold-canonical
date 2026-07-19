@@ -13,6 +13,22 @@ STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
 
 ---
+
+DECISION: High-stakes live-DB security audits get a directive, precise roadway — the standing "brief the floor + intent, leave latitude" posture is suspended for them.
+DATE: 2026-07-19
+WHY: Today's triage instance had every capability to run the authenticated P4×L8 attack — a 07-16 instance self-provisioned two confirmed households via the browser tool and ran admit/deny across both. Instead it worked from a bare curl/anon seat, hit email-confirmation, and self-declared "degraded to policy-reading" — a false limit presented as a stack constraint. The failure was not capability; it was an unsanctioned path chosen under latitude, on the single most expensive item on the board. The fix is to remove the fork (mandate the tool, the sequence, the attack surface, the report format), not to add trust. Latitude survives only where jAIne is blind and cannot specify — the exploit SQL against a live schema jAIne can't see. Rejected: trusting Code to find the right path itself (just demonstrated to fail here); jAIne authoring the attack SQL (blind to live schema, would get columns wrong). Scope: this is an exception for high-stakes attacks, NOT a reversal of trust-the-lane / don't-over-specify for normal build work.
+REPLACES: Nothing — scopes an exception to the standing posture; does not overturn it.
+STATUS: proposed LOCKED
+
+---
+
+DECISION: An authenticated live-DB audit brief MUST explicitly mandate the browser tool for account provisioning. Harness reachability to the live DB is solved and was never a stack limit.
+DATE: 2026-07-19
+WHY: A fresh Code instance, left to choose, defaults to a bare curl/anon seat, hits mailer_autoconfirm=false, and concludes "no mailbox → degraded to policy-reading." That conclusion is wrong: a 07-16 instance drove the real signup UI, pulled the confirmation link from the email in-tab, captured a session, grabbed the join code, and ran admit/deny across two accounts. The requirement is to instruct the path, not assume it — the instance will otherwise walk past it. This retires the long-standing open caveat that the P4×L8 audit might "degrade to policy-reading" for lack of reach. Rejected: pre-provisioning the two holds by hand and handing Code credentials — cleaner teardown, but unnecessary now that self-provisioning is proven, and it adds Scott labor for no security gain (cleanup is cheap).
+REPLACES: The standing status/parking-lot open question "confirm the adversarial harness can reach Lovable Cloud's DB from outside — if not, the audit degrades to policy-reading."
+STATUS: proposed NOTED
+
+---
 DECISION: Founder avatar gate — DB-value gate + household entitlement flag, reusing the Guildhall seam
 DATE: 2026-07-18
 WHY: Building a bespoke gating system was unnecessary — the Founding Guildhall entitlement flag was always going to exist, so the gate reads it instead of inventing a parallel one. Mechanism: a global gate stored as a flippable DB value (system_flags.founder_gate_enabled, seeded false, read via founder_gate_enabled()) + a per-household entitlement (families.is_founder, boolean, default false, read via my_household_is_founder()). Picker rule: an avatar is selectable if tier=free OR gate OFF OR household is_founder. Gate is OFF now, so everything's selectable and nothing renders locked. Household-level only, never per-kid (honors the seam rule). Cosmetic-only (membrane-safe — never touches embers/quests/approvals). Decouples from Stripe: the flag exists now; the checkout that writes it is a later build. The flip later = two one-line data changes (grandfather existing holds to is_founder=true, then set the gate true), not a build session. Rejected: (a) a code-constant gate — would need a redeploy to flip, and Lovable chose the DB-value approach which is strictly better; (b) any per-member gating — violates the household-only seam rule; (c) a separate "founder catalog" — a WHERE clause on tier beats a second system.
