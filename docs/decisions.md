@@ -12,6 +12,39 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
 
+
+---
+
+DECISION: Recurring quest lifecycle — assignment is permanent; only the cycle resets; the successor anchors to the next calendar period from APPROVAL date, not from the completed instance's due_date.
+DATE: 2026-07-21
+WHY: A recurring quest models a standing responsibility ("the trash is SnowDad's each week"). Completion resets whether *this cycle's instance* is live — it never reassigns ownership. On approval, handle_quest_approval() spawns the next instance carrying assigned_to forward, and stamps it with the next calendar anchor computed from CURRENT_DATE (approval day). The prior formula anchored to date_trunc(NEW.due_date) + 1 period, which broke on late completion: finish a weekly whose due_date is already a period old and "+1 period" lands in the CURRENT period, so the successor is due today-or-past and reappears immediately with no rest week. Anchoring from approval date guarantees a clean forward gap regardless of when the quest is actually finished. REJECTED — a scheduled reset job (cron / pg_cron / edge function) to flip quests live on the anchor day: none exists in the stack, it would be new infrastructure, and it is unnecessary because isActiveQuest already surfaces any quest the moment due_date <= today. REJECTED — extending the client-invoked roll_missed_dailies pattern to weekly/monthly: scoped, then cut as redundant for the same reason. REJECTED — successor due today (immediate reappearance, no rest week): simplest to build and matches the daily path, but it erases the "resting until next cycle" rhythm that is the whole point of a weekly.
+REPLACES: Nothing — new decision. (First time this model has been written down; three prior sessions fixed symptoms of its absence.)
+STATUS: proposed LOCKED
+
+---
+
+DECISION: Quest activeness is TWO mechanisms that only work together — status hides completed-this-cycle, due_date hides not-yet-this-cycle — expressed as a single shared predicate.
+DATE: 2026-07-21
+WHY: A quest is active-and-visible when: !archived AND status !== 'approved' AND (due_date == null OR due_date <= today). Both halves are load-bearing and neither is sufficient. Status alone leaks the future-dated successor onto the board the instant its predecessor is approved. Due_date alone wrongly hides freshly created quests with no due date. Each was tried in isolation this session and each was exactly 50% right — which is why the bug survived three passes. due_date is NOT a scheduling nicety; it is the instance's ACTIVATION DATE ("the day this instance goes live"), and null means "live now." The predicate lives once, as isActiveQuest(quest, today) in src/lib/quest-helpers.ts, imported by board.tsx, Briefing.tsx, and wall.tsx. REJECTED — leaving each surface to define "active" independently: it had been written three separate times, the definitions drifted, and the visible defect was a roster badge reading 4 next to a detail list showing 3. Three copies cannot disagree if there is only one. REJECTED — a server-side due_date filter on a single surface's fetch: that asymmetry was the original bug.
+REPLACES: Nothing — new decision. Supersedes a mid-session jAIne proposal that "due_date is not part of activeness," which was disproven the following round and never committed.
+STATUS: proposed LOCKED
+
+---
+
+DECISION: Dates must be STAMPED and JUDGED in the same clock. Any date the client filters on must be written by the client, not defaulted by the server.
+DATE: 2026-07-21
+WHY: quests.due_date is DATE NOT NULL DEFAULT CURRENT_DATE, and create.tsx never set it — so the value was written by Postgres in the SERVER's timezone (UTC) while isActiveQuest judged it against the CLIENT's local today (todayIsoDate(), US Pacific). Creating a quest in the evening in Pacific meant the server was already on tomorrow's date, so a brand-new quest landed due "tomorrow" and was hidden by its own visibility filter — visible in Quest Log (no due_date gate), absent from the board. This presented as "creation is broken" and cost most of a session to find, because every layer of the code was individually correct; only the seam between two clocks was wrong. Fix: the create path stamps due_date: todayIsoDate() explicitly. The general rule follows: a server default is only safe for a column no client-side comparison ever touches. REJECTED — normalizing the client to UTC instead: it would make the board's "today" disagree with the user's actual day, trading a rare edge case for a permanent one. NOTE — the same seam likely exists in handle_quest_approval's successor math (server CURRENT_DATE / date_trunc); creation was fixed, that path was not. Parked in NEXT.
+REPLACES: Nothing — new decision.
+STATUS: proposed LOCKED
+
+---
+
+DECISION: DECLINED — "the Quick Add favorite chip silently auto-assigns the assignee" is not a bug and requires no fix. Assignment-at-creation is an intended feature.
+DATE: 2026-07-21
+WHY: jAIne flagged this repeatedly across several turns as a lurking defect, inferring from a recon line that the favorite-chip prefill was copying assigned_to without the user's knowledge. It was not. The create form has an explicit "Assign to" selector — Open to anyone, or a named member — and Scott was deliberately assigning each test quest to SnowDad in order to reproduce the actual bug under investigation. The observed "claimed just now" label was also misread: claimed_at does not exist as a column; quest-log.tsx synthesizes that label from created_at whenever status is claimed. Recording this as DECLINED because an un-written rejected idea comes back every six weeks, and because a future instance reading only the symptom ("new quests arrive pre-assigned") would plausibly re-flag a working feature as a defect. Root failure worth carrying: jAIne substituted an inference for the user's stated deliberate action, and continued re-flagging after correction.
+REPLACES: Nothing — new decision.
+STATUS: proposed DECLINED
+
 ---
 
 DECISION: High-stakes live-DB security audits get a directive, precise roadway — the standing "brief the floor + intent, leave latitude" posture is suspended for them.
