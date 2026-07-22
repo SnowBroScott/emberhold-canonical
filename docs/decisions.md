@@ -12,7 +12,27 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
 ```
 
+DECISION: Every SECURITY DEFINER function ships with explicit EXECUTE grants in the same migration that creates it
+DATE: 2026-07-21
+WHY: Postgres grants EXECUTE to PUBLIC by default on every newly-created function. This is not a bug we hit once — it is a mechanism that silently re-breaks the grant surface every time a function is written, and it has now produced grant drift three separate times. The 07-21 enumeration found seven SECURITY DEFINER functions carrying PUBLIC + anon EXECUTE, and the affected set was chronological rather than random: everything older had been cleaned by a past reactive revoke, everything newer had inherited the default. One of the seven was `enforce_quest_family_refs` — created inside the 07-19 migration whose entire purpose was closing two grant-drift breaches. The fix bundle shipped a fourth instance of the disease it was curing. Reactive one-off revokes cannot win against an automatic default; only a convention applied at creation time can. THE RULE: every new SECURITY DEFINER function ships with an explicit `GRANT EXECUTE ... TO authenticated` AND `REVOKE EXECUTE ... FROM PUBLIC, anon` in the same migration that creates it. Trigger functions get NO API-role grants at all — they run in trigger context and should be unreachable via the API. ORDER MATTERS AND IS PART OF THE RULE: grant to `authenticated` FIRST, then revoke from PUBLIC — because `authenticated` inherits EXECUTE from PUBLIC, so revoking first silently kills every live path that depends on the function. This goes into the standing Lovable build-prompt boilerplate, not into anyone's memory. Rejected alternative: continue catching these in periodic scans. Rejected because the scanner reports the category without naming instances, so every detection costs a full enumeration read to triage — and because a missing defense-in-depth layer is only safe until the first RPC written without an internal auth.uid() guard, at which point nothing in the process catches it.
+REPLACES: Nothing — new decision. Complements the existing "hand-applied DB changes are forbidden; everything lands as a migration file."
+STATUS: proposed LOCKED
 
+---
+
+DECISION: Supabase database-linter 0029 ("Signed-In Users Can Execute SECURITY DEFINER Function") is permanently ignored
+DATE: 2026-07-21
+WHY: The lint fires on any SECURITY DEFINER function that authenticated users can execute. In Emberhold that is the architecture, not a defect — `admit_pending_member`, `wall_request_redemption`, `member_spendable`, `approve_redemption` and roughly fifteen others are all deliberately reachable by a signed-in user, because that is how a household member does anything at all. The rule is structurally unclearable: no amount of correct work will ever empty this category, and the only way to satisfy it would be to dismantle the RPC layer. It is dismissed in the Lovable dashboard and recorded here so that no future scan, and no future jAIne instance, re-litigates it as an open finding. NOTE THE CONTRAST with lint 0028 (anon/PUBLIC can execute), which is NOT ignorable and was fixed the same session — 0028 flags a real over-broad grant; 0029 flags the intended design. They look similar in the panel and are opposites in substance.
+REPLACES: Nothing — new decision.
+STATUS: proposed LOCKED
+
+---
+
+DECISION: Two of the five ignored scanner findings are CONDITIONALLY accepted, and the condition is the own-session-vs-per-member-auth fork
+DATE: 2026-07-21
+WHY: The Lovable dashboard's "Ignored" bucket flattens three genuinely different reasons into one word. Of the five ignored findings: two are false positives that were never real ("Forgot PIN" takeover, join-code → Parent admin) and are dead permanently; one is structurally unclearable (lint 0029) and is also dead permanently; but two — "adult PIN lock isn't tied to real permission checks" and "any member can submit a redemption attributed to another member" — describe REAL behavior that is accepted ONLY because the shared-session model is what it is. In that model a device-kid rides the owner's ambient parent JWT, so the PIN is the only kid/parent line and it is client-side; the wall's on-behalf redemption is the propose tier working as designed. Both are intra-household, not cross-tenant, and the 07-19 audit confirmed `current_family_id()` derives server-side from `auth.uid()`. WHY THIS NEEDS WRITING DOWN: "Ignored" is a permanent-looking word for a conditional judgment, and the dashboard will never surface the condition. If the parked own-session-vs-per-member-auth fork is ever decided toward per-member auth, these two stop being by-design and become live work items — alongside the `adults_only` rewards read and the `parents_only` quest read, which already wait on the same fork. That makes four items behind one decision, and nothing in the tooling connects them.
+REPLACES: Nothing — new decision. Extends the walk-up trust boundary record.
+STATUS: proposed NOTED
 ---
 
 DECISION: Recurring quest lifecycle — assignment is permanent; only the cycle resets; the successor anchors to the next calendar period from APPROVAL date, not from the completed instance's due_date.
