@@ -1,12 +1,12 @@
 # Master Spec
 **What Emberhold IS.** Canonical design truth — above any individual build prompt or chat. Status lives in `status.md`; this doc does not track it.
 
-Last substantive update: **2026-07-19** — the P4×L8 tenant-isolation boundary verified sound under live authenticated cross-tenant attack; two grant-drift breaches found and closed; four load-bearing grant rules added to the security posture (`member_spendable` family-scoping, quest-FK same-family enforcement, `is_founder` service-role-only, founder-RPC execute scope).
+Last substantive update: **2026-07-25** — the constitution restructure. Platform law separated into a supreme **constitution** that no optional module may contradict. Two constitutional rules rewritten: "one currency" became **no conversion**, and verification-minting was rescoped to **real-world redeemability**. The 07-25 "four registers are four functional layers" reading is **superseded** — see *Registers and modules*. Also folded, all four overdue: the activeness model and recurring lifecycle (07-21), the household-local date rule (07-23), and the 07-25 decision set.
 
 ---
 
 ## What it is
-A gamified household operating system. Household tasks become **quests** worth **embers**; kids claim and complete them, adults approve, and embers drive a leaderboard and real rewards. Built mobile-first as an installable PWA, live at **theemberhold.com**. Long-term vision: the household's one-stop organization hub — calendar, chores, lists, goals, and memory in one place.
+A gamified household operating system. Household work becomes **quests** worth **embers**; kids claim and complete them, adults approve, and embers drive a leaderboard and real rewards. Built mobile-first as an installable PWA, live at **theemberhold.com**.
 
 > **Vocabulary note.** User-facing labels are neutral: role label is **"Adult"** (not "Parent"), and the group is **"the Hold"** (not "Family"). This lets a hold *with* kids and one *without* (couples, roommates) both fit. The underlying role enum and permission logic are unchanged — neutral wording is a UI-layer relabel, not a model change. (Deeper power-structure flexibility — flat/peer holds — is parked.)
 
@@ -20,27 +20,99 @@ A gamified household operating system. Household tasks become **quests** worth *
 ## THE VOCABULARY (LOCKED — the string law)
 Vocabulary drift is a real failure mode. These are the rules, not suggestions.
 
-- **Embers is the sole user-facing currency term. XP is dead.** Campaign progress renders as a bare **%** (earning-type campaigns showing a real ember count are the only exception). The `points` field name in the data model is unchanged — this is a UI-string law, not a schema law.
-- **"Quest" is the universal object term.** Every task object is a quest, assigned or not. Open/Assigned **status badges** on the card carry the state — the *word* never changes with the state. *(This walks back the earlier `assigned_to`-null-means-"Bounty" rule: the rule created friction in real use and confused a tester. "Quest" being universally understood is a feature, not a weakness — the differentiation budget is already well spent on ember, hold, hearth, Vault, Ranks.)*
+**Structural nouns (LOCKED 2026-07-25):**
+- **The hold** is the tenant — the household and its hearthmates. (`families` in the schema for historical reasons; user-facing it is always the Hold.)
+- **A surface** is a platform screen or system every hold gets: the board, the Vault, campaigns, the calendar, Lists, the Briefing, the wall.
+- **A module** is an optional functional area a hold may enable. **There is exactly one candidate: training.** Stored in `families.enabled_modules`.
+- **A register** is one of **Forge · Garden · Keep · Hall**. Registers are **aesthetic only** — an avatar class and an ambient theme. **A register is not a functional area.**
+- *Retired: "layer."* The word was coined to describe four functional areas. Three of them (Keep, Garden, Hall) decomposed entirely into quests, lists and campaigns on inspection — they were registers all along. With one genuine module left, the extra noun bought nothing.
+
+**Currency and game terms:**
+- **Embers is the currency of the platform economy. XP is dead.** Campaign progress renders as a bare **%** (earning-type campaigns showing a real ember count are the only exception). The `points` field name in the data model is unchanged — this is a UI-string law, not a schema law.
+- **"Quest" is the universal object term.** Every task object is a quest, assigned or not. Open/Assigned **status badges** on the card carry the state — the *word* never changes with the state. *(This walks back the earlier `assigned_to`-null-means-"Bounty" rule: it created friction in real use and confused a tester. "Quest" being universally understood is a feature — the differentiation budget is already well spent on ember, hold, hearth, Vault, Ranks.)*
 - **"Bounty" survives as a proper noun in exactly one place:** the Briefing's unclaimed-quest strip, **"Open Bounties."** Nowhere else.
-- **The tier ramp is DIM → WARM → HOT → BLAZING.** Four tiers, derived from points, driving visual + animation intensity. This is "brightness = heat = importance" made countable.
+- **The tier ramp is DIM → WARM → HOT → BLAZING.** Four tiers, derived from points, driving visual + animation intensity. "Brightness = heat = importance" made countable.
 - **"Legendary" is NOT a fifth tier.** It is a **campaign-completion override state** — a one-off significance flag on the feed, not a rung on the ladder.
-- **Pre-auth "Hold" grammar rule.** Imperative / doorway framing grounds the word and self-teaches it ("Enter the Hold" ✓). Cold possessive use does not ("Your hold's quest board" ✗) — a brand-new user has no referent yet. Possessive pre-auth copy uses plain language ("household," "home") instead. Post-auth, "Hold" is free everywhere.
+- **Pre-auth "Hold" grammar rule.** Imperative / doorway framing grounds the word and self-teaches it ("Enter the Hold" ✓). Cold possessive use does not ("Your hold's quest board" ✗) — a brand-new user has no referent yet. Possessive pre-auth copy uses plain language ("household," "home"). Post-auth, "Hold" is free everywhere.
+
+---
+---
+
+# PART I — THE CONSTITUTION
+
+Platform law. **Supreme: no module may contradict a rule in this part.** A module may *specialize* within a rule — never carve an exception to one. If a module genuinely needs an exception, the constitution is wrong and gets amended deliberately in `decisions.md`, once — not per-module, forever.
+
+## The seven constitutional rules
+
+**1. NO CONVERSION.** *(LOCKED 2026-07-25 — replaces "one currency to rule them all.")*
+Currencies may be multiple. They may **never** exchange, convert, or purchase across a module boundary. The rule that was ever load-bearing is the absence of an exchange rate, not the absence of plurality — a foreign-exchange desk inside a chore app is the failure mode, and two sealed economies that share a login are not that.
+- **Standing law with nothing to govern yet, deliberately.** No second currency currently exists. The rule is on the books *before* one is proposed, because that is the only time a rule like this is cheap.
+- **The burden of proof for a new currency is high and explicit.** A module earns one only if it has (a) its own distinct earn, (b) its own distinct sink, and (c) no conversion path. **Miss any of the three and what it actually wants is a counter, not a currency.**
+- **The semantic reason this matters more than the mechanical one:** an ember means *an adult verified I did something for the hold, and it buys me a real thing.* That is tight and legible, and it is what gives the Vault teeth. Any second currency exists to keep **embers** clean, not to add a wallet.
+- **The seal breaks quietly, not loudly.** The requests that will arrive: *"can \<module currency\> buy a Vault reward?"* and *"can a kid trade one for embers?"* Both are DECLINED in advance.
+
+**2. REAL-WORLD REDEEMABILITY REQUIRES A SECOND PARTY TO MINT.** *(LOCKED 2026-07-25 — rescopes "embers mint only on adult approval.")*
+Any currency redeemable for something **outside the app** must be minted by someone other than the earner. Embers buy real goods, so embers require adult approval — unchanged, and it remains the lock on the economy. A **sealed** in-app-only currency has no shared economy to defend and needs no second party: self-logging is self-approval.
+- **The rule follows convertibility, not effort.** Outside the adult-approval gate on kids' embers, Emberhold does not verify that people did what they said. We are not the police.
+
+**3. ONE TIMELINE.** The calendar is shared. A workout, a dentist appointment and a party are all events on the same surface. No module ships a second calendar.
+
+**4. THE MONETIZATION SEAM IS HOUSEHOLD-LEVEL, ALWAYS.** Per-class, per-character, per-kid, or per-module-per-kid SKUs recreate a *"buy each kid their skin"* dynamic **inside a household tool** — the worst possible seam to put between a parent and their kids. One purchase, everyone gets everything. **No exceptions, ever.**
+
+**5. ONE MEMBER TABLE. A MODULE NEVER CREATES A PERSON.** *(LOCKED 2026-07-25.)*
+There is exactly one member-creation path in the app. Modules **read** hearthmates from the existing member table, render them with the **existing hero-portrait component** (so avatars, fallbacks, and identity colors stay consistent), and point at the existing member identifier. An empty state routes to the add-hearthmate flow; it never offers a local shortcut.
+- *Earned the hard way: a training prototype shipped a free-text "Who's training?" field that minted its own rows. Two ways to make a person produces "Mia" in the hold and "mia" in the module with no reconciliation path — duplicated avatars, split history, an identity model nobody can trust.*
+- **Deliberately unsolved:** filtering a module's member list by "Adults" is a proxy for "participates," and it will break — a twelve-year-old lifting in a garage gym is normal. When it breaks the answer is a **per-member flag**, not a role check. Not built now.
+
+**6. BRIGHTNESS = HEAT = IMPORTANCE.** The hierarchy principle, the animation-intensity dial, the avatar-luminosity floor, and the Vault's affordability-as-heat mode switch are one rule wearing four hats. Every module and every register inherits it.
+
+**7. FREE IS A FULL TOOL. PAID IS DELIGHT, *OR* MARGINAL COST.** *(Amended LOCKED 2026-07-25.)*
+The membrane applied to money. Paid may never be access to basic function — **with one generalized carve-out**: a feature with a genuine, unavoidable **per-user marginal cost** may be paid.
+- **GUARDRAIL, so the clause doesn't rot:** the cost must be *real and unavoidable, not architected into existence.* Anything can be made to "incur cost" by routing it through an API on purpose. If a feature could run on-device or as a deterministic rule and a model call was added to justify a paywall, that is the rule being gamed against itself. **Paywalling a rest timer would be indefensible.** Emberhold's cosmetics have no marginal cost, which is why they're delight, not function.
+- **The live test case:** *LLM-generated* programming is paid. **Deterministic** autoregulation, template-driven auto-programming, rest timing and progressive adjustment are **free** — they run on rules, not tokens.
+- Generalizing rather than granting an exception is deliberate: an exception invites the next case to be argued from scratch; a clause gives a test for video hosting, exports, and anything else that bills per user.
+
+---
+
+## The hold (the tenant)
+- **Members ("hearthmates"):** name, avatar (hero portrait), role (**Adult / Kid** — display label; role enum unchanged), class (**Forge / Garden / Keep / Hall** — the register).
+- **Model:** profile-switching, shared-device first (Netflix-style — tap to switch), because young kids have no phone. Join-code is the *secondary* path. **Kids have no auth identity** — they are sub-profiles acting under an adult's authenticated session. *(Also the COPPA advantage: no kid email, no direct collection. And the reason naive `auth.uid()`-based RLS fixes don't work — see Security.)*
+- **Adult profiles are PIN-locked, fail closed.** A PIN is *mandatory* at adult creation (with confirm-entry); existing PIN-less adults are intercepted and forced to set one. No path into an Adult profile without a PIN. This gives the approval gate teeth (anti-cheat).
+- **Adult profile creation** routes through the `create_adult_profile` SECURITY DEFINER RPC.
+- **PIN / password recovery (three locks):** (a) **adult-resets-adult** — a reset (↺) on each other adult's member card clears their PIN; fail-closed intercept forces a new one on switch-in. (b) **account-owner master path** — "Forgot PIN?" clears that profile's PIN via the owner-gated `set_profile_pin` RPC; closes the sole-adult lockout. (c) **account login** — "Forgot password?" → Supabase built-in reset → `/reset-password`. No new auth system, no new tables. *(Threat note: an acting adult can reset another adult's PIN — peer trust, fine for a 2-adult hold; revisit for peer/roommate holds.)*
+- **Hold membership:** an owner; an editable hold name. **Invite to the Hold** fires the Web Share API with a prefilled message + deep link `theemberhold.com/join?code=XXXX` (desktop clipboard fallback). **Join code visibility + invite are Adult-only** (inviting is admin authority).
+- The **"Whole hold" entity is marked by the keep glyph** in household-amber — members carry identity-color dots; the hold carries the brand object.
+- **A hold has a timezone.** `families.timezone` (IANA, NOT NULL). The canonical clock for every household-local date — see *The household clock*.
+
+## Registers and modules
+**Registers are aesthetic. Modules are functional. They are not the same axis and they never gate each other.**
+
+**The four registers — Forge · Garden · Keep · Hall** — are an avatar class and an ambient theme. A hearthmate picks one because they like it. **A member's register has no relationship to what their hold has enabled.**
+
+> **SUPERSEDED (2026-07-25, same day):** the reading that the four registers were four functional layers. It failed decomposition. **Keep** (upkeep, chores, repair, DIY) is quests. **Garden** (yard, planting, outdoor maintenance) is quests. **Hall** (celebration, hosting, parties, feasting) is lists, campaigns and calendar events. All three are content and theme on machinery that already exists — which is what a register *is*. Only training failed to decompose into a quest, because it is the one activity in the household that **cannot mint embers without breaking constitutional rule 2**: nobody approves your squat set, and a currency that buys ice cream cannot be minted by the person who benefits. **Training is the odd one out, and it is the only module.**
+
+**Module enablement is household-level, set at onboarding by intent, and easily reversible by an adult from a Hold profile screen** *(LOCKED 2026-07-25)*. Stored as `families.enabled_modules text[]`, written **only** through the `set_enabled_modules()` RPC.
+- **The RPC is load-bearing and not a style choice.** `families.is_founder` is service-role-write-only, and that is what makes the paywall enforceable. Granting `authenticated` table-level UPDATE on `families` so a screen could write a feature column would have re-opened the paywall hole. The RPC means **zero new grants on `families`** — `authenticated` still holds column-level UPDATE on `name` only.
+- **Never per-member** (constitutional rule 4).
+- **Never offer a module that doesn't exist.** Offering choices for unbuilt things is how the everything-app trap walks back in through the door built to keep it out.
+- **Reversible.** Disabling hides surfaces; it never destroys data.
+- **The column is correctly named as shipped.** `['household']` = base; `['household','training']` = base + training. Nothing needs renaming.
 
 ---
 
 ## Architecture (the bones)
-- **Everything is an "entry."** Shapes: quest, calendar event, list, list item, meal. Only **quests** carry the game.
-- **Two backbones:** one currency (**embers** — every feature is a source, sink, or pool) and one timeline (**the calendar**).
+- **Everything is an "entry."** Shapes: quest, calendar event, list, list item, meal. Only **quests** carry the platform game.
+- **The backbones:** the **calendar** (one timeline, constitutional) and the **ember economy** (every platform feature is a source, sink, or pool).
 - **Three horizons:** Engine (daily quests), Campaigns (seasonal collective goals), Archive (the forever adventure log).
 - **One spine for movement:** the **activity feed** (`activity_log`) — an append-only stream every meaningful state change writes to. The engine under notifications, wall callouts, and the Adventure Log.
-- **The `+` is the universal capture** — every module is a new entry type it can mint. Inside a create flow, the `+` transforms into that form's submit action. On a single-purpose surface that owns its own create action (a list's docked add-item bar), the `+` FAB is suppressed entirely.
-- **Personal vs shared views are filters, not separate data.** *(This is now proven twice — the quest audience filter and the reward audience rail are both WHERE clauses, not second screens.)*
-- **Role-aware home.** Adults land on **the Briefing** (command center — operations), Kids land on the **game board** (quests — play). Same nav slot, different surface. "Kids see a game; adults see operations."
-- **The membrane (critical discipline).** The game lives in **quests only**. Calendar, Lists, meals, notes stay clean utilities that may *optionally* spawn a quest. Gamify the chore, not the grocery item. Lists writes nothing to the activity_log spine.
+- **The `+` is the universal capture** — every surface is a new entry type it can mint. Inside a create flow, the `+` transforms into that form's submit action. On a single-purpose surface that owns its own create action (a list's docked add-item bar), the `+` FAB is suppressed entirely.
+- **Personal vs shared views are filters, not separate data.** *(Proven twice — the quest audience filter and the reward audience rail are both WHERE clauses, not second screens.)*
+- **Role-aware home.** Adults land on **the Briefing** (operations), Kids land on the **game board** (play). Same nav slot, different surface.
+- **THE MEMBRANE.** The platform game lives in **quests only**. Calendar, Lists, meals and notes are clean utilities that may *optionally* spawn a quest, and have no game at all. Gamify the chore, not the grocery item. Lists writes nothing to the activity_log spine.
+  - **Module amendment** *(LOCKED 2026-07-25)*: **a module may carry at most ONE game of its own, sealed from the platform's.** The membrane exists to stop *every* surface becoming a game; "at most one per module, sealed" preserves that while allowing an optional module its own. **No module currently exercises this.**
 
 ## The audience pattern (a first-class architectural primitive)
-One mechanic, now used in two places, and the template for any future scoping:
+One mechanic, used in two places, and the template for any future scoping:
 
 **A nullable/defaulted `audience` enum on an object + a viewer-role WHERE clause on its read query.** No second screen, no duplicated component, no parallel table.
 
@@ -52,48 +124,70 @@ Any future "X should only be seen by Y" want gets answered with this pattern bef
 
 ---
 
+## The household clock (LOCKED 2026-07-23)
+**The canonical clock for any household-local date is HOUSEHOLD-local, derived server-side from a single named function.** Not client-local stamped at write time, and never server UTC.
+
+- **The mechanism:** `families.timezone` (IANA, NOT NULL) + **`household_today(fam uuid)`** (STABLE). Every expression touching `due_date` derives from it.
+- **`CURRENT_DATE` is banned in any expression touching `due_date`.** It is UTC, the hold is not, and the gap is a whole timezone's worth of wrong for several hours a day.
+- **Why not client-stamped:** `handle_quest_approval()` is a BEFORE-UPDATE trigger. It has no caller and no place to accept a client-supplied date, which structurally kills the stamp-at-write remedy. That the client-supplied-date trust-widening evaporated with it is a bonus, not the reason.
+- **This is a class, not an instance.** Reported at one site; enumeration of `supabase/` found **six** live violations across two functions.
+- **Open, Gate B:** the column defaults to `America/Los_Angeles` — correct for every current hold and **silently wrong for the first stranger in Ohio.** Capture `Intl.DateTimeFormat().resolvedOptions().timeZone` at hold setup. Belongs with onboarding.
+
+## The activeness model (LOCKED 2026-07-21)
+**`isActiveQuest(quest, today)` in `src/lib/quest-helpers.ts` is the single shared predicate.** Every surface that asks "is this quest live right now" imports it. None defines its own.
+
+- **This exists because three surfaces each defined "active" independently** and drifted apart — a defect *pattern*, not a bug. Board, Briefing and wall are unified behind it.
+- **Any new activeness surface imports the predicate or is wrong by construction.**
+- *A fourth surface (the member profile / roster active-quest list) is under investigation — see `status.md`. If confirmed, the sweep completes rather than the rule changing.*
+
+---
+
 ## Data model — the Quest object
 - `title` — short text
-- `points` — integer, set on creation *(internal field name; user-facing term is **embers**)*
+- `points` — integer, set on creation *(internal field name; user-facing term is **embers**)*. **Minimum 1 — zero-ember quests are illegal.**
 - `created_by` — member who posted it
 - `assigned_to` — empty = open (anyone claims); set = directed
-- `audience` — **anyone / adults_only / kids_only** (default anyone). Model, form, **and consumer all live**: kids see `anyone` + `kids_only`; adults see all three. Applied as one shared rule across board + Briefing strip + count badges.
+- `audience` — **anyone / adults_only / kids_only** (default anyone). Model, form, **and consumer all live**: kids see `anyone` + `kids_only`; adults see all three. One shared rule across board + Briefing strip + count badges.
 - `campaign` — empty = everyday; set = tagged, its embers feed that campaign's bar
 - `status` — open → claimed → submitted → approved (directed quests start at claimed)
 - `approved_by` — the adult who approved; **embers only count once set**
-- `due_date` — `DATE NOT NULL DEFAULT CURRENT_DATE`. **No user-facing picker** — set by the default on create, computed by the recurrence trigger on respawn. The board and every open-bounty surface filter `due_date <= today`; recurrence spawns the next instance *dated forward*, so it appears only when its date arrives. **This gate is load-bearing** — it's what keeps the board a "what needs doing now" surface rather than a dump of everything in the table.
-- `recurrence` — none / daily / weekly / **monthly**. **Fixed calendar anchors (LOCKED 2026-07-14):** weekly → the **Monday** of the following week; monthly → the **1st** of the following month; daily → tomorrow. There is **no day-of-month selector** — it was removed. Monthly is always the 1st; anything bespoke is a **calendar event**, not a recurring quest (the membrane). Anchoring is by construction (`date_trunc('week'|'month', …) + interval`), which kills the old relative-drift where a late approval walked the due date forward. On approval of a recurring quest, archive the completed instance and spawn the next — **never reset in place** (one shared spawn path, `handle_quest_approval`). The next instance spawns **only on approval** — there is no timer.
-  - **Per-cadence rollover rule (asymmetric, deliberate):** daily **rolls forward on miss** — `roll_missed_dailies` archives the stale instance and spawns a fresh one for today, no ember accumulation, no guilt-pile. Weekly/monthly do **not** roll — an undone weekly/monthly persists at its original `due_date` until approved, because approval is the only spawn trigger. Consequence: an undone monthly never auto-refreshes and never blocks its own next cycle; it lingers, visibly, which is correct — it's still owed.
+- `due_date` — `DATE NOT NULL`. **Backend-only — never user-facing.** Recurrence machinery, not user information. Set on create, computed by the recurrence trigger on respawn. The board and every open-bounty surface filter `due_date <= household_today()`; recurrence spawns the next instance *dated forward*, so it appears only when its date arrives. **This gate is load-bearing** — it keeps the board a "what needs doing now" surface rather than a dump of the table. *(The column still carries `DEFAULT CURRENT_DATE` deliberately, recorded so it isn't rediscovered as an oversight; nothing relies on the default.)*
+- `recurrence` — none / daily / weekly / **monthly**
 - `rating` — optional 1–5, quality signal only, does NOT change embers
 - `is_favorite` — star → appears in a quick-add template list
 - `tier` — derived from points: **DIM → WARM → HOT → BLAZING.** Drives visual intensity
 - Timestamps: created, claimed, submitted, approved
 
+### The recurring lifecycle (LOCKED)
+- **Fixed calendar anchors.** Weekly → the **Monday** of the following week; monthly → the **1st** of the following month; daily → tomorrow. There is **no day-of-month selector** — it was removed. Monthly is always the 1st; anything bespoke is a **calendar event**, not a recurring quest (the membrane). Anchoring is by construction (`date_trunc('week'|'month', …) + interval`), which kills the relative-drift where a late approval walked the due date forward.
+- **Spawn on approval only. There is no timer.** On approval of a recurring quest, archive the completed instance and spawn the next — **never reset in place**. One shared spawn path: `handle_quest_approval`.
+- **The successor anchors to the household's today, not to the completed instance's old date.** Anchoring to the archived instance walks the whole series backward and was a real shipped bug.
+- **Per-cadence rollover is asymmetric, deliberately.** Daily **rolls forward on miss** — `roll_missed_dailies` archives the stale instance and spawns a fresh one for today: no ember accumulation, no guilt-pile. Weekly/monthly do **not** roll — an undone weekly/monthly persists at its original `due_date` until approved, because approval is the only spawn trigger. Consequence: an undone monthly never auto-refreshes and never blocks its own next cycle; it lingers, visibly, which is correct — it's still owed.
+- **`roll_missed_dailies` fires on every board mount, unconditionally.** Any create flow that navigates to the board runs it seconds later, so a freshly created daily is judged by it immediately. This is why its comparison must use the household clock: judged against UTC it declared same-day rows "missed," archived them, and respawned them dated tomorrow — correct for one round-trip, then clobbered.
+- **Rollover has no health indicator.** A stuck daily and a healthy one are indistinguishable from the glass. Logged as an observability gap.
+
 **Adult self-completion:** when the submitter is an Adult, completion writes `status='approved'` + `approved_by=self` **atomically** — embers mint immediately, never entering the pending queue. The gate is *satisfied*, not bypassed. Kid completions unchanged.
 
-**Quest approval is guarded by `a_enforce_quest_update_authority` (a BEFORE-UPDATE trigger that fires before the approval handler and restricts approval to parents). Load-bearing: do not drop or refactor this trigger without replacing its guarantee.** **A second load-bearing trigger, `enforce_quest_family_refs`, rejects any quest whose `claimed_by`/`assigned_to`/`approved_by` points outside the quest's own family (the cross-tenant guard added 2026-07-19).**
+**Two load-bearing triggers — do not drop or refactor without replacing the guarantee:**
+- **`a_enforce_quest_update_authority`** — BEFORE-UPDATE, fires before the approval handler, restricts approval to parents. The lock on the ember economy.
+- **`enforce_quest_family_refs`** — rejects any quest whose `claimed_by` / `assigned_to` / `approved_by` points outside the quest's own family. The cross-tenant guard.
 
-**Planned extensions (parked):** `objectives[]` — an array of checkable steps turning a quest into a **multi-step quest**. Steps don't mint; only turn-in does, and submit is locked until every step is checked. The model home for **chore lists** and the deferred list→quest hook.
+**Planned extension (parked):** `objectives[]` — an array of checkable steps turning a quest into a **multi-step quest**. Steps don't mint; only turn-in does, and submit is locked until every step is checked. The model home for chore lists and the deferred list→quest hook.
 
 ---
-
-## Household & roles
-- **Members ("hearthmates"):** name, avatar (hero portrait), role (**Adult / Kid** — display label; role enum unchanged), class (**Forge / Garden / Keep / Hall**).
-- **Model:** profile-switching, shared-device first (Netflix-style — tap to switch), because young kids have no phone. Join-code is the *secondary* path. **Kids have no auth identity** — they are sub-profiles acting under an adult's authenticated session. *(This is also the COPPA advantage: no kid email, no direct collection. And the reason naive `auth.uid()`-based RLS fixes don't work — see Security.)*
-- **Adult profiles are PIN-locked, fail closed.** A PIN is *mandatory* at adult creation (with confirm-entry); existing PIN-less adults are intercepted and forced to set one. No path into an Adult profile without a PIN. This gives the approval gate teeth (anti-cheat).
-- **Adult profile creation** routes through the `create_adult_profile` SECURITY DEFINER RPC. *(Fixes the `permission denied for table users` production bug; the kid path was fixed by dropping a redundant subquery.)*
-- **PIN / password recovery (three locks):** (a) **adult-resets-adult** — a reset (↺) on each other adult's member card clears their PIN; fail-closed intercept forces a new one on switch-in. (b) **account-owner master path** — "Forgot PIN?" clears that profile's PIN via the owner-gated `set_profile_pin` RPC; closes the sole-adult lockout. (c) **account login** — "Forgot password?" → Supabase built-in reset → `/reset-password`. No new auth system, no new tables. *(Threat note: an acting adult can reset another adult's PIN — peer trust, fine for a 2-adult hold; revisit for peer/roommate holds.)*
-- **Hold membership:** an owner; an editable hold name. **Invite to the Hold** fires the Web Share API with a prefilled message + deep link `theemberhold.com/join?code=XXXX` (desktop clipboard fallback); `/join?code=XXXX` pre-fills the join screen. **Join code visibility + invite are Adult-only** (inviting is admin authority).
-- The **"Whole hold" entity is marked by the keep glyph** in household-amber — members carry identity-color dots; the hold carries the brand object.
 
 ## Onboarding (Pip-guided)
-The ember-sprite mascot, **Pip** (soft-named; kids retain veto), is the app's guide. Pip is **guidance only** — read-only, never awards embers, unlocks, or gates anything (the game stays in quests). Reuses Pip's expression set (idle / encourage / celebrate).
-- **First-run is contextual setup, not a feature tour.** Signup: Pip greets, inline "?" help on the three non-obvious fields (Role, Adult PIN, Start-vs-Join); signup creates the account holder only.
-- **Add-to-hold (creator only):** a dedicated Pip-guided screen builds the rest of the hold (hearthmate repeater — name / avatar / role; Adult requires PIN).
-- **Joiners** skip hold-building. **Kid first-run:** welcome card + 3 skippable coach-marks. **Persistent help:** Pip in the top header corner → role-aware help sheet + "Replay the intro" / "Add more hearthmates."
-- **Feature tour is on-demand** — offered only once the hold has content. The loop card (**"Post the work → Claim & complete → Approve & reward → Chase the campaign"**) doubles as the marketing pitch, and is the intended centerpiece of the landing page.
+The ember-sprite mascot, **Pip** (soft-named; kids retain veto), is the app's guide. Pip is **guidance only** — read-only, never awards embers, unlocks, or gates anything. Reuses Pip's expression set (idle / encourage / celebrate).
 
----
+**First-run is contextual setup, not a feature tour**, and it carries **three** payloads that are one screen, not three:
+1. **Hold setup** — signup, then a Pip-guided screen building the rest of the hold (hearthmate repeater: name / avatar / role; Adult requires PIN). Signup itself creates the account holder only.
+2. **Module intent** — *"what does this Hold want out of the app."* The answer writes enablement. Offer only modules that exist.
+3. **Timezone capture** — silent, from the browser. See *The household clock*.
+
+Plus the activation doorway: **a new hold currently lands on an empty board with no path to a first quest.** Onboarding ends at setup, not at activation, and that is the top structural gap in the product.
+
+- **Joiners** skip hold-building. **Kid first-run:** welcome card + 3 skippable coach-marks. **Persistent help:** Pip in the top header corner → role-aware help sheet + "Replay the intro" / "Add more hearthmates."
+- **Feature tour is on-demand** — offered only once the hold has content. The loop card (**"Post the work → Claim & complete → Approve & reward → Chase the campaign"**) doubles as the marketing pitch and is the intended centerpiece of the landing page.
 
 ## The economy
 - **Sources:** quests mint embers, on adult approval (adults self-approve atomically). **Sinks:** the **Vault**. **Pools:** campaign collective bars.
@@ -105,7 +199,7 @@ The ember-sprite mascot, **Pip** (soft-named; kids retain veto), is the app's gu
 Rewards sit on the same **DIM / WARM / HOT / BLAZING** ramp as quests. One ramp, both directions of the economy.
 
 ### The adult reward menu (v1 — LOCKED, 7 items)
-Adults earn and spend too — this is what May actually uses, and it's what makes the app a household tool rather than a kid tool with adult admins.
+Adults earn and spend too — this is what makes the app a household tool rather than a kid tool with adult admins.
 
 | Tier | Reward |
 |---|---|
@@ -119,24 +213,25 @@ Adults earn and spend too — this is what May actually uses, and it's what make
 
 **Deliberately excluded — dishes.** It already exists as a quest. The same chore cannot be both a source and a sink; double-dipping reads as a bug, not a reward.
 
-**Deliberately relocated — date night.** Moved *out* of the Vault and *into* Campaigns as the EARNING type's first real content. It's a shared goal two people pool toward, not something one person buys. This is what the couples rail exists to serve.
+**Deliberately relocated — date night.** Moved *out* of the Vault and *into* Campaigns as the EARNING type's first real content. A shared goal two people pool toward, not something one person buys.
 
 ---
 
-## Modules (the surfaces)
+## Platform surfaces
 
 ### The Engine
-Quest board, ember economy, recurrence (fixed anchors — weekly=Mon, monthly=1st), ratings, favorites, adult approval, Ranks leaderboard, Quest Log.
-- Board is **date-windowed** (`due_date <= today`). Completed dailies leave the board; missed dailies archive + reset fresh on board mount (`roll_missed_dailies`).
+Quest board, ember economy, recurrence, ratings, favorites, adult approval, Ranks leaderboard, Quest Log.
+- Board is **date-windowed** (`due_date <= household_today()`) and reads activeness through the shared predicate. Completed dailies leave the board; missed dailies archive + reset fresh on board mount.
 - **Scope badges (adult view only):** `adults_only` → "Adults only"; `kids_only` → "Kids only"; `anyone` → no badge. Not shown on the kid board — a kid just sees claimable work.
-- **Claim-eligibility copy states itself exactly once per card.** `anyone` keeps the "Available to anyone" subline and gets no badge; scoped quests show their badge and **drop** the subline. (Kills the "Adults only / Available to anyone" self-contradiction.)
+- **Claim-eligibility copy states itself exactly once per card.** `anyone` keeps the "Available to anyone" subline and gets no badge; scoped quests show their badge and **drop** the subline.
+- **The Quest Log applies no `due_date` filter.** Currently load-bearing as a diagnostic surface — it is how both date bugs were confirmed. Whether that stays is an open deliberate call.
 
 ### The Vault (the reward store — dual-mode, both roles)
-The store **switches mode on a binary affordability trigger**. This is affordability-as-heat: the hierarchy principle applied to desire.
+The store **switches mode on a binary affordability trigger**. Affordability-as-heat: the hierarchy principle applied to desire.
 
 **Kid view:**
-- **ZERO affordable → CATALOG ("The Wish Menu").** The full ladder by tier, cheapest-first, everything visible, everything favoritable. This is the *goal-setting / desire* state. Header: "Nothing in reach yet — pick what you're grinding toward."
-- **ONE+ affordable → CURATED.** In-reach glowing set (up to 2 at/under balance) + live **Redeem** + "N embers left after" + next-unlock taunt(s) with progress bars + per-tier fold. This is the *decision / cash-out* state.
+- **ZERO affordable → CATALOG ("The Wish Menu").** The full ladder by tier, cheapest-first, everything visible, everything favoritable. The *goal-setting / desire* state. Header: "Nothing in reach yet — pick what you're grinding toward."
+- **ONE+ affordable → CURATED.** In-reach glowing set (up to 2 at/under balance) + live **Redeem** + "N embers left after" + next-unlock taunt(s) with progress bars + per-tier fold. The *decision / cash-out* state.
 - **Favorites are additive, never an override.** A pinned reward rides *alongside* the auto-surfaced slots. A goal pinned in catalog mode carries into curated mode.
 - **Popularity / highest-redeemed is explicitly rejected as a curation signal** — it structurally buries the aspirational rewards, which are the ones doing the motivational work.
 
@@ -147,25 +242,25 @@ The store **switches mode on a binary affordability trigger**. This is affordabi
 
 **Reporting deliberately does NOT live here.** Redemption history and reward-performance/prune belong on a future admin/reporting surface — Emberhold's first *analyze-vs-operate* split. Data intact, just not shown in the Vault.
 
-**The couples rail (`reward.audience`).** `household` / `adults_only`, default `household`. Toggle in the create/edit-reward form ("Everyone in the hold" / "Adults only"). Store filters by viewer role — kid sees `household` only; adult sees both. Membrane-safe: adults_only rewards are normal rewards with the same sink and same flow; only visibility changes.
+**The couples rail (`reward.audience`).** `household` / `adults_only`, default `household`. Toggle in the create/edit-reward form ("Everyone in the hold" / "Adults only"). Store filters by viewer role. Membrane-safe: adults_only rewards are normal rewards with the same sink and same flow; only visibility changes.
 
 ### Campaigns
 Shared-goal containers a quest tags into, with a progress bar. Two types via `goal_type`:
-- **PLANNING** — completed tagged quests / total (e.g. São Paulo).
-- **EARNING** — pooled embers. **This is the home for shared/couple goals** (Date Night). The pooled mechanic that the Vault deliberately doesn't have.
+- **PLANNING** — completed tagged quests / total.
+- **EARNING** — pooled embers. **The home for shared/couple goals.** The pooled mechanic the Vault deliberately doesn't have.
 
 Planning tools, not earning grinds. Progress renders as a bare **%** (earning-type campaigns showing a real ember count are the exception). Campaign completion fires the **Legendary** override state on the feed.
 
 ### Calendar
-Standalone event CRUD: month grid, per-member color dots, today-glow, day-tap list, event detail. Events carry who / date / optional `end_date` (multi-day) / times or all-day / location / notes / simple recurrence. The keep glyph marks whole-hold items. **Native OS date picker** for event dates (deliberate). Event **creation** is a feed write point; edits aren't. No iCal import yet (deferred).
+Standalone event CRUD: month grid, per-member color dots, today-glow, day-tap list, event detail. Events carry who / date / optional `end_date` (multi-day) / times or all-day / location / notes / simple recurrence. The keep glyph marks whole-hold items. **Native OS date picker** for event dates (deliberate). Event **creation** is a feed write point; edits aren't. No iCal import yet. **One timeline is constitutional — every module's dated things land here.**
 
 ### Lists
 A generic shared-list primitive (`list` / `list_item` / `list_section`). Index (ember cards, open-count) + detail (docked add-item bar, **strike-and-sink**, user-defined **sections** with per-section sink and a section chip, per-item delete, "Clear checked"). Seed lists: Groceries / Packing / Errands. Permissions: anyone adds/checks/deletes items + manages sections; **deleting a whole list is adult-only.** **Off the activity_log spine** (membrane: no embers, no game).
-- **Add-item bar = full-width solid docked footer** (opaque elevated layer, hard top edge, fade scrim; list scrolls cleanly *behind* it). The global FAB is suppressed on list-detail — the docked bar is the sole create action.
-- **Search bar** appears automatically past ~50 items (sticky top); **searches checked items too** (the un-stock-when-you-run-out case); retains section grouping during search; clear-to-restore.
+- **Add-item bar = full-width solid docked footer** (opaque elevated layer, hard top edge, fade scrim; list scrolls cleanly *behind* it). The global FAB is suppressed on list-detail.
+- **Search bar** appears automatically past ~50 items (sticky top); **searches checked items too**; retains section grouping during search; clear-to-restore.
 
 ### The Briefing
-The Adult command center and the **Hub's seed**, built as final architecture with sparse contents (modules add rows, never re-poured). Zones, priority-ordered by brightness=heat=importance:
+The Adult command center and the **Hub's seed**, built as final architecture with sparse contents (surfaces add rows, never re-poured). Zones, priority-ordered by brightness=heat=importance:
 1. **NEEDS YOU** attention bar
 2. **OPEN BOUNTIES** strip *(the one surviving use of the word)*
 3. **FEED** — the live activity pulse strip (newest-first, auto-advancing, DIM→BLAZING heat, 48h window)
@@ -178,126 +273,184 @@ Plus the Quest Log link.
 ### In-app notifications
 Global header bell, every screen. Badge = actionable items for the current profile only (Adults: submitted quests + pending redemptions; Kids: none in v1). Panel: **NEEDS YOU** (actionable) + **RECENT** (~10 latest activity_log items, read-only). **Stateless** — no read/unread, no new table; derived live from quest status + activity_log.
 
+### The wall (display / kiosk mode)
+Always-on, no-login, full-screen on a cheap tablet — the Hub's final form factor; the activity feed is its engine. Top full-width FEED ticker; bottom-left ~3/4 calendar WEEK view; bottom-right ~1/4 avatar-collapsible ACTION RAIL. Rotating ambient cards, 5–10s.
+- **THE WALL SHOWS AND PROPOSES. IT NEVER MINTS, SPENDS, APPROVES, OR EDITS.** Claim/complete move status only; approval stays PIN-gated. On-behalf writes (`wall_request_redemption`) *request*; they never commit. The commit gate stays sacred even on a walk-up kiosk.
+- Open-pool visibility lives IN the feed (unclaimed-glow + 72h aging render rules).
+- **The only semi-public Emberhold surface a non-customer can encounter** — which is why wall-visibility is the ranking criterion for cosmetic catalog items.
+
 ---
 
 ## Navigation
 - Bottom tab bar, **7 tabs**: BOARD · CAMPS · CAL · **LISTS** · VAULT · RANKS · YOU. Lists is dead-center.
 - The **"+" FAB is raised** to a kiss-overlap above the bar with a soft contact glow. It opens the create menu; becomes the docked submit inside a create flow; is suppressed on single-purpose surfaces that own their create action (Lists detail).
 - *(Tab count is one past mobile comfort — intentional/temporary; profile-to-header consolidation is parked, not forced.)*
+- **Open question:** seven tabs is already one too many, and an enabled module needs somewhere to live. Module navigation is unresolved and is **not** "add another tab."
 
 ---
 
 ## Avatars (the hero roster)
 - **Hero portraits are the sole avatar system** (Classic emoji retired). Never a bare photo in the circle — a raw photo breaks the style floor and would make every hand-crafted portrait read as set dressing. *(The underlying "I want it to be me" want is served instead by roster variety near-term, and long-term by a photo→stylized-hero render pipeline that pushes an uploaded face* into *the floor.)*
-- The picker is grouped by the four classes and **collapses per class** to ~4 portraits with "show more / show less" — the container that lets the roster grow deep without ever reading as cluttered. Current selection forces its class open.
+- The picker is grouped by the four registers and **collapses per register** to ~4 portraits with "show more / show less" — the container that lets the roster grow deep without ever reading as cluttered. Current selection forces its register open.
 
-### The four classes
-Double as task + animation themes:
+### The four registers
+The avatar/animation registers, carried on `members.class`. **Aesthetic only — a register is not a functional area and does not gate anything.**
 - **FORGE** — warriors, protectors, ember-forged heroes
 - **GARDEN** — nature-touched growers and wildsfolk
 - **KEEP** — steadfast watchers and guardians
-- **HALL** — the whole gathering hall: makers **and** entertainers **and** keepers of warmth (bards, storytellers, dancers, revelers, hearth-tenders, hosts). Food is **≤ ~1/3** of the class.
-  - *Renamed from **FEAST** (7/03) — and it was a redefinition, not just a label swap. "Feast" narrows to food (a generator fed the word returned 6/8 food characters). "Hall" restores the spatial-noun logic of the other three and opens the class to what it was always meant to be. Cheap find/replace: label, enum value, animation-theme name.*
+- **HALL** — the whole gathering hall: makers **and** entertainers **and** keepers of warmth (bards, storytellers, dancers, revelers, hearth-tenders, hosts). **Food is ≤ ~1/3 of the register.**
+  - *Renamed from **FEAST** (7/03) — a redefinition, not a label swap. "Feast" narrows to food (a generator fed the word returned 6/8 food characters). "Hall" restores the spatial-noun logic of the other three. The constraint is permanent: if anything named Hall ever reads as a food surface, it has re-narrowed to Feast and it is wrong.*
 
 ### The roster
-**44 characters: 40 base (10 per class) + 4 cool-register (1 per class).**
-- Expanded 8 → 10 per class because the collapsible picker makes depth free — every "swap or cut" argument dissolves into "keep both."
-- **Register spread per class (LOCKED):** every class must span **cute / majestic / COOL**. Not "cute where the class allows" — **every class carries 2–3 genuine kid-magnets** *and* a cool/battle-ready character. Generators underweight the cute end by default and regress to one token per class unless explicitly pushed. Validated by which avatars the kids actually reacted to — which is the entire product thesis.
-- Cool-register picks: Forge → ember-lava warrior-woman · Garden → antlered stag-warden · Keep → crystalline ice knight · Hall → twilight crown-queen.
+**48 characters, 12 per register.**
+- **Register spread (LOCKED):** every register must span **cute / majestic / COOL**. Not "cute where it allows" — **every register carries 2–3 genuine kid-magnets** *and* a cool/battle-ready character. Generators underweight the cute end by default and regress to one token each unless explicitly pushed. Validated by which avatars the kids actually reacted to — which is the entire product thesis.
 
 ### The Avatar Style Spec (LOCKED — the band)
-Coherence is governed by a **wide style band with a hard floor**. Range freely *inside* the floor; never break it.
+Coherence is governed by a **wide style band with a hard floor**. Range freely *inside* the floor; never break it. **The floor is a floor, not a ceiling** — the band is intentionally wide, and different registers cohere because they share the floor, not because they resemble each other.
 
 **The floor — three load-bearing constraints (all must hold):**
 1. **LUMINOSITY** *(most important)* — the subject glows from within / carries strong warm ember rim-lighting; light comes OFF the character. "Brightness = heat = importance" expressed as a character. Never flat, dull, or muddy.
 2. **STYLIZED ILLUSTRATION** — clearly hand-drawn painterly fantasy art. NOT photoreal, NOT gritty oil-painting realism, NOT flat chibi/mascot. The grounded, rich middle.
 3. **SATURATED JEWEL COLOR** — rich, clean, saturated color (crimson, purple, blue, teal, ember-gold). Never muddy brown earthy naturalism.
 
-**Inside the floor, the band is WIDE** — cute ↔ grizzled ↔ beautiful all welcome. A luminous battle-woman and a chibi baby dragon cohere because they're *lit and colored* alike, not because they share a subject or proportion.
+**Composition rule (LOCKED): circular-crop-safe framing.** Every avatar centered with even margin on all sides; full head (crown / horns / hat included) + shoulders inside a centered circle with breathing room, nothing touching edges. Applies to all future generation regardless of engine.
 
-**Composition rule (LOCKED): circular-crop-safe framing.** Every avatar centered with even margin on all sides; full head (crown / horns / hat included) + shoulders sit inside a centered circle with breathing room, nothing touching edges. Applies to all future avatar generation regardless of engine.
-
-**Background rule:** each background derives from THAT character (their element / domain / mood), kept dark enough to blend into the app base `#1A110B` in a circular crop — a FILLED portrait, not a transparent cutout. **No uniform gold frame, no shared set-dressing.** The rim-light unifies the roster; a frame does not. Backgrounds vary character to character. *(Watch the leak: the luminosity constraint tends to bleed into the background and set everything on fire. Fence it explicitly.)*
+**Background rule:** each background derives from THAT character (their element / domain / mood), kept dark enough to blend into the app base `#1A110B` in a circular crop — a FILLED portrait, not a transparent cutout. **No uniform gold frame, no shared set-dressing.** The rim-light unifies the roster; a frame does not. *(Watch the leak: the luminosity constraint tends to bleed into the background and set everything on fire. Fence it explicitly.)*
 
 **Diversity rule:** humanoids default to one young light-skinned face unless explicitly fenced. Name the archetype traps — silver-locs elder, curly-haired beauty, big-eyed elf child, generic young-hero man — as **"at most once in the entire roster."**
 
 **Asset hygiene:** image gen always lies about "transparent background" (it paints a box/checkerboard). Sidestep it with filled-dark backgrounds that blend into `#1A110B`. For any future cutout need, generate on flat pure-green and chroma-key; verify alpha programmatically.
 
 ### How to actually generate avatars
-**The method lives in `playbooks/avatar-generation.md`.** It is hard-won, counterintuitive, and not optional — read it before touching a generator. Headline: the style block controls output by **axis, not length** (pin the floor; free the casting, palette, and pose); generate the **full roster in one run** so the anti-repeat constraint can bind; prompt the cool register through **material and light**, never supernatural vocabulary.
-
-**Status:** roster **designed and banked** (44 characters). The remaining work is **transport** — files → Lovable/Supabase (naming, sizing, alpha/crop, picker slotting). Design is done; shipped is not.
+**The method lives in `playbooks/avatar-generation.md`.** Hard-won, counterintuitive, not optional — read it before touching a generator. Headline: the style block controls output by **axis, not length** (pin the floor; free the casting, palette, and pose); generate the **full roster in one run** so the anti-repeat constraint can bind; prompt the cool register through **material and light**, never supernatural vocabulary.
 
 ---
 
 ## Monetization (the Founding Guildhall)
-*(Never previously in the spec. It is design truth now.)*
-
-- **One v1 SKU: the "Founding Guildhall."** A **one-time, household-level** purchase. Stripe Checkout + Supabase webhook + a household entitlement flag (`families.is_founder`, service-role-write-only as of 2026-07-19 — an owner cannot self-grant it, so the paywall is enforceable; see Security). Staying outside app-store rails retains **~97%** of revenue — the reason the PWA posture is a decision, not a compromise.
-- **What it unlocks:** the remaining **24 of 40** base avatars (free tier keeps 16 — four per class).
-- **The free tier must be genuinely COMPLETE, not a demo.** This is the membrane applied to money: **free is a full tool; the purchase is delight, never access to basic function.** Every free four therefore needs a genuine kid-magnet — first-love is the free tier's job; aspirational-but-reachable is the paid tier's.
-- **THE MONETIZATION SEAM RULE (load-bearing).** Per-class or per-character SKUs recreate a *"buy each kid their skin"* dynamic **inside a household tool** — the worst possible seam to put between a parent and their kids. A **household-level** unlock dissolves it entirely: one purchase, everyone gets everything. **All future cosmetic drops must remain household-level.** No exceptions.
+- **One v1 SKU: the "Founding Guildhall."** A **one-time, household-level** purchase. Stripe Checkout + Supabase webhook + a household entitlement flag (`families.is_founder`, **service-role-write-only** — an owner cannot self-grant it, so the paywall is enforceable). Staying outside app-store rails retains **~97%** of revenue — the reason the PWA posture is a decision, not a compromise.
+- **What it unlocks:** the paid share of the avatar roster. Free keeps **16** (four per register); the Guildhall opens the remaining **32**. The gate is a DB value (`system_flags.founder_gate_enabled`) — flipping it is an UPDATE, not a build.
+- **The free tier must be genuinely COMPLETE, not a demo** (constitutional rule 7). Every free four therefore needs a genuine kid-magnet — first-love is the free tier's job; aspirational-but-reachable is the paid tier's.
+- **Household-level, always** (constitutional rule 4).
 - **Membrane-safe cosmetics.** Cosmetics can be **seen** but must never affect gameplay, ember earning, or quest access. A paid avatar is not a better avatar.
-- **Second tollbooth item (parked):** a seasonal **frost cosmetic set** — the leftover cool-register gens + a unified frost aesthetic, shipped as a household-level unlockable. Build after the base roster ships and validates. *Don't build the winter DLC before the base game.*
+- **The catalog is retention leverage, not acquisition insurance.** A retained hold becomes worth $25 + cosmetics, not $25 flat. **Wall-visibility ranks catalog items.**
+- **Next catalog item:** living-hold ambient themes, one per register, canvas particle-based. Keep first, as the performance proving-ground.
+- **A sharper test than "delight vs. function," borrowed and worth adopting: is this thing a CHOICE or a MEMORY?** Expression is choice — always free, always reversible, outcome-neutral. A **mark** is memory — earned through something that actually happened, and what is paid for is the ritual of making it permanent. Themes are choice. An artifact produced by six months of real effort is a memory. This gives the catalog a test that doesn't collapse into "would people pay for it."
 
 ---
 
 ## Design system
 - **Ember-lit aesthetic.** Warm charred darks, never cold gray. Base `#1A110B`, elevated card `#241813`, top-edge sheen `#6E4A2E`, primary text `#F2E3CB`, muted `#A07B54`. Ember ramp (deep→bright): `#BA7517` → `#EF9F27` → `#F8C13C` → `#FCDE5A`; gold rim `#E0A94A`.
-- **Brightness = heat = importance.** The hierarchy principle AND the animation-intensity dial AND the avatar-luminosity floor AND (as of 7/10) the Vault's **affordability-as-heat** mode switch.
-- **Member identity colors are a SEPARATE system from the ember ramp.** Jewel-tone hues across grid dots, event cards, the Briefing horizon. SnowDad amber/gold `#E0A94A` (also "Whole hold" default), May violet `#9B6BD6`, Mia jade `#3FB37A`, Cade steel-blue `#4A9FD6` (spare: rose `#E0607A`, teal `#2DB3A6`, coral `#E08750`).
+- **Brightness = heat = importance** (constitutional rule 6).
+- **Member identity colors are a SEPARATE system from the ember ramp.** Jewel-tone hues across grid dots, event cards, the Briefing horizon. Amber/gold `#E0A94A` (also "Whole hold" default), violet `#9B6BD6`, jade `#3FB37A`, steel-blue `#4A9FD6` (spare: rose `#E0607A`, teal `#2DB3A6`, coral `#E08750`).
 - **The household keep glyph.** Tintable SVG (keep body `currentColor`, hearth a fixed warm glow), household-amber, ~20–22px inline.
-- **Date pickers.** Calendar event dates use the **native OS picker**. *(Quests carry no user-facing date input — recurrence is fixed-anchor and the old quest day-of-month chip picker was removed 2026-07-14.)*
+- **Date pickers.** Calendar event dates use the **native OS picker**. Quests carry no user-facing date input.
+- **Numeric inputs must be clearable.** A number field that refuses an empty intermediate state is unusable on mobile.
 - **Depth, not flat:** layered surfaces, a 1px warm top-edge highlight, soft shadow beneath cards, glow on heat.
-- **The FAB-as-submit / FAB-suppression pattern:** on create screens the bottom-center `+` becomes the form's submit, docked in-flow. On a single-purpose surface that already owns a create action, the global FAB is suppressed entirely. **Exactly one create control in the bottom thumb zone, always.**
+- **The FAB-as-submit / FAB-suppression pattern:** on create screens the bottom-center `+` becomes the form's submit, docked in-flow. On a single-purpose surface that already owns a create action, the global FAB is suppressed. **Exactly one create control in the bottom thumb zone, always.**
 - **Layered docked surfaces:** a docked input over a scrolling list must be a full-width **opaque** elevated layer with a hard top edge and a short fade scrim — content scrolls *behind* it, never *through* it. Translucent floating capsules over scrolling content are banned (they wash out).
-- **Brand: two marks, one keep.** App icon (round-towered keep + glowing hearth on a charred tile) = universal small mark; login crest (the same keep in a forged-gold heraldic shield) = ceremonial mark. One keep silhouette across icon, crest, and household glyph. Motto **"by hearth & hold."** Plus **Pip**, the ember-sprite mascot (idle / encourage / celebrate).
+- **Brand: two marks, one keep.** App icon (round-towered keep + glowing hearth on a charred tile) = universal small mark; login crest (the same keep in a forged-gold heraldic shield) = ceremonial mark. One keep silhouette across icon, crest, and household glyph. Motto **"by hearth & hold."** Plus **Pip**, the ember-sprite mascot.
+- **A register's palette may never override the ember-lit base or the brightness rule.** Registers are a skin on one house, not four houses.
 
 ## Experience layer (the juice)
-- Completing a quest is theater (Battle Chess principle). **Tier = intensity, class = theme — no new data model.**
-- **Pass 1 live:** reactive micro-motion (ember burst by tier, approval echo, new-approval pulse, count roll-ups, press feedback, breathing submit button) + a subtle state-driven household-warmth shift.
-- **Wall / kiosk / display mode:** always-on, no-login, full-screen on a cheap fridge tablet — the Hub's final form factor; the activity feed is its engine. **Validated layout** (designed, not built): top full-width FEED ticker; bottom-left ~3/4 calendar WEEK view; bottom-right ~1/4 avatar-collapsible ACTION RAIL (no-login, no-mint — claim/complete move status only; **approval stays PIN-gated on an adult's phone**). Open-pool visibility lives IN the feed (unclaimed-glow + 72h aging render rules). Rotating ambient cards, 5–10s.
-  - **This is the ambient-presence thesis, and it is unproven.** It is also fenced to post-launch. See the north star for the open tension.
+- Completing a quest is theater (Battle Chess principle). **Tier = intensity, register = theme — no new data model.**
+- **Reactive micro-motion:** ember burst by tier, approval echo, new-approval pulse, count roll-ups, press feedback, breathing submit button, plus a subtle state-driven household-warmth shift.
 - **AI-generated, never stale:** grow a library of themed vignette assets in the background, cache, select instantly at the win. Bake an alpha-check into the pipeline.
 
-## The activity feed (the event-log spine — BUILT)
+## The activity feed (the event-log spine)
 A single **append-only, permanent, immutable** stream — the source of truth for everything that has happened in the hold.
 - **`activity_log` table.** Fields: `id`, `actor_id` (soft, nullable), `actor_label` (frozen), `verb` (enum), `object_id` (soft, no hard FK), `object_label` (frozen at write), `ember_delta` (nullable), `campaign_id` + `campaign_label` (nullable), `significance` (**Legendary** campaign-completion override only), `created_at` (indexed).
 - **`logActivity()` helper** — the single app-level write path. No DB triggers — explicit curated call sites only.
 - **Five curated write points:** `quest_approved` (actor = completer; +points; campaign if tagged) · `bounty_posted` (unassigned/open only; actor = creator) · `reward_redeemed` (actor = redeemer; −cost) · `campaign_completed` (system, actor null, on 100%) · `event_created` (calendar creation only; ember_delta null — membrane).
 - **CAP THE READ, NEVER THE WRITE.** The table is permanent (the Adventure Log's source). Consumers window their own reads. **No pruning queue, ever.**
-- **Downstream consumers (reads off the spine):** the notification RECENT panel (built) · the full in-app feed view · the notification/awareness layer (built in-app; PWA push later) · wall/kiosk live callouts · the **weekly recap** (the feed's first real consumer) · the Adventure Log · the family message board. Build each as a read off the existing table.
+- **The actor must be derived server-side.** `actor_label` is currently a client-supplied parameter, making the receipt surface forgeable within a hold — the one place where "a kid could do a thing" becomes "a kid could make the record say an adult did it," corrupting the surface an adult would use to catch the first thing. Derive from `auth.uid()`.
+- **The feed is where an optional module touches the platform.** A module may write to the spine — that is presence, not economy. Same theater, no exchange rate.
+- **Downstream consumers (reads off the spine):** the notification RECENT panel · the full in-app feed view · wall/kiosk live callouts · the **weekly recap** · the Adventure Log · the family message board. Build each as a read off the existing table.
 
 ---
 
 ## Security posture (design truth, not just a bug list)
-- **The core rule: embers mint only on adult approval.**
-- **The tenant boundary holds under authenticated cross-tenant attack (VERIFIED 2026-07-19).** Run as a live two-household attack with real owner JWTs: all cross-tenant reads/writes, `current_family_id()` integrity (no arg/header/body override surface), every household-scoped SECURITY DEFINER RPC, the `family_xp` view (`security_invoker`), the insert trigger, and `system_flags` write are SECURE. Two grant-drift breaches were found and closed (below). **One honest caveat:** grant-enumeration was not exhaustively readable from the auth seat, so the claim is *every tested surface secure*, not *grant surface provably complete* — the exhaustive table-by-table `authenticated` grant read (Lovable SQL-dump) is the remaining, non-blocking step.
-- **Four load-bearing grant rules (LOCKED 2026-07-19 — do not regress; each closed a real or potential cross-tenant/paywall hole):**
-  1. **`member_spendable()` is family-scoped** — returns a balance only for profiles in the caller's `current_family_id()`; foreign profiles return null. *(Closed Finding A: cross-household balance read + inflation, which a household's own `approve_redemption` trusts.)*
-  2. **Quest FK columns resolve to the quest's family** — `claimed_by` / `assigned_to` / `approved_by` are rejected at write time if they point outside the quest's family, via the `enforce_quest_family_refs` trigger. *(The write-side half of Finding A.)*
-  3. **`families.is_founder` is service-role-write-only** — `authenticated` may update the hold `name` but NOT `is_founder`. *(Closed Finding B: any owner could self-grant premium and skip the paywall. This is what makes the Founding Guildhall entitlement actually enforceable.)*
-  4. **`founder_gate_enabled()` / `my_household_is_founder()` execute is `authenticated`/`service_role` only** — `anon`/`PUBLIC` execute revoked.
-- **The recurring disease is grant drift.** Both 07-19 breaches, like the four prior schema-drift instances, were the live grant/schema surface diverging from the repo. Hand-applied DB changes are forbidden — every change lands as a migration file — and structural changes verify against the live surface, not migration history (see the landmine note below).
-- **SECURITY DEFINER audit — sweep run (2026-07-19).** Every household-scoped definer RPC was fired cross-tenant with a real hostile JWT and verified anon-denied or internally guarded (`…not in your household`); the founder RPCs' over-broad `anon` execute was revoked. Residual: the exhaustive grant-enumeration read (above). *(Function-level / exploit detail stays in the private Workstream note, never this public repo.)*
-- **Join codes admit members to a household — now gated by admit-on-approval (data layer LOCKED 2026-07-14).** A join-by-code creates a `profiles.status = 'pending'` profile; **`current_family_id()` returns NULL for any non-active profile**, so every family-scoped RLS policy denies by construction — one chokepoint, fail-closed everywhere. The self-selected role is stored as `requested_role` (advisory only); **no `user_roles` row is written at join.** A parent admits *and* confirms the role in one action (`admit_pending_member(_profile_id, _confirmed_role)` — confirmed role is authoritative), enforced at the trigger layer (`enforce_profile_role_change`), not policy alone. **Do not refactor `current_family_id()` without preserving the NULL-for-pending guarantee — it is the lock on the entire pending-member gate**, the way `a_enforce_quest_update_authority` is the lock on the ember economy. The tenant-isolation audit (2026-07-19) confirmed the join flow exposes **no cross-tenant path** (`complete_household_setup` returns the caller's own household; the pending-role hint is advisory only) — the gate is proven at the isolation layer. (Admit-UI build status is tracked in `status.md`.)
-- **Schema-history landmine (operational).** The tracked migrations do **not** fully describe the live schema — confirmed 2026-07-14: `recurrence_day` (since dropped) and the `monthly` enum value were both added out of band, with no migration file defining them. Before any structural change, verify against the **live** schema (`information_schema`), not the migration history alone. The exact drift this repo exists to prevent, reappearing at the schema layer. **Reinforced 2026-07-19:** both P4×L8 breaches were live grant drift (grants wider than the repo intended) — now a five-times-observed pattern, and the reason the grant-enumeration read matters.
-- **Kid-vs-kid impersonation.** The client-side profile switch is ungated. Kid PINs stay **off by default** (they tax the walk-up thesis, which is the whole shared-device model). Mitigation already built: the **redeemer's name + face on the adult approval card**. Resolution is an optional lightweight picture-lock, shipping with the wall/kiosk phase.
-- **Persistence debt:** Vault favorites currently use `localStorage`. Fine for validation, fatal for the shared-wall model — favoriting is now load-bearing (goal-commitment) across kid store, adult store, and rail. **Needs real per-profile persistence before ship.**
+- **The core rule: embers mint only on adult approval** — the platform expression of constitutional rule 2.
+- **The tenant boundary holds under authenticated cross-tenant attack (VERIFIED 2026-07-19).** Run as a live two-household attack with real owner JWTs: all cross-tenant reads/writes, `current_family_id()` integrity (no arg/header/body override surface), every household-scoped SECURITY DEFINER RPC, the `family_xp` view (`security_invoker`), the insert trigger, and `system_flags` write are SECURE.
+- **Load-bearing grant rules (LOCKED — do not regress):**
+  1. **`member_spendable()` is family-scoped** — returns a balance only for profiles in the caller's `current_family_id()`; foreign profiles return null.
+  2. **Quest FK columns resolve to the quest's family** — enforced by `enforce_quest_family_refs` at write time.
+  3. **`families.is_founder` is service-role-write-only** — `authenticated` may update the hold `name` but NOT `is_founder`. This is what makes the Founding Guildhall entitlement enforceable.
+  4. **`founder_gate_enabled()` / `my_household_is_founder()` execute is `authenticated`/`service_role` only.**
+  5. **Module enablement writes only through its RPC** — no table-level UPDATE grant on `families` is ever added to support a feature column. Adding one would re-open rule 3.
+- **GRANT DRIFT IS A CLASS-LEVEL DEFECT, NOT AN INCIDENT.** Postgres grants `EXECUTE` to `PUBLIC` by default on every newly created function, and table grants have diverged from the repo in **both** directions — once too narrow (14 tables lost `authenticated` Data-API grants) and once too wide (`anon` holding full CRUD on `families`, including UPDATE on `is_founder`). **Revocation must be proactive, not reactive.** Grant convention: grant `authenticated` first, then revoke `PUBLIC` — order matters.
+- **Hand-applied DB changes are forbidden.** Every change lands as a migration file. Structural changes verify against the **live** surface (`information_schema`), not migration history — the tracked migrations do not fully describe the live schema, a repeatedly observed pattern.
+- **Schema is undone FORWARD** *(LOCKED 2026-07-25)*. A Lovable version-revert restores code and project files **only**: applied migrations are not rolled back, objects stay live, and the migration *files* are removed while their objects remain — manufacturing exactly the schema-history drift this repo exists to prevent. There is no mechanism to roll back a specific migration; undoing schema means writing a new migration that reverses it. Drop in FK order **without CASCADE**, so an unexpected dependency stops the migration instead of being forced through. Run a read-only live-schema recon before any teardown.
+- **Join codes admit members to a household — gated by admit-on-approval.** A join-by-code creates a `profiles.status = 'pending'` profile; **`current_family_id()` returns NULL for any non-active profile**, so every family-scoped RLS policy denies by construction — one chokepoint, fail-closed everywhere. The self-selected role is stored as `requested_role` (advisory only); **no `user_roles` row is written at join.** A parent admits *and* confirms the role in one action (`admit_pending_member`), enforced at the trigger layer. **Do not refactor `current_family_id()` without preserving the NULL-for-pending guarantee** — it is the lock on the entire pending-member gate, the way `a_enforce_quest_update_authority` is the lock on the ember economy.
+- **The walk-up trust boundary (accepted, intra-household).** In the shared-session model a device-kid holds the owner's ambient parent JWT, so economic RPCs are satisfied by that session; the PIN is the only kid/parent line and it is client-side. **Intra-household, not cross-tenant** — `current_family_id()` derives server-side from `auth.uid()`. Accepted for household use. Two scanner findings are ignored *because of* this boundary; deciding the own-session-vs-per-member-auth fork revives both. The fork is parked.
+- **Kid-vs-kid impersonation.** The client-side profile switch is ungated. Kid PINs stay **off by default** (they tax the walk-up thesis, which is the whole shared-device model). Mitigation already built: the **redeemer's name + face on the adult approval card**. Resolution is an optional lightweight picture-lock.
+- **Persistence debt:** Vault favorites use `localStorage`. Fine for validation, fatal for the shared-wall model — favoriting is load-bearing (goal-commitment) across kid store, adult store, and rail. **Needs real per-profile persistence.**
+
+---
+---
+
+# PART II — THE TRAINING MODULE (SHAPE UNDECIDED)
+
+**Status: not built, and its shape is an OPEN DECISION.** This section records what is settled and names the fork. It is deliberately not written as design truth, because it isn't yet.
+
+## What is settled
+
+**It is a module inside Emberhold, not a sibling app** *(LOCKED 2026-07-25)*. A separate product, tenancy, and domain is DECLINED. The standalone frame reached a domain recommendation, an eight-table schema, and a working slice before it broke — on **proportion**: it had grown a tool wall, a metal-composition system, and project-scoped blocks while still being unable to log a working set. Merging fixes the ratio and deletes work: no second auth, no second tenant bootstrap, one member table, one PIN system, one avatar pipeline, one Founding Guildhall unlock.
+
+**Why it is the only module.** Every other candidate area decomposes into quests, lists, or campaigns. Training does not, because it **cannot mint embers without breaking constitutional rule 2** — nobody approves a squat set, and a currency redeemable for real goods cannot be minted by its beneficiary.
+
+**The engine is pure client-side TypeScript, and progression logic never lives in Postgres** *(LOCKED 2026-07-25)*. `src/lib/progression.ts` exists today: RPE-driven autoregulation, plate-snapping against an equipment inventory, Epley+RIR e1RM, 10/10 tests, zero Supabase imports.
+- **It lives in the client for one non-negotiable reason: a garage has unreliable connectivity.** If the rule lives in the database the app is useless the moment wifi drops. Supabase is the sync target, never the compute.
+- **Tests are mandatory here specifically** — a silent off-by-one corrupts training data that cannot be reconstructed.
+- It survived a full eight-table teardown intact, which is what having no Supabase imports buys.
+
+**The differentiator is the reason string, not the math.** Loggers are commoditized with generous free tiers; generators are widely criticized for making decisions users must override without explaining why. *"3×5 @ 185, avg RPE 6.7 — all sets complete under target, adding 10 lb"* beats an unexplainable algorithm and costs nothing to build.
+
+**The v1 job is to replace Fitbod.** Set logging, automatic programming, rest timing, progressive adjustment, and the reason string. At $15.99/mo, that is ~$192/year against a $636/year break-even target — roughly a third of break-even recovered before a stranger pays anything, with no paywall, funnel, or Gate E dependency.
+
+**Free/paid split** (constitutional rule 7): deterministic autoregulation, template-driven auto-programming, rest timing and progressive adjustment are **FREE**. Only *LLM-generated* programming is paid — it is the sole feature with a real per-user marginal cost.
+
+**Participation is not a role check.** "Adults only" is a proxy for "trains" and will break. When it does, the answer is a per-member flag.
+
+**Explicitly out of scope:** client-facing training (paying clients, not hearthmates). A client is not a hearthmate and cannot share a household tenant. If it ever happens it is a separate trainer-facing surface reading the same data — never a change to the household model.
+
+**Platform constraint, and it is hard.** Heart-rate-validated training requires Apple Health / Google Fit. **There is no HealthKit web API**, and the PWA posture is LOCKED (Capacitor assessed and DECLINED 2026-07-22). **Self-logged strength work is the only modality a PWA can honestly measure.** Distance, interval and mobility work validated by heart rate are structurally unavailable until and unless the platform posture changes.
+
+## The open fork
+
+**Option A — TOOL ONLY.** Training is a clean utility with no game, no currency, no collection. It writes presence to the activity feed and nothing else. Recommended as v1: it is buildable now, it cancels a subscription this month, and it tests whether the module is used before anything is built on top of it.
+
+**Option B — TOOL PLUS ONE SEALED GAME.** Training additionally carries a game under the membrane amendment: effort produces typed materials, materials combine into artifacts, artifacts accumulate as a collection that is legible evidence of what was actually trained. No currency in the fungible sense — an artifact isn't worth anything, it's *evidence*, which is what makes the seal structural rather than policed.
+
+**What Option B would owe before it could be written as truth:**
+- Whether materials pool or are claimed at commitment.
+- What materials are typed **on**. Typing them by modality contradicts a prior locked call elsewhere that all modalities must produce equal value — and with one available modality there is nothing to type across anyway.
+- Whether a collection survives contact with the calibration check: *this is a family chore game with your kids' faces in it.*
+
+**The standing risk, named because it has already happened once.** The game is the most interesting part to build and the tool is the part that pays. The 07-25 collapse was exactly this shape. **Option B does not get designed until Option A has been used for a month.**
 
 ---
 
 ## Tech & working model
-- **Stack:** Lovable.dev (React + Supabase), mobile-first installable PWA, live at theemberhold.com. **Stripe Checkout + Supabase webhook** for the Guildhall. **Copilot Create** for avatar/asset generation (work account — zero Lovable credit burn). **Claude Code** for the codebase-reading jobs Lovable can't do from inside itself (RLS audits, the self-approval fix, any future native shell).
-- **The Copilot bridge is validated end-to-end:** Copilot designs against the locked floor → Scott selects → Lovable engineers. Same lane discipline, different asset engine, zero credit burn. A proven part of the working model, not a maybe.
-- **The team (three lanes — LOCKED):**
-  - **Scott** — vision, taste, final decisions.
-  - **jAIne** — hears, challenges, breaks down, translates intent into direction (build prompts, debugging, spec stewardship). *Does not reach into Lovable's lane.*
-  - **Lovable** — engineers the functional output.
-  - **The principle:** trust each lane; don't do each other's jobs. **jAIne's failure mode is over-specifying when under-trusting downstream** — scripting exact characters or specifics is grabbing Lovable's wheel. The fix: brief the **floor + intent**, leave **latitude on execution**. Evidence: Scott's favorite avatars were the ones authored *unsupervised* off loose briefs; the over-specified gens were the weakest. Applies platform-wide, not just to avatars.
-- **Brain → hands loop:** this Project's docs are the brain; Lovable is the hands; jAIne is the reasoning + debugging between. Each build phase runs as its own chat.
-- **"Shipped" has a standard.** A completed end-to-end loop — not a screen rendering in a screenshot. Design-complete ≠ shipped (see: the 44 avatars sitting on a phone).
-- **Source-of-truth upgrade (parked, warming):** a version-controlled canonical repo + manifest when Emberhold outgrows Project knowledge. Signal: doc-edit friction (no write-back; every update is a manual file swap). *The doc-set is getting big and this signal is now firing.*
+- **Stack:** Lovable.dev (React + Supabase), mobile-first installable PWA, live at theemberhold.com. **Stripe Checkout + Supabase webhook** for the Guildhall. **Copilot Create** for avatar/asset generation (work account — zero Lovable credit burn). **Claude Code** for the codebase-reading jobs Lovable can't do from inside itself.
+- **The Copilot bridge is validated end-to-end:** Copilot designs against the locked floor → Scott selects → Lovable engineers. Same lane discipline, different asset engine, zero credit burn.
+- **The lanes (LOCKED):**
+  - **Scott** — vision, taste, final decisions. **Anything whose success criterion is visual.**
+  - **jAIne** — hears, challenges, breaks down, translates intent into direction (build prompts, debugging, doc stewardship). **Cannot see. Does not brief visual work as if she could.** *Does not reach into Lovable's lane.*
+  - **Lovable** — engineers the functional output. Default lane for frontend and live-DB work.
+  - **Claude Code** — text: code, config, strings, files, structure. Anything verifiable by reading. **Syncs to `origin/main` before reading — a stale local clone is never authoritative.**
+  - **The edge of Code's lane:** the moment the success criterion is *"does this look right,"* Code is outside it — and briefing harder does not help, because the briefer is blind too.
+- **One writer at a time.** Data-layer / live-DB → Lovable. Frontend text/code → Claude Code. Never simultaneous.
+- **Brief the floor and the intent; leave latitude on execution.** **jAIne's failure mode is over-specifying when under-trusting downstream.** Evidence: the favorite avatars were authored *unsupervised* off loose briefs; the over-specified gens were the weakest. *(Exception: high-stakes live-DB audits get a directive, precise roadway.)*
+- **Fetch the canon before producing anything.** The protocol is not ceremony — it is what catches an invented noun in thirty seconds instead of eight tables later.
+- **Recon before build. Brief recon to DISPROVE, not to confirm.** A brief that asks "confirm X" gets X.
+- **Sweep the class before fixing the instance.** Seven functions carrying a grant default; six date sites across two functions; one sampled table with wide-open grants implying twenty unread ones.
+- **A prompt's DO-NOT-BUILD list is not self-enforcing.** Read what landed against what was briefed, every time. Never ratify unbriefed scope without reading the schema underneath it.
+- **A defensive layer is not verified by the migration that adds it.** Fix → re-read the catalog → confirm on the live artifact. A catalog read is not a glass test, and **HTTP 200 is not "renders."**
+- **"Shipped" means a completed end-to-end loop, verified on the glass.** Not a screen in a screenshot. Not assets on a phone. **Design-complete ≠ shipped.**
+- **A Code job isn't done until the artifact is observable from outside the agent.** Verify `origin/main`, not the agent's report.
+- **Model routing:** Haiku (recon/mechanical) · Sonnet (build + diagnosis) · **Opus (tenant-isolation audit and P4×L8-class work).**
+- **Decompose before you promote.** A thing that looks like new architecture may be existing machinery wearing a name. Three of four proposed functional areas dissolved into quests and lists under inspection, in the same session they were proposed. **Run the decomposition before writing the doc.**
+- **The calibration check:** this is a family chore game with your kids' faces in it. If a direction gets too self-serious or too complex for that, that is information.
 
 ## The other docs
-See `README.md` for the full manifest. In short: `north-star.md` (why + the gate ladder) · **this spec** (what it is) · `status.md` (where the build is and what's left) · `parking-lot.md` (what might be) · `decisions.md` (what we decided and why) · `playbooks/` (how to do a thing) · `archive/` (reasoning history).
+`north-star.md` (why + the gate ladder — read first, cold) · **this spec** (what it is) · `status.md` (where the build is and what's left) · `parking-lot.md` (what might be) · `decisions.md` (what we decided and why) · `playbooks/` (how to do a thing) · `archive/` (reasoning history). Full manifest: `canonical-manifest.md`.
