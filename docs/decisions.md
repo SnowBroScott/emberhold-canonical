@@ -9,15 +9,25 @@ DECISION: [what was decided]
 DATE: [date]
 WHY: [the reasoning, including rejected alternatives]
 REPLACES: [what this supersedes, or: Nothing — new decision]
-STATUS: [LOCKED / DRAFT / NOTED / DECLINED]
+STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
+
+STATUS VALUES:
+- LOCKED — decided and binding.
+- DRAFT — decided, contingent on a named verification that hasn't happened yet. Name the verification.
+- NOTED — a finding or observation that constrains future work without being a rule.
+- DECLINED — rejected deliberately.
+- SUPERSEDED — was law, no longer is. Name the date and the entry that replaced it.
+
+jAIne sets the status. There is no "proposed" prefix.
+
 ---
 
 DECISION: The four avatar registers are the four functional modules of Emberhold. FORGE = training; KEEP = the house maintained; GARDEN = growing; HALL = cooking and feeding.
 DATE: 2026-07-25
 WHY: Scott exercised veto here over jAIne's objection, and the argument that carried it is the right one: if the child layers ARE the registers, the naming isn't chosen, it's inherited. Emberhold already owns four palettes, four icons, four ambient themes, 48 avatars, and a `members.class` enum carrying these exact four values — that identity work is paid for and should be banked rather than duplicated. Two corrections landed inside the session and both stuck: (1) jAIne argued a forge is where you MAKE things so Forge should be DIY — Scott countered that iron and the gym are near-synonymous and the register is about heat and metal, which is the stronger read; (2) jAIne claimed DIY had no home, splitting "projects" from "maintenance" — Scott corrected that for an actual homeowner these are nearly the same set (deck, faucet, gutters, drywall), and recreational woodworking is the edge case, not the center. Keep absorbs both. REJECTED: naming the training layer as a standalone brand (Emberfit, Embermill, Emberworks, Ironhold) — moot once the layers became modules. The one structural asymmetry worth remembering: Forge is the only register about a PERSON; the other three are about the PROPERTY. That is why Forge is the right one to build first, and why Garden/Hall/Keep will sit much closer to Emberhold's existing surfaces — Hall in particular overlaps Lists and the calendar heavily.
 REPLACES: Nothing — new decision. (Supersedes the working assumption, held for most of this session, that the training product was a separate app.)
-STATUS: proposed LOCKED
+STATUS: SUPERSEDED 2026-07-25 — replaced by "The four registers are AESTHETIC ONLY."
 
 ---
 
@@ -25,7 +35,7 @@ DECISION: The training layer is a MODULE inside Emberhold, not a sibling app. A 
 DATE: 2026-07-25
 WHY: The separate-app frame got as far as a recommended domain purchase, an eight-table schema, and a working vertical slice before it broke. What broke it: Scott's wife, from the outside and with no context, said it no longer felt like part of Emberhold. jAIne's first response was a defense of family resemblance — same law (verification-minted currency, brightness=heat, absence-never-punished, free-is-a-full-tool, the same quest/approval schema, the same art floor). That defense is true and it was the wrong answer. The real signal was PROPORTION: in Emberhold the useful tool is the product and the game is a thin delightful skin; the training design had grown a tool wall, a metal-composition system, and project-scoped blocks while still being unable to log a working set. Merging fixes the ratio problem and deletes work: no second auth, no second tenant bootstrap (the standalone build deadlocked on exactly that — an RLS insert policy gating on a membership row that could only be created after the insert), one member table, one PIN system, one avatar pipeline, one Founding Guildhall unlock. REJECTED: separate app with merge-compatible naming (jAIne's hedge — real reasons: Emberhold's schema is in motion, blast radius on 13 live households, and two Lovable projects migrating one Supabase project breaks the one-writer rule). The hedge lost because merging NOW is a weekend and merging in three months is a migration project. Client-facing training (paying clients, not hearthmates) is deliberately left unresolved — a client is not a hearthmate and cannot share a household tenant; if it happens it is a separate trainer-facing surface reading the same data.
 REPLACES: Nothing — new decision.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -33,7 +43,7 @@ DECISION: Module enablement is household-level, chosen at onboarding by intent, 
 DATE: 2026-07-25
 WHY: One app that does chores AND fitness is the everything-app trap; one app that shows you only what you said you came for is a product. Onboarding-by-intent is the thing that turns the merge from bloat into focus — and it collapses into an item already at the top of the critical path, since the empty-board activation doorway and the "what does this Hold want" question are one screen. Household-level, never per-member, per the monetization seam rule — the same logic that makes per-kid SKUs unthinkable makes per-kid module toggles unthinkable. Reversible because people's answers change; onboarding TAILORS, it does not branch permanently. Ship two options (Household, Training) and never offer a module that doesn't exist — offering four is how the everything-app trap walks back in through the door built to keep it out. THE RPC IS LOAD-BEARING AND NOT A STYLE CHOICE: `families.is_founder` is service-role-write-only (LOCKED 07-19) and that is what makes the paywall enforceable. Granting `authenticated` table-level UPDATE on `families` so a screen could write a new column would have re-opened Finding B. The RPC means zero new grants on `families` at all — verified after the fact: `authenticated` still holds column-level UPDATE on `name` only.
 REPLACES: Nothing — new decision.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -41,7 +51,7 @@ DECISION: AMENDMENT to the monetization principle. "Free is a full tool. Paid is
 DATE: 2026-07-25
 WHY: The LOCKED rule reads "free is a full tool; the purchase is delight, never access to basic function" — the membrane applied to money. Weekly AI-generated programming breaks it as written: that is function, not delight. It survives, but only as an amendment, because the honest justification is narrow and real — it is the one feature with a genuine per-user marginal cost. Emberhold's cosmetics have none, which is why paywalling a rest timer would still be indefensible. Scott's read, and it is correct: the market has already trained people that an AI tier costs money, so this is close to an expected place to pay. Generalizing the rule rather than granting an exception is deliberate — an exception invites the next case to be argued from scratch, while a clause gives a test for video hosting, exports, and anything else that bills per user. GUARDRAIL, so the clause doesn't rot: the cost must be real and unavoidable, not architected into existence. Anything can be made to "incur cost" by routing it through an API on purpose; if a feature could run on-device or as a deterministic rule and a model call was added to justify a paywall, that is the rule being gamed against yourself. Note the split this preserves: deterministic per-session autoregulation stays FREE, the weekly LLM plan is PAID.
 REPLACES: Amends the LOCKED monetization principle in master-spec.md. Does not replace the monetization seam rule (household-level only), which is untouched.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -49,7 +59,7 @@ DECISION: AMENDMENT to the membrane. Each module may carry at most ONE game laye
 DATE: 2026-07-25
 WHY: The LOCKED membrane reads "the game lives in quests only; other modules stay clean utilities that may optionally spawn a quest." A training module with a progression economy and a collection surface is a second game, not a utility — so either the training layer's game is declared the fitness module's quest-equivalent, or the principle is amended to be honest about what is being built. jAIne leans amendment because it says the true thing. What the amendment preserves is the part that was actually load-bearing: the membrane exists to stop EVERY surface becoming a game (gamify the chore, not the grocery item), and "at most one per module, sealed" keeps that intact while allowing a second module to have its own. Lists, Calendar, and meals remain clean utilities with no game at all. SEALED IS THE OPERATIVE WORD and it is where the real risk lives — the moment one module's economy converts into another's, there is an exchange rate, a farming exploit, and a foreign-exchange desk inside a chore app. NOTE: this amendment is entangled with the unresolved currency question (see parking-lot OPEN DECISIONS) — if training simply mints embers, this amendment may be unnecessary. Decide the currency first.
 REPLACES: Amends the LOCKED membrane principle in master-spec.md and north-star.md.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -57,7 +67,7 @@ DECISION: A module never creates a person. Modules read hearthmates from the exi
 DATE: 2026-07-25
 WHY: The training prototype shipped a free-text "Who's training?" field that minted its own member rows. That is not a missing nicety, it is a defect class: two ways to make a person produces "Mia" in the hold and "mia" in the Forge with no reconciliation path, duplicated avatars, split history, and an identity model nobody can trust. The fix generalizes past this instance — any module that needs people reads them, renders them with the EXISTING hero-portrait component (so the avatar system, fallbacks, and identity colors stay consistent), and points at the existing member identifier. Empty state routes to Emberhold's add-hearthmate flow rather than offering a local shortcut. RELATED AND DELIBERATELY NOT SOLVED: filtering the training member list to Adults is a proxy for "trains," and it will break — a twelve-year-old lifting in a garage gym is normal. When it breaks, the answer is a per-member flag, not a role check. Not built now.
 REPLACES: Nothing — new decision.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -65,7 +75,7 @@ DECISION: Schema is undone FORWARD, never by reverting the project. A Lovable ve
 DATE: 2026-07-25
 WHY: Confirmed directly with Lovable when the option was live and attractive — nothing had been published and reverting looked like the clean escape. It is not. Version history restores code and project files ONLY: applied migrations are not rolled back, every table, column, and function stays live, and the migration FILES are removed from `supabase/migrations/` while their objects remain in the database. That is precisely the schema-history drift already recorded here as a five-times-observed landmine (and now six). Reverting would have manufactured a new instance to clean up an old one, and would have deleted the one artifact worth keeping. There is also no Lovable mechanism to roll back a specific migration — undoing schema means writing a new migration that reverses it. OPERATIONAL COROLLARIES, both earned tonight: drop in FK order without CASCADE, so an unexpected dependency stops the migration instead of being forced through; and run a read-only live-schema recon BEFORE the teardown, because the migration history does not describe the database. One caveat on that recon: Postgres records no DDL timestamps, so any "created today" list inferred from OID ordering over-reports — it dates objects relative to each other, never absolutely. Four functions were flagged as new that were 07-19/07-23 objects.
 REPLACES: Nothing — new decision.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -73,14 +83,14 @@ DECISION: The training progression engine is pure client-side TypeScript. Progre
 DATE: 2026-07-25
 WHY: The engine takes last session's sets, the prescription, and the equipment inventory, and returns a load plus a human-readable reason. Pure in, pure out. It lives in the client for one non-negotiable reason: a garage has unreliable connectivity, and if the rule lives in the database the app is useless the moment wifi drops. Supabase is the sync target, not the compute. Secondary benefits that turned out to matter: it is trivially unit-testable (ten tests, every branch plus plate-snapping plus two-member independence), and because it has zero Supabase imports it SURVIVED the teardown of all eight tables completely intact — the only artifact of the night that did. Tests are worth insisting on here specifically: a silent off-by-one in progression corrupts training data that cannot be reconstructed. THE DIFFERENTIATOR IS THE REASON STRING, NOT THE MATH. Market read this session: the loggers (Hevy, Strong, StrengthLog) are commoditized with generous free tiers; the generators (Fitbod, $15.99/mo) are widely complained about for making decisions users must override, and the sharpest published criticism is that it never explains why it is pushing you. Deterministic autoregulation that states "3x5 @ 185, avg RPE 6.7 — all sets complete under target, adding 10 lb" beats an unexplainable algorithm, and costs nothing to build. The real unmet market need is HYBRID (strength apps ignore cardio, running apps ignore strength) — which is the four-modality taxonomy the design already had for aesthetic reasons.
 REPLACES: Nothing — new decision.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 DECISION: The canonical clock for any household-local date is HOUSEHOLD-local, derived server-side from a single named function — not client-local stamped at write time. `families.timezone` + `household_today(fam uuid)` is the mechanism.
 DATE: 2026-07-23
 WHY: This AMENDS the 2026-07-21 same-clock rule ("dates must be stamped and judged in the same clock; any date the client filters on must be written by the client"). That rule was correct about the failure and incomplete about the remedy. Its remedy — have the client stamp the value — is structurally impossible for `handle_quest_approval()`, which is a BEFORE-UPDATE trigger with no caller and nowhere to accept a parameter. It carried four `CURRENT_DATE` sites (daily successor, weekly and monthly `date_trunc` anchors, fallback branch); `roll_missed_dailies()` carried two more (staleness filter, respawn value). Six live violations, one of them reachable by a client and five of them not. The deeper correction: "what day is it" is a property of the HOUSEHOLD, not of whichever device happened to fire the write. A parent approving the weekly trash quest from a hotel in Newark should not re-anchor the hold's recurrence to Eastern time. The client-local date worked only as a proxy that happens to be right because everyone is in the same timezone. `families.timezone` (IANA, NOT NULL, DEFAULT 'America/Los_Angeles') backfills all 13 existing households correctly; `household_today(fam)` is STABLE and becomes the only way server-side code asks the question. Both functions keep their signatures, so `board.tsx:40` and every other call site are unchanged — the frontend lane was zero. Two secondary wins: the client-supplied-date variant would have let a device-kid pass tomorrow's date to churn a daily early (harmless, inside the accepted walk-up boundary, but a real trust-widening), and that never came into existence; and the correct thing to type is now a named function, so the next person reaching for `CURRENT_DATE` near a date column has to actively ignore an obvious alternative. REJECTED — passing a client-supplied `_today` parameter to both functions: works for the RPC, impossible for the trigger, and wrong on the merits for the traveling-parent case. jAIne argued for this and against a stored timezone one turn earlier, on reasoning that was backwards — the "it goes stale when a parent travels" objection describes the failure mode of the client-supplied approach, not the stored one. REJECTED — a GUC / session variable carrying the date into trigger context: the write reaches Postgres through PostgREST with no per-request hook to set it, and it would be invisible fragile plumbing. REJECTED — moving the recurring respawn out of the trigger into a client-called RPC: an invasive redesign of working logic to avoid adding one column. REJECTED (again, carried from 07-21) — normalizing the client to UTC: trades a rare edge case for a permanent one.
 REPLACES: Amends the 2026-07-21 decision "Dates must be STAMPED and JUDGED in the same clock." That rule remains true; its mechanism is superseded. The NOTE parked in that entry — that the same seam likely existed in `handle_quest_approval` — is confirmed and closed. The 07-21 create-path fix (`due_date: todayIsoDate()`) stays as-is: verified on the glass, and it agrees with `household_today()` whenever the device is in the hold's timezone.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -88,7 +98,7 @@ DECISION: `quests.due_date` keeps its `DEFAULT CURRENT_DATE`. Deliberately not f
 DATE: 2026-07-23
 WHY: The enumeration that found the six function-level date violations also flagged the column default, which evaluates in server UTC. It is left in place on purpose, and this entry exists so it is not rediscovered later and mistaken for something the 07-23 sweep missed. It only fires on an INSERT that omits `due_date`, and no application path does: the create form stamps `todayIsoDate()` explicitly, `roll_missed_dailies()` supplies its respawn value, and `handle_quest_approval()` supplies the successor's. Its only reachable callers are manual SQL, migrations, and admin tooling. Fixing it properly is also awkward — a column DEFAULT expression cannot reference another column of the row being inserted, so it cannot call `household_today(family_id)`; the real options are dropping the default (letting NOT NULL fail loud) or adding a BEFORE INSERT trigger. Both are defensible and neither is urgent, and bundling a change with a nonzero chance of breaking an unknown insert path into an otherwise clean migration is exactly the kind of ride-along that turns a verified fix into an ambiguous one. REJECTED — dropping the default in the same migration: fail-loud is arguably the better end state, but the blast radius is every insert path including ones not yet audited, and it does not belong in a migration whose whole value was being cleanly verifiable. REJECTED — hardcoding a timezone into the default expression: a placeholder that is wrong for the first out-of-Pacific household and invisible when it is.
 REPLACES: Nothing — new decision.
-STATUS: proposed NOTED
+STATUS: NOTED
 
 ---
 
@@ -96,7 +106,7 @@ DECISION: When a bug is an instance of a rule already written down, sweep the wh
 DATE: 2026-07-23
 WHY: Two sessions running, the enumeration returned more than the reported symptom, and in both cases the extra findings were the ones that mattered. 07-21 late: the reported item was one scanner row; the read found seven functions carrying a Postgres grant default, and the root cause was a mechanism that re-broke automatically on every new function. 07-23: the reported item was one invisible daily quest; the read found six date-seam sites across two functions, and the second function was a trigger — which is what forced the correct fix shape and would not have surfaced from fixing the reported instance alone. The economics are lopsided in a way worth naming: a grep is free and a Lovable credit is not, so a one-function migration that gets superseded two days later costs more than the read that would have prevented it. This is distinct from the 07-21 "enumerate before you triage" rule, which is about scanner findings that name a category without naming instances. This one is about bug reports: the symptom is one instance, and the rule it violates is already in `decisions.md`, so the question is never "is this bug real" but "how many of these are there." The tell that triggers it: the fix you are about to write cites a rule you have written down before. REJECTED — fixing the reported instance and letting the sweep follow as a separate queued item: that is precisely what produced three consecutive grant-drift breaches, each closed by a reactive one-off against a mechanism nobody had enumerated.
 REPLACES: Nothing — new decision. Generalizes, and does not supersede, the 2026-07-21 "enumerate before you triage" rule.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 ---
 
 
@@ -104,7 +114,7 @@ DECISION: Emberhold's definition of success is (a) it works for the W Drapers, a
 DATE: 2026-07-22
 WHY: Stated consistently by Scott since 2026-07-01 ("not significant revenue — break-even on hosting and tooling") but never written into canon. The cost of leaving it unwritten was visible and recurring: every competitive or distribution question got silently evaluated against an implied startup scoreboard nobody had chosen. The gate ladder is rigorous about sequence and says nothing about destination — Gate E's exit criterion is a measurement, not a goal — so the ladder reads in startup grammar by default. Codifying the destination means the ladder can be read correctly without Scott having to re-decide his own goal every time an external comparison shows up. Emberhold was built primarily for one family; that it is also marketable is secondary and stays secondary.
 REPLACES: Nothing — codifies a premise that has been operative since 2026-07-01 but never recorded.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -112,7 +122,7 @@ DECISION: Founding Guildhall is priced at $25 USD, one-time, household-level. Th
 DATE: 2026-07-22
 WHY: The binding constraint on this product is REACH, not willingness-to-pay. A solo builder with no store presence, no funnel, and no appetite for a marketing job cannot cheaply manufacture more strangers — so every dollar of price directly reduces the hardest input. At $9 net, break-even needs 76 households; at $25 net ($23.98 after Stripe's 2.9% + $0.30), it needs 27. Same year, same effort, 49 fewer strangers to find. Price also has to carry the name: a lifetime household unlock called "Founding Guildhall" priced at $9 undercuts its own premise, and $25 is objectively cheap beside Cozi Gold (~$39/YEAR) or a Skylight display ($160+ of hardware). Honest read on achievability: 27 is real but not casual — the 13 existing accounts are friends and mostly grandfathered, so this is 27 strangers who pay. Rejected alternatives: $9 and $15 (make the reach problem worse to solve a price problem that does not exist); $39 (fewer households needed, but pushes an unproven product past impulse range for a stranger with no reviews and no store listing to reassure them). Measured off the Stripe dashboard — zero build, the instrument already exists.
 REPLACES: Nothing — the Founding Guildhall SKU was LOCKED 2026-07-01 as household-level and one-time; this sets its price and attaches an operating target.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -120,7 +130,7 @@ DECISION: The native app-store path (Capacitor wrapper, iOS/Android listing) is 
 DATE: 2026-07-22
 WHY: Corrects a live mis-memory first — this was never parked on legal or regulatory grounds. COPPA and privacy sit in Gate C and apply to a PWA identically; a wrapper changes nothing about them. It was parked on economics and velocity, and both got worse on inspection, not better. Competitive evidence from the Wanmine scan is the decisive input: a hardware-backed family calendar app accumulated ~172 iOS ratings and ~1.8k Android installs in ten months, and its store presence functions as a support channel for people who already bought the screen, not as a discovery channel. Nobody discovers a free lifestyle app by browsing a store. Against that non-benefit sit real costs: 15-30% of the entire revenue model versus Stripe's ~3% (and the Founding Guildhall architecture exists specifically to avoid that rail); a 24-48hr review queue imposed on a working model that ships two or three times per 90-minute pre-work session; and a second release surface maintained by one person who currently cannot land a cheap catalog read in a single sitting. Decisively: it clears no gate — not B, not C, not D, not E. It is distribution work undertaken pre-distribution, the exact inversion the ladder exists to prevent. REOPEN TRIGGER 1 (native): PWA push proves load-bearing for day-8 retention in the Gate E beta — push is the only genuine functional gap a wrapper would close. REOPEN TRIGGER 2 (appliance, a different thing entirely): Gate E returns real retention AND the wall is the surface driving it — at which point an ODM relationship, a BOM, inventory, returns and support constitute a company, not a feature, and get evaluated as such. Note the asymmetry deliberately: the store is wrong for reasons that do not expire (economics, velocity); the appliance is wrong for reasons that do (no validated retention, no revenue). One is a dead end, the other is a queue position.
 REPLACES: Supersedes "Capacitor / app-store path — assessed viable; hinges on whether payment rails are ever needed. Currently: no." (parking lot, LATER). Converts an indefinite deferral into a declined call with named triggers.
-STATUS: proposed DECLINED
+STATUS: DECLINED
 
 ---
 
@@ -128,14 +138,14 @@ DECISION: The post-launch cosmetic catalog is framed as LEVERAGE ON RETENTION, n
 DATE: 2026-07-22
 WHY: jAIne initially framed a catalog as a hedge — something to build if the one-time SKU failed to sustain itself — and characterized it as trading a customer treadmill for a content treadmill. Scott corrected the shape: a catalog does not chase new families, it deepens households that have already adopted, so a retained household becomes worth $25 + $10 + $5 instead of $25. That reduces the number of strangers required even if acquisition never improves, which breaks break-even's dependence on perpetual acquisition. The correction is accepted; the original framing was wrong. One refinement survives from the original skepticism and sharpens the plan: cosmetics only aid ACQUISITION where a non-customer can see them, and Emberhold cosmetics live on private phones seen by the four people who already paid. The single exception is the wall — the only semi-public Emberhold artifact, seen by guests, playdate parents and visiting family whether or not they asked. Therefore catalog value concentrates almost entirely in what renders on the wall, giving the priority order: (1) living-hold ambient themes — whole-surface motion, maximum legibility from across a room, and already spec'd wall-first and kiosk-hardened; (2) avatar packs — dual-surface, wall and phone; (3) borders, frames and phone-only flourishes — real, but they sell only to people already inside. A useful consequence: a wall-first catalog needs a handful of genuinely beautiful things rather than volume, so four living-hold registers could be a year's entire release slate — which retires the content-treadmill objection rather than accepting it. Membrane holds without special pleading: nothing touches earning, quest access, or the ledger; free stays a full tool and the hearth stays the free register. Hard constraint retained: all of it is downstream of day-8. A catalog can amplify retention that exists and cannot manufacture retention that does not.
 REPLACES: Nothing — this is the reasoning layer beneath the "Sustaining Revenue (post-launch)" stream now filed in the parking lot. Supersedes jAIne's own same-session "catalog as treadmill insurance" framing, recorded here so it is not re-argued.
-STATUS: proposed NOTED
+STATUS: NOTED
 
 ---
 DECISION: Every SECURITY DEFINER function ships with explicit EXECUTE grants in the same migration that creates it
 DATE: 2026-07-21
 WHY: Postgres grants EXECUTE to PUBLIC by default on every newly-created function. This is not a bug we hit once — it is a mechanism that silently re-breaks the grant surface every time a function is written, and it has now produced grant drift three separate times. The 07-21 enumeration found seven SECURITY DEFINER functions carrying PUBLIC + anon EXECUTE, and the affected set was chronological rather than random: everything older had been cleaned by a past reactive revoke, everything newer had inherited the default. One of the seven was `enforce_quest_family_refs` — created inside the 07-19 migration whose entire purpose was closing two grant-drift breaches. The fix bundle shipped a fourth instance of the disease it was curing. Reactive one-off revokes cannot win against an automatic default; only a convention applied at creation time can. THE RULE: every new SECURITY DEFINER function ships with an explicit `GRANT EXECUTE ... TO authenticated` AND `REVOKE EXECUTE ... FROM PUBLIC, anon` in the same migration that creates it. Trigger functions get NO API-role grants at all — they run in trigger context and should be unreachable via the API. ORDER MATTERS AND IS PART OF THE RULE: grant to `authenticated` FIRST, then revoke from PUBLIC — because `authenticated` inherits EXECUTE from PUBLIC, so revoking first silently kills every live path that depends on the function. This goes into the standing Lovable build-prompt boilerplate, not into anyone's memory. Rejected alternative: continue catching these in periodic scans. Rejected because the scanner reports the category without naming instances, so every detection costs a full enumeration read to triage — and because a missing defense-in-depth layer is only safe until the first RPC written without an internal auth.uid() guard, at which point nothing in the process catches it.
 REPLACES: Nothing — new decision. Complements the existing "hand-applied DB changes are forbidden; everything lands as a migration file."
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -143,7 +153,7 @@ DECISION: Supabase database-linter 0029 ("Signed-In Users Can Execute SECURITY D
 DATE: 2026-07-21
 WHY: The lint fires on any SECURITY DEFINER function that authenticated users can execute. In Emberhold that is the architecture, not a defect — `admit_pending_member`, `wall_request_redemption`, `member_spendable`, `approve_redemption` and roughly fifteen others are all deliberately reachable by a signed-in user, because that is how a household member does anything at all. The rule is structurally unclearable: no amount of correct work will ever empty this category, and the only way to satisfy it would be to dismantle the RPC layer. It is dismissed in the Lovable dashboard and recorded here so that no future scan, and no future jAIne instance, re-litigates it as an open finding. NOTE THE CONTRAST with lint 0028 (anon/PUBLIC can execute), which is NOT ignorable and was fixed the same session — 0028 flags a real over-broad grant; 0029 flags the intended design. They look similar in the panel and are opposites in substance.
 REPLACES: Nothing — new decision.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -151,14 +161,14 @@ DECISION: Two of the five ignored scanner findings are CONDITIONALLY accepted, a
 DATE: 2026-07-21
 WHY: The Lovable dashboard's "Ignored" bucket flattens three genuinely different reasons into one word. Of the five ignored findings: two are false positives that were never real ("Forgot PIN" takeover, join-code → Parent admin) and are dead permanently; one is structurally unclearable (lint 0029) and is also dead permanently; but two — "adult PIN lock isn't tied to real permission checks" and "any member can submit a redemption attributed to another member" — describe REAL behavior that is accepted ONLY because the shared-session model is what it is. In that model a device-kid rides the owner's ambient parent JWT, so the PIN is the only kid/parent line and it is client-side; the wall's on-behalf redemption is the propose tier working as designed. Both are intra-household, not cross-tenant, and the 07-19 audit confirmed `current_family_id()` derives server-side from `auth.uid()`. WHY THIS NEEDS WRITING DOWN: "Ignored" is a permanent-looking word for a conditional judgment, and the dashboard will never surface the condition. If the parked own-session-vs-per-member-auth fork is ever decided toward per-member auth, these two stop being by-design and become live work items — alongside the `adults_only` rewards read and the `parents_only` quest read, which already wait on the same fork. That makes four items behind one decision, and nothing in the tooling connects them.
 REPLACES: Nothing — new decision. Extends the walk-up trust boundary record.
-STATUS: proposed NOTED
+STATUS: NOTED
 ---
 
 DECISION: Recurring quest lifecycle — assignment is permanent; only the cycle resets; the successor anchors to the next calendar period from APPROVAL date, not from the completed instance's due_date.
 DATE: 2026-07-21
 WHY: A recurring quest models a standing responsibility ("the trash is SnowDad's each week"). Completion resets whether *this cycle's instance* is live — it never reassigns ownership. On approval, handle_quest_approval() spawns the next instance carrying assigned_to forward, and stamps it with the next calendar anchor computed from CURRENT_DATE (approval day). The prior formula anchored to date_trunc(NEW.due_date) + 1 period, which broke on late completion: finish a weekly whose due_date is already a period old and "+1 period" lands in the CURRENT period, so the successor is due today-or-past and reappears immediately with no rest week. Anchoring from approval date guarantees a clean forward gap regardless of when the quest is actually finished. REJECTED — a scheduled reset job (cron / pg_cron / edge function) to flip quests live on the anchor day: none exists in the stack, it would be new infrastructure, and it is unnecessary because isActiveQuest already surfaces any quest the moment due_date <= today. REJECTED — extending the client-invoked roll_missed_dailies pattern to weekly/monthly: scoped, then cut as redundant for the same reason. REJECTED — successor due today (immediate reappearance, no rest week): simplest to build and matches the daily path, but it erases the "resting until next cycle" rhythm that is the whole point of a weekly.
 REPLACES: Nothing — new decision. (First time this model has been written down; three prior sessions fixed symptoms of its absence.)
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -166,7 +176,7 @@ DECISION: Quest activeness is TWO mechanisms that only work together — status 
 DATE: 2026-07-21
 WHY: A quest is active-and-visible when: !archived AND status !== 'approved' AND (due_date == null OR due_date <= today). Both halves are load-bearing and neither is sufficient. Status alone leaks the future-dated successor onto the board the instant its predecessor is approved. Due_date alone wrongly hides freshly created quests with no due date. Each was tried in isolation this session and each was exactly 50% right — which is why the bug survived three passes. due_date is NOT a scheduling nicety; it is the instance's ACTIVATION DATE ("the day this instance goes live"), and null means "live now." The predicate lives once, as isActiveQuest(quest, today) in src/lib/quest-helpers.ts, imported by board.tsx, Briefing.tsx, and wall.tsx. REJECTED — leaving each surface to define "active" independently: it had been written three separate times, the definitions drifted, and the visible defect was a roster badge reading 4 next to a detail list showing 3. Three copies cannot disagree if there is only one. REJECTED — a server-side due_date filter on a single surface's fetch: that asymmetry was the original bug.
 REPLACES: Nothing — new decision. Supersedes a mid-session jAIne proposal that "due_date is not part of activeness," which was disproven the following round and never committed.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -174,7 +184,7 @@ DECISION: Dates must be STAMPED and JUDGED in the same clock. Any date the clien
 DATE: 2026-07-21
 WHY: quests.due_date is DATE NOT NULL DEFAULT CURRENT_DATE, and create.tsx never set it — so the value was written by Postgres in the SERVER's timezone (UTC) while isActiveQuest judged it against the CLIENT's local today (todayIsoDate(), US Pacific). Creating a quest in the evening in Pacific meant the server was already on tomorrow's date, so a brand-new quest landed due "tomorrow" and was hidden by its own visibility filter — visible in Quest Log (no due_date gate), absent from the board. This presented as "creation is broken" and cost most of a session to find, because every layer of the code was individually correct; only the seam between two clocks was wrong. Fix: the create path stamps due_date: todayIsoDate() explicitly. The general rule follows: a server default is only safe for a column no client-side comparison ever touches. REJECTED — normalizing the client to UTC instead: it would make the board's "today" disagree with the user's actual day, trading a rare edge case for a permanent one. NOTE — the same seam likely exists in handle_quest_approval's successor math (server CURRENT_DATE / date_trunc); creation was fixed, that path was not. Parked in NEXT.
 REPLACES: Nothing — new decision.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -182,7 +192,7 @@ DECISION: DECLINED — "the Quick Add favorite chip silently auto-assigns the as
 DATE: 2026-07-21
 WHY: jAIne flagged this repeatedly across several turns as a lurking defect, inferring from a recon line that the favorite-chip prefill was copying assigned_to without the user's knowledge. It was not. The create form has an explicit "Assign to" selector — Open to anyone, or a named member — and Scott was deliberately assigning each test quest to SnowDad in order to reproduce the actual bug under investigation. The observed "claimed just now" label was also misread: claimed_at does not exist as a column; quest-log.tsx synthesizes that label from created_at whenever status is claimed. Recording this as DECLINED because an un-written rejected idea comes back every six weeks, and because a future instance reading only the symptom ("new quests arrive pre-assigned") would plausibly re-flag a working feature as a defect. Root failure worth carrying: jAIne substituted an inference for the user's stated deliberate action, and continued re-flagging after correction.
 REPLACES: Nothing — new decision.
-STATUS: proposed DECLINED
+STATUS: DECLINED
 
 ---
 
@@ -190,7 +200,7 @@ DECISION: High-stakes live-DB security audits get a directive, precise roadway �
 DATE: 2026-07-19
 WHY: Today's triage instance had every capability to run the authenticated P4×L8 attack — a 07-16 instance self-provisioned two confirmed households via the browser tool and ran admit/deny across both. Instead it worked from a bare curl/anon seat, hit email-confirmation, and self-declared "degraded to policy-reading" — a false limit presented as a stack constraint. The failure was not capability; it was an unsanctioned path chosen under latitude, on the single most expensive item on the board. The fix is to remove the fork (mandate the tool, the sequence, the attack surface, the report format), not to add trust. Latitude survives only where jAIne is blind and cannot specify — the exploit SQL against a live schema jAIne can't see. Rejected: trusting Code to find the right path itself (just demonstrated to fail here); jAIne authoring the attack SQL (blind to live schema, would get columns wrong). Scope: this is an exception for high-stakes attacks, NOT a reversal of trust-the-lane / don't-over-specify for normal build work.
 REPLACES: Nothing — scopes an exception to the standing posture; does not overturn it.
-STATUS: proposed LOCKED
+STATUS: LOCKED
 
 ---
 
@@ -198,14 +208,14 @@ DECISION: An authenticated live-DB audit brief MUST explicitly mandate the brows
 DATE: 2026-07-19
 WHY: A fresh Code instance, left to choose, defaults to a bare curl/anon seat, hits mailer_autoconfirm=false, and concludes "no mailbox → degraded to policy-reading." That conclusion is wrong: a 07-16 instance drove the real signup UI, pulled the confirmation link from the email in-tab, captured a session, grabbed the join code, and ran admit/deny across two accounts. The requirement is to instruct the path, not assume it — the instance will otherwise walk past it. This retires the long-standing open caveat that the P4×L8 audit might "degrade to policy-reading" for lack of reach. Rejected: pre-provisioning the two holds by hand and handing Code credentials — cleaner teardown, but unnecessary now that self-provisioning is proven, and it adds Scott labor for no security gain (cleanup is cheap).
 REPLACES: The standing status/parking-lot open question "confirm the adversarial harness can reach Lovable Cloud's DB from outside — if not, the audit degrades to policy-reading."
-STATUS: proposed NOTED
+STATUS: NOTED
 
 ---
 DECISION: Founder avatar gate — DB-value gate + household entitlement flag, reusing the Guildhall seam
 DATE: 2026-07-18
 WHY: Building a bespoke gating system was unnecessary — the Founding Guildhall entitlement flag was always going to exist, so the gate reads it instead of inventing a parallel one. Mechanism: a global gate stored as a flippable DB value (system_flags.founder_gate_enabled, seeded false, read via founder_gate_enabled()) + a per-household entitlement (families.is_founder, boolean, default false, read via my_household_is_founder()). Picker rule: an avatar is selectable if tier=free OR gate OFF OR household is_founder. Gate is OFF now, so everything's selectable and nothing renders locked. Household-level only, never per-kid (honors the seam rule). Cosmetic-only (membrane-safe — never touches embers/quests/approvals). Decouples from Stripe: the flag exists now; the checkout that writes it is a later build. The flip later = two one-line data changes (grandfather existing holds to is_founder=true, then set the gate true), not a build session. Rejected: (a) a code-constant gate — would need a redeploy to flip, and Lovable chose the DB-value approach which is strictly better; (b) any per-member gating — violates the household-only seam rule; (c) a separate "founder catalog" — a WHERE clause on tier beats a second system.
 REPLACES: The stale "16 free / 24 paid" split arithmetic (locked against a 44-roster)
-STATUS: [proposed LOCKED]
+STATUS: LOCKED
 
 ---
 
@@ -213,7 +223,7 @@ DECISION: Free/founder avatar split re-locked at 16/32
 DATE: 2026-07-18
 WHY: The old "16 free / 24 paid" predated the 48-roster and was stale arithmetic. Scott set the new split by hand — sorting the 48 cut, slot-named files into Roster Free (16) and Roster Founders (32), a clean 4-free + 8-founder per class across forge/garden/keep/hall. The folders were the casting; the split is a Scott product decision closed by his action, never handed to an agent. Encoded in the catalog as explicit free/founder tier tags per file. Rejected: leaving the split to an agent as part of transport (the split is taste, not mechanics — it stays Scott's).
 REPLACES: "16 free / 24 paid" (stale, 44-roster era)
-STATUS: [proposed LOCKED]
+STATUS: LOCKED
 
 ---
 
@@ -221,7 +231,7 @@ DECISION: QA "#5 hold admin role" reclassified as a distribution-era super-admin
 DATE: 2026-07-18
 WHY: Raised as a home-hold QA item; on clarification it means someone who can reach into a household to manage members/events/feed — cross-hold support authority. That's cross-tenant and only needed once strangers' holds exist to support, so it belongs on the distribution ladder near Gate C–E, not in a home-hold QA pass. It is NOT a bug and NOT a quick fix. Residual ambiguity flagged and left open in parking-lot: (a) an in-hold admin tier above parent vs (b) a cross-hold super-admin are different builds — Scott to bring concrete examples before it's scoped. Rejected: treating it as a QA-session one-liner (it's a workstream), and building it now (it's post-strangers, gated behind the P4×L8 distribution gate).
 REPLACES: Nothing — reclassification of an open QA item
-STATUS: [proposed NOTED / PARKED]
+STATUS: NOTED
 ---
 DECISION: Wall commit is ADULT-VERIFY, not identity-verify. An adult present at the wall commits a quest turn-in (the mint) behind a server-verified adult PIN that proves a committer is PRESENT, not WHICH adult. approved_by records the session-owner adult. Provable per-adult attribution is deferred to the P4×L8 commit-attribution hardening.
 DATE: 2026-07-18
