@@ -13,6 +13,109 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
 
+---
+DECISION: Forge v1 is a prescription engine with a log attached, not a logger with programming bolted on
+DATE: 2026-07-28
+WHY: Asked directly what they valued most about Fitbod, both Scott and May named "what exercise to do" and "what weight to use." Scott added the rest timer. Neither of them named logging. The log is the commodity — every free tier does it well and no one switches apps for it. This inverts the build order: "what weight" already exists in progression.ts (RPE autoregulation, plate-snapping, e1RM, ten tests), while "what exercise" does not exist anywhere and is the harder half. It was previously carried as a footnote ("no progression axis except load") and is now half of the single most-valued feature. The lucky consequence: if the whole value is "tell me what to do," then trust in the instruction IS the product — and the incumbent's most-cited weakness is that it won't explain itself. The reason string stops being a nice touch and becomes the moat, sitting directly on top of the #1 feature. Rejected: continuing to frame v1 as logging-first with programming as a later layer.
+REPLACES: Supersedes the implicit logging-first framing carried since the module reframe. Sharpens "the bar is a USER TEST: Scott and May stop opening Fitbod" — the test is about prescription, not logging.
+STATUS: LOCKED
+
+---
+
+DECISION: A pre-session gate accepts declared constraints before prescription is generated
+DATE: 2026-07-28
+WHY: May named the exact condition under which she overrides Fitbod: an injury that needs accounting for, or a bad night's sleep meaning there is no 100% available — "it always assumes 100% all the time." progression.ts autoregulates on RPE, which is a BACKWARD signal: it learns a session was too hard after it's been done and corrects next time, one session late, on exactly the day it was needed. Nothing in the current asset accepts a constraint before deciding. That is a real gap in the half we assumed was finished. The gate is one screen, a few taps, before generation. It is also where the reason string pays off hardest — "shoulder flagged, swapping overhead press for landmine press" fires at the precise moment she currently overrides. Rejected: inferring readiness from wearable data — there is no HealthKit web API, and a declared rough night is more honest than an inferred score because the user owns the result instead of arguing with it. Scope guardrail: this is one screen and three taps. The moment it grows a body map, a pain scale, or a history graph it has stopped being a prescription input and become a wellness tracker, which is a different product.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Readiness is a scalar; injury is a filter. Two controls, two lifespans, never one dial
+DATE: 2026-07-28
+WHY: May's complaint is two findings wearing one sentence. "I slept badly" means dial the whole session down — less load, maybe less volume, same movements — and it expires tonight. "My shoulder is hurt" means never prescribe this movement at any weight, and it is still true next Tuesday. One is a per-session multiplier; the other is a persistent exclusion. Jammed into a single "how are you feeling" dial, the result is wrong for both: either a tired user gets movements they shouldn't do, or an injured user gets their whole session watered down when only one pattern is the problem. Rejected: a unified wellness/readiness score.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: An injury flag carries its own resolution, asked at flag time; expiry rides the training split, not a timer
+DATE: 2026-07-28
+WHY: Two problems, both solved by asking rather than modeling. (1) Severity: at flag time the user picks "reduced load" or "avoid entirely." One extra tap deletes an entire severity-inference problem, and it keeps the call with the person who actually has the shoulder. Note the cost asymmetry — reduced load is nearly free because progression.ts already does load math, while avoid-entirely is the expensive branch, since avoiding creates a hole something must fill. That branch is the real build cost of the module and it is what makes the catalog non-optional. (2) Expiry, which is Scott's call and better than jAIne's proposal: flags don't decay, they get re-asked at the next session that touches the flagged region — "last push day you said your chest was hurt. Is it still injured?" The training split IS the timer. No decay logic, no duration declared up front, and the question fires at the only moment the answer is worth anything. jAIne had proposed either a duration at flag time or a nag after N skipped weeks; both invent a mechanism the product already has. The answer is three-way — still hurt / better / cleared — because "better" is the common real case and a binary forces a lie in one direction. "Better" moves avoid to reduced, reusing the fork rather than adding one. Filed as a downstream constraint, not a change to today's design: prescribing around a declared injury is a materially different act when the user isn't your wife. For the Drapers it's two adults making a call together; for a stranger it's an app that heard "my shoulder hurts" and told them what to lift. Liability posture, disclaimer surface, possibly a scope cut — the best feature in this session is the one most likely to need a lawyer before it meets strangers.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Core is programmed as real work, not accessory filler
+DATE: 2026-07-28
+WHY: May's second, separate complaint: Fitbod rarely or never makes core intense — it's always easy or filler. Unlike the readiness gap, this is not a modeling failure. It is a template bias: the incumbent files core as accessory and always will. Ours doesn't have to. This is a content decision inside the template library, costs nothing, and is a visible "we're not that app" signal in week one from a user who already articulated the complaint unprompted.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The exercise catalog is the single blocking dependency and it is the first build
+DATE: 2026-07-28
+WHY: Four separate features all require the same underlying tagging layer — movement pattern, muscle attribution, equipment requirement, and a substitution map. (1) Injury substitution: "swapping overhead press for landmine press" requires knowing what legitimately substitutes for what. (2) Rack-taken swaps: same lookup, different trigger. (3) Resequencing: knowing what else in this session is doable right now. (4) The pre-session gate's relevance check: "last push day you said your chest was hurt" requires knowing today's session touches chest. Four features, one dependency — which means the build order is no longer ambiguous and everything good in the module is downstream of it. Second in order and parallel, not blocked by the catalog: progression.ts has no progression axis except load. NextLoad returns {loadLb, reason, holdsAfter} — no reps, no sets, no tempo, not stubbed. It cannot express "175 instead of 185, so give me 8 instead of 5," which is now half the named differentiator. That is a Claude Code job — pure TypeScript, ten tests, zero Supabase imports, zero credits — and it should be scoped together with the pre-session gate's forward input path, since both are the same gap: the engine reacts and cannot yet be told anything in advance.
+REPLACES: Nothing — new decision. Supersedes the status framing that treated the engine's missing progression axis as a carried footnote.
+STATUS: LOCKED
+
+---
+
+DECISION: Make is an offline content factory for Forge, never a runtime
+DATE: 2026-07-28
+WHY: Scott already runs Make for the Etsy store and asked whether it could generate workouts on demand. Wrong seam, right tool. As a runtime it fails on latency (seconds with an LLM call in it), on per-operation quota that scales with every future user, and on constitutional rule 7's guardrail — if a feature could run deterministically and a model call was added anyway, that's the rule being gamed against itself. As a factory it is excellent and it buys the most expensive piece of the module: the catalog and a template library are a large pile of structured data that must exist before substitution or the pre-session gate work, they are generated once, and Scott reviews the output before it ships. This is a pattern the spec already uses — the experience layer generates vignette assets in the background, caches them, and selects instantly at the win. Same shape: generate offline, select locally, instant on the glass, zero marginal cost. Rejected: Make in the live prescription path.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Household scope changes Forge's economics, not its architecture; the LLM seam is session-start generation over an edge function
+DATE: 2026-07-28
+WHY: Bespoke for two people kills the free/paid split (no paywall for a household of two), per-user marginal cost (pennies), and quota pressure — all of which was product reasoning. Be generous with the model. What survives is structural. Generation happens at the start of a session, not per set: the model writes the plan, the client executes it. Once the session is materialized as a cached object, the in-gym loop is entirely local — sets, rest timer, load adjustment, logging. Three things hold regardless of scope. (1) The API key lives in a Supabase edge function, never the client — theemberhold.com is public and a key in the bundle is a key on the internet; this is the one place bespoke buys no shortcut. (2) The deterministic template path stays as the no-generation fallback — not extra work, it's the same engine doing double duty. (3) The reason string stays COMPUTED, never narrated — "avg RPE 6.7, adding 10 lb" is trustworthy precisely because it's derived; the model may pick exercises and structure, but it may not narrate math it didn't do. The real unlock of bespoke isn't the model, it's the context: two people's full training history, actual equipment, standing injuries, and individual response to volume, with no consent flow and no privacy surface. That is a prompt no product could ship. Building the architecture right now costs nothing and saves an unwind if this ever generalizes.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The client-side-engine rule survives on latency and sunk cost, not on connectivity
+DATE: 2026-07-28
+WHY: Scott's correction, and it was a correction of jAIne's method as much as her conclusion. master-spec.md Part II states the progression engine lives client-side "for one non-negotiable reason: a garage has unreliable connectivity." For a bespoke two-person build, connectivity is never a concern — WiFi or cellular, always. jAIne quoted the LOCKED rationale as an argument instead of testing whether it still applied. The rule survives on better grounds: the engine is already written and tested (deleting it costs a rewrite, keeping it costs nothing), and even on perfect LTE a rest timer and a plate calculation over the network is worse than one running locally — mid-set is the least forgiving moment in the app. Local isn't a hedge there, it's just faster. Two real unlocks follow from dropping the connectivity assumption: the exercise catalog can live in Supabase rather than shipping as a static asset, editable without a redeploy — which matters a lot while the substitution map is being tuned — and live mid-session regeneration becomes viable ("rack's taken, give me something else"), a genuinely good feature jAIne would have argued against an hour earlier on bad grounds. The connectivity clause is not dead, it is rescoped: it returns as a product constraint the day this meets strangers with basement racks and dead-zone commercial gyms. This is a Part II correction owed to the scheduled master-spec fold.
+REPLACES: Supersedes the stated rationale of the client-engine rule in master-spec.md Part II (2026-07-25). The rule itself stands.
+STATUS: LOCKED
+
+---
+
+DECISION: Contention resolution is a first-class Forge feature; the ladder is resequence, then substitute, then modify load
+DATE: 2026-07-28
+WHY: Scott and May train together on different splits and collide on shared equipment — one needs the Smith for bench while the other is squatting, one needs the bench rack while the other does pull-ups. This is the first thing in the module that no competitor could ship: it requires two people in one tenant sharing one equipment inventory, generated together. Fitbod structurally cannot do it because it has no concept of the person twelve feet away. Emberhold has it natively — constitutional rule 5 already has the module reading both members from the existing member table. The resolution ladder matters: the first move is resequencing within your own session, which costs zero workout integrity because it's still your workout reordered; substitute only when nothing else is doable; modify load last. Most collisions die at tier one for free. Deliberately NOT built: equipment presence detection or sensing who is on what — the users are ten feet apart and can see the rack; what's needed is one button that answers in under two seconds. Also rejected: minute-by-minute planning of both sessions, since real sessions drift and any timeline is wrong within ten minutes. Instead, bias at generation — both sessions plan from one call and the openers get staggered so nobody starts at the same rack. Near-zero cost, kills a chunk of collisions before anyone leaves the house. One new data field required: equipment must carry exclusive vs. shareable, since a Smith or squat rack is exclusive while dumbbells at different weights are parallel.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: A time budget is a generation input, not a schedule; duration estimates calibrate from the user's own rest-timer data
+DATE: 2026-07-28
+WHY: Scott values being able to tell Fitbod he has 45 minutes and have it plan accordingly — and notes it is often not close to accurate while still being useful. That reveals what the number's real job is: SIZING, not prediction. It shapes what gets generated (five exercises instead of eight); accuracy is a bonus. jAIne initially drew the line in the wrong place by lumping the budget in with minute-by-minute scheduling; Scott separated them correctly. The budget is an input, the schedule is an output, and only the output is worthless. We can also have the bonus that Fitbod can't: the rest timer is already being built, which means the app observes real set-to-set intervals including setup, plate changes, and conversation — per person, over months. Fitbod estimates from population averages; ours estimates from these two users. That is a byproduct of data already being collected, not a feature to build. It also extends the reason string past load into session shape: "45 minutes — keeping both compounds, dropping the second accessory." Shared-equipment time tax needs no model: if real sessions run 12% over, calibration absorbs 12% without anyone building a contention timing model.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Nag with the rest timer; never with session duration
+DATE: 2026-07-28
+WHY: Scott's call, and the principle generalizes past Forge: interrupt only when there is an action attached. The rest-timer alert has one — "go" is a thing you can do. A duration alert is a verdict you cannot act on, because you cannot lift faster; it turns a training tool into a stopwatch with anxiety. At most one soft check near the end ("20 minutes left, two exercises planned") as a prompt, never a verdict. Technical flag carried into the build: a rest timer that alerts is trivial while the app is awake and genuinely hard on a locked iPhone — iOS Safari suspends background JS timers and PWA push is fenced. Audio plus vibration with the screen awake covers the realistic case since the phone is already in hand between sets. This constraint is substantially defused by the always-on display decision.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Forge display mode is a separate always-on garage device that idles as the wall; the avatar is the session lane
+DATE: 2026-07-28
+WHY: Scott's design, arrived at in the shower, and it solves several problems at once. Device posture: this is NOT a toggle of the existing wall display mode — the spec already says the garage tablet is a different job, an input device at arm's length mid-rest rather than a display glanced at from across the room. The wall is glanceable and passive; a Forge screen is touched, wet-handed, between sets. Framing it as a toggle would get it built as a wall skin, which it isn't. But they reconcile cleanly through precedence rather than a new mode: idle defaults to the wall, a workout takes it over, with a manual "start workout" and "end session" and no presence detection — anything that tries to detect presence will be wrong at the exact moment someone is standing there sweating. A second screen in a daily-traffic room is also more surface for the habit to live on, which is the existing retention thesis. It also removes the iOS background-timer problem entirely — an always-on screen never suspends — which is a real technical argument, not just a nice-to-have. Layout: reuse the display mode's avatar-and-agenda structure. Tap an avatar, get the pre-session questions and Start; the lane expands into an agenda line carrying exercise, load, reps; tap the agenda item to log a set and the rest timer appears. Multiple lanes run this concurrently. THE AVATAR IS THE SESSION LANE — that is the answer to two people, two splits, and two timers on one screen, and it is not split view; it is the existing roster component doing double duty, which is exactly what constitutional rule 5 prescribes. A free feature falls out of it: with both agendas visible side by side you see a collision coming two lines ahead, so contention becomes avoidable on sight rather than resolved after the fact. One consequence recorded so it isn't re-litigated: the wall's never-mints-never-approves-never-edits rule does NOT bind a Forge screen. That rule protects the EMBER ECONOMY, and Forge has no economy — constitutional rule 2 is the entire reason it is a module and not a register. A Forge screen that writes sets operates outside the surface the rule protects. Superseded within this same session: the pre-session gate was first placed on a phone in the kitchen; it lives on the garage screen. One device, one place, and generation latency lands while the user is standing there anyway. Left open for Scott: whether the rest-timer alert fires from the screen or the pocket, and whether the timer shares the agenda cell with load/reps or replaces it — jAIne's objection to replacing it (rest is exactly when you want to see what you're about to lift) is flagged, not ratified.
+REPLACES: Supersedes the same-session placement of the pre-session gate on a phone in the kitchen. Refines the parked note that "the garage wall is an input device, not a display" by adding the idle-defaults-to-wall precedence model.
+STATUS: LOCKED
+
 ——
 DECISION: The non-creator first run is the same SetupShell with a second step registry, and the flow writes nothing except a completion marker.
 DATE: 2026-07-27
