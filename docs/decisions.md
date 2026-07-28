@@ -11,6 +11,75 @@ WHY: [the reasoning, including rejected alternatives]
 REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
+
+
+
+---
+
+DECISION: The Forge is scoped to the Draper household, not to strangers. It stays merged inside Emberhold.
+DATE: 2026-07-27
+WHY: Emberhold has a thin market and real teeth — a family that finds it cold could plausibly say "hell yeah." The fitness market is the opposite: saturated with competent products, so the bar for a stranger-facing Forge is far higher than Emberhold's and the ceiling is lower. Scott's own framing: don't dilute the "wow" of Emberhold with a "meh" Forge. REJECTED: rebuilding Forge as a standalone tool for two users. That reverses a decision made on grounds audience does not touch. The 07-25 merge was decided on infrastructure — no second auth, no second tenant bootstrap, one member table, one PIN system, one avatar pipeline, one unlock — and every one of those costs stays fixed while the audience shrinks to two. Standalone-for-two is a WORSE proportion than standalone-for-strangers, and proportion is exactly what killed the 07-25 prototype (a tool wall and a metal-composition system, still unable to log a working set). REJECTED: the fear that Forge dilutes Emberhold. It is structurally impossible — enabled_modules plus a gated route with no nav entry means a stranger household never renders it. The switch already exists and needs no build. The real risk is SUBSTITUTION, not dilution: a Forge session happening instead of a Gate B item rather than alongside one. That is the tripwire. Money survives intact: ~$192/yr of Fitbod cost avoidance counts identically to $192 of revenue against a $636/yr tooling-cost target.
+REPLACES: Nothing — new decision. Constrains the 2026-07-25 module-merge decision by scoping its audience.
+STATUS: LOCKED
+
+---
+
+DECISION: "A full Fitbod replacement" is retired as Forge's standard. The bar is a user test: Scott and May stop opening Fitbod.
+DATE: 2026-07-27
+WHY: Read literally, "full Fitbod replacement" has no exit condition — Fitbod has a funded team and an edge-case surface Forge will never match. That standard makes A permanently unshippable, which is the opposite of what the 07-26 call intended. Read as a user test it is achievable and probably closer than it looks, because Forge serves two known users in one known gym with no edge cases. Consequence: constitutional rule 7's free/paid split no longer applies to Forge. Nobody buys an LLM programming tier in a two-person app, and LLM programming was the sole paid feature.
+REPLACES: The 2026-07-26 call that "A must be a FULL Fitbod replacement, not a thin MVP." That entry is SUPERSEDED 2026-07-27.
+STATUS: LOCKED
+
+---
+
+DECISION: Forge stores weight in pounds and logs dumbbell load per hand. Exercises carry a bilateral flag.
+DATE: 2026-07-27
+WHY: Most American gyms mark plates and dumbbells in lb, and progression.ts already names every field _lb. Kg is not a display toggle on lb data — a standard bar is 20kg (44.09lb, not 45) and standard kg plates don't map onto lb denominations, so the achievable load set genuinely differs. Store one unit, convert at the glass. Per-hand matches Fitbod (so numbers stay portable) and avoids mentally halving at the rack every set. REJECTED: logging total. It reads cleaner in tonnage math and is worse everywhere a human touches it. Per-hand forces a bilateral boolean on the exercise row — a 40lb bilateral press and a 40lb single-arm row are the same logged number and twice the work apart. That flag cannot be added after data exists without every historical volume figure silently changing. Also noted: a dumbbell e1RM must never be estimated from a barbell e1RM or vice versa; 40 per hand is 80lb moved but is not an 80lb bench.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Forge equipment is standards-plus-override. Users select equipment TYPES; presets generate the load set. No plate-by-plate inventory entry.
+DATE: 2026-07-27
+WHY: Scott's call, overruling three messages of jAIne building an inventory system with Scott's gym as the schema rather than as a row in it — the same failure mode as the standalone app, solving for the case in front of it and calling it architecture. A real user will not enter every plate they own. REJECTED: dropping inventory entirely. progression.ts needs to know what loads exist or plate math is guesswork; the inventory is not the mistake, making a user type it in is. Presets write standard inventories behind a type selection. THE TEST: if Scott's gym cannot be expressed as preset + overrides, the preset model is wrong — his rack is unusual enough to be a genuine stress case. Corollary, also Scott's call: when the prescribed load isn't achievable, the user adjusts manually and the app compensates in reps rather than the system modelling finite plate counts. That compensation is the differentiator — it's the reason string running in reverse, and it's where Fitbod goes silent. It needs a validity floor: below some deviation the app must say "that's a different exercise now" rather than compute an equivalence it doesn't have.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Forge cardio is included, self-reported, and prescribed rather than autoregulated. Sessions hold entries of two shapes and may be mixed.
+DATE: 2026-07-27
+WHY: jAIne conflated "a PWA cannot VALIDATE cardio" with "cardio cannot be INCLUDED." Time and resistance are self-reported exactly like every other number in the app; the absence of HealthKit only removes validation, not participation. Cardio entries carry duration and optional resistance, nothing computes them, and there is no reason string because there is no reasoning — that is honest and sufficient. Scott's own example forced the mixed-session requirement: "10 minute bike warmup" is the front of a lift day, not its own session, and if cardio only exists as a separate session type the warmup gets skipped or creates junk data. Two entry shapes must exist from day one; retrofitting the second after the first has data is the expensive version. NOTED: cardio and bands are the same category — equipment producing no load set. Bands stay out of v1, but once a non-load entry shape exists they stop being a second engine and become a rank plus reps. Door unwelded, not opened. DECLINED for now: a session-RPE field for cardio progression — do not store a column until something reads it.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The activity-log actor-forgery item is downgraded and re-scoped from a security fix to a design question about what actor_label means.
+DATE: 2026-07-27
+WHY: Read-only Code sweep, briefed to disprove, killed jAIne's own recommendation. activity_log.actor_id is already derived server-side from auth.uid() and cannot be faked from the client; family_id derives from current_family_id(); _ember_delta is already nulled for non-parents. Only actor_label — the rendered display string — is client-supplied. So the exposure is a feed that can render a wrong NAME over a row that still records the truth: cosmetic-layer lie, auditable data beneath. Under the walk-up trust boundary this was never a cross-tenant concern. REJECTED: deriving actor_label from auth.uid(). It is a regression, not a fix. Four of six logActivity call sites deliberately pass someone other than the caller — Briefing.tsx and quest.$id.tsx pass claimed_by ?? assigned_to, vault.tsx's approve path passes r.requested_by — because a parent approving a kid's quest must show the KID's name. Deriving from the session would rewrite every completed-quest feed entry to the approving parent. The column is doing two jobs: sometimes "who clicked," sometimes "who gets credit." The likely shape is a validated subject_profile_id with the label derived server-side from it — a third field, not a substitution. That needs Scott. The sweep also confirmed actor_label is the only client-supplied identity field in the entire migration set, and that admit_pending_member / deny_pending_member both stamp from auth.uid(). LESSON: severity in a doc outlives the evidence for it. This was carried three sessions as "top open security item" on a summary nobody re-derived.
+REPLACES: The 2026-07-26 entry ranking activity-log actor forgery as the top open security item and prescribing derivation from auth.uid(). That entry is SUPERSEDED 2026-07-27.
+STATUS: NOTED
+
+---
+
+DECISION: families.timezone gets a set-once silent heal plus an explicit parent-triggered reset button. The household clock never follows a device automatically after it has been confirmed once.
+DATE: 2026-07-27
+WHY: The thirteen existing holds were BACKFILLED with the America/Los_Angeles default when the NOT NULL column landed 07-23; timezone detection did not ship until 07-26, so it never ran for any of them. At least one hold (Phaeaz) is known to be outside Pacific. Wrong zone means dailies rolling over mid-evening — a silent correctness bug in the engine's core loop with no user-facing lever. REJECTED: wiping the column to let it repopulate. Detection is a browser API that runs on the user's device when they are present; Postgres cannot go get it. Wiping produces thirteen NULLs and breaks rollover for holds that are currently correct. THE GENERAL RULE: client-detected values only arrive when a client shows up. REJECTED: a UTC offset instead of an IANA name — offsets aren't stable (LA is −8 in winter, −7 in summer) and the failure wouldn't look like a timezone bug, it would look like dailies rolling at 11pm twice a year. REJECTED: NTP (pool.ntp.org, time.nist.gov) — it answers "what instant is it," which nothing here is confused about. The question is "which calendar day is it for this household," and the off-the-shelf answer is the IANA tz database, which Postgres ships and household_today() already uses. REJECTED: silent auto-correct on any parent login — Scott overruled and was right. A parent travelling for work would move the whole household's clock for a week; his family's dailies would expire mid-evening and nobody at home would connect the two. A household's timezone is where the household LIVES, and a traveller's device is exactly the wrong source of truth. REJECTED: per-member timezones — contradicts the 07-23 call that the household's day is what matters, and it should, because a chore is done at a house, not at a person. REJECTED: a settings form alone — it builds a lever with nobody's hand on it; someone still has to know Phaeaz's real zone and go set it. The heal fixes the thirteen with no interviews; the button covers the once-a-decade relocation. Moving is a decision and travel is a trip, and no signal from a device can distinguish them — so the system stops guessing and a human confirms. Implementation: families.timezone_confirmed_at timestamptz NULL, a parent-gated SECURITY DEFINER set_household_timezone() validating against pg_timezone_names, silent heal only when confirmed_at IS NULL, and NO table-level UPDATE grant on families (the 07-15 privilege-escalation fix stays intact — families holds is_founder).
+REPLACES: Nothing — new decision. Closes the 2026-07-26 open finding that families.timezone has no update path.
+STATUS: DRAFT — contingent on the build landing and on verifying, on the glass, that a second sign-in changes nothing.
+
+---
+
+DECISION: Session lane is declared at open. Four values: design-only, design + Lovable, design + Code, full.
+DATE: 2026-07-27
+WHY: Scott carries conversations across a day — a thread can start in the gym between sets and finish at a keyboard. jAIne briefing into a lane that isn't open wastes the session and makes good design work feel unfinished: build prompts against an empty credit balance, Code recon at someone standing at a rack. REJECTED: inferring the lane from location. Falsified inside one conversation — Scott was at a desktop with twelve credits left, so "at a keyboard" did not mean "can build." Credits and hands are INDEPENDENT switches. REJECTED: treating the gym as design-only by definition. Lovable is a browser tab and runs fine from a phone; only Claude Code is genuinely desktop-bound, because reviewing what an agent did to a codebase on a phone is a bad idea. Design is always on. NOTED: rest-period design is a real and productive mode — a large share of Emberhold was built that way, and this session's best corrections (cardio, standards-over-Scott's-gym, rep compensation, per-hand) came from it. jAIne asserted this mode was leaking out of the repo; it was not. Scott commits the outputs and the capture muscle is working. Folds into playbooks/session-protocol.md on a session where jAIne can read the current version first.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
 DECISION: Fitness Option A is a FULL Fitbod replacement, not a thin MVP with the game deferred. `/setup/intent` is parked until Forge is built.
 DATE: 2026-07-26
 WHY: The A-versus-B framing risked being read as "ship a minimal logger now, add the interesting part later," which is the wrong shape twice over. FIRST, IT MISREADS WHAT A IS FOR: A's job is to cancel a $15.99/mo subscription, and a subscription does not get cancelled by a tool that does most of what the paid one does. If a lifter still opens Fitbod for anything — program authoring, e1RM trends, plate math, rest timing — then A has not shipped and the $192/yr is not recovered. Partial replacement recovers zero dollars while consuming the whole build. SECOND, IT INVERTS THE RISK THAT ALREADY MATERIALIZED ONCE: on 07-25 a fitness prototype grew a tool wall and a metal system while still being unable to log a working set. The standing risk is that the game is the most interesting part to build and the tool is the part that pays. Declaring A "full-featured" is the guardrail — it means the fun cannot start until the tool is genuinely done, rather than the tool being declared done early so the fun can start. THE FUNCTIONAL BAR, from the market read: offline-first logging; set entry that survives a sweaty one-handed rest period; RPE/RIR on every set; e1RM trend and weekly volume; rest timing; template-driven program and block authoring. The differentiator remains explainability, not AI — deterministic autoregulation off RPE surfacing a one-sentence reason. B is deferred, not rejected, and does not get designed until A has been used for a month. RELATED PARKING CALL: /setup/intent has been carried as an open question for three sessions. It is unrouted, unlinked, never loaded by a human, and nothing reads enabled_modules — because module intent has nothing to point at until a module exists. It is therefore not an open decision at all; it is a dependency of the fitness build. Parked with a trigger: finalized when Forge is built, not before. Do not re-litigate it in the meantime, and do not delete it either — deleting and rebuilding costs more than leaving it.
