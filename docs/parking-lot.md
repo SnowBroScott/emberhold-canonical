@@ -3,7 +3,7 @@
 **What might be.** Captured, not committed. One place for every stray idea, so nothing derails the build.
 
 > Decisions live in `decisions.md`. Status lives in `status.md`. **This doc holds only what hasn't been decided yet.**
-> *Complete dated replacement each session. Last: 2026-07-28.*
+> *Complete dated replacement each session. Last: 2026-07-29.*
 
 ## How this works
 - **Inbox** — the dump zone. Capture and move on.
@@ -14,14 +14,15 @@
 
 ## Inbox (untriaged)
 
-*(empty — triaged 2026-07-28)*
+*(empty — triaged 2026-07-29)*
 
 ---
 
 ## OPEN DECISIONS (unresolved — waiting on Scott)
 
-- **🆕 WHERE DOES THE REST-TIMER ALERT FIRE — the garage screen, or the pocket?** The always-on screen removes the iOS background-suspension problem entirely, which argues for the screen. But the timer is the most personal and most interruptive element in a session, and with two people running different intervals a shared screen beeping for one of them is noise for the other. **jAIne's lean: the screen owns the SESSION (what's next, load, reason string, contention state); phones own the TIMER.** Taste call in a room jAIne can't see. **Scott's.**
-- **🆕 In the agenda lane, does the rest timer SHARE the cell with load/weight/reps or REPLACE it?** Scott's shower-design sketch has it replace. **jAIne flagged the objection and it was never ratified:** rest is exactly when you most want to see what you're about to lift, and swapping it out means tapping back, wet-handed, at the beep. **Unresolved. Visual call, Scott's.**
+- **🆕 EMPTY ROSTER SEAT — auto-default an avatar, or leave it an "unclaimed, tap to pick" seat?** A holdmate added without an avatar renders as a silhouette-in-a-frame (observed: "Ada"). **jAIne's lean: do NOT auto-default and do NOT guess "first of each class"** — the roster is the one place a hearthmate says "this is me," and stamping a portrait picks their identity for them, which they then have to correct (or don't, and a wrong avatar sits on the wall). The empty state is already the honest state; what's missing is a **nudge** — make the empty seat tappable → routes to the picker, "pick yours." **The one exception is the wall**, where a silhouette is a dead spot on an ambient display — that's a wall-render fallback (the "floor" item), not an onboarding default. **Raised 2026-07-29, jAIne recommended, Scott never ratified** (the thread moved to the tour-screen cut). Decision + the tappable-affordance build both owed.
+- **🆕 WHERE DOES THE REST-TIMER ALERT FIRE — the garage screen, or the pocket?** The always-on screen removes the iOS background-suspension problem, which argues for the screen. But the timer is the most personal and most interruptive element, and with two people on different intervals a shared screen beeping for one is noise for the other. **jAIne's lean: the screen owns the SESSION; phones own the TIMER.** Taste call in a room jAIne can't see. **Scott's.**
+- **🆕 In the agenda lane, does the rest timer SHARE the cell with load/weight/reps or REPLACE it?** Scott's shower-design sketch has it replace. **jAIne flagged the objection, never ratified:** rest is exactly when you most want to see what you're about to lift, and swapping it out means tapping back, wet-handed, at the beep. **Unresolved. Visual call, Scott's.**
 - **🆕 Does the LLM plan BOTH sessions in one call, or one call per person?** One call is what makes staggered openers and contention-aware generation possible. Two calls are simpler and independent. **The contention feature effectively requires one call — confirm that's intended before it becomes an implicit constraint.**
 - **🔴 WHAT DOES `actor_label` MEAN?** `actor_id` is server-derived from `auth.uid()` and truthful; only the display string is client-supplied. **But four of six call sites pass a label that is deliberately NOT the caller** — a parent approving a kid's quest correctly shows the kid's name. The column is doing two jobs: sometimes "who clicked," sometimes "who gets credit." Options: (a) leave it and accept a rendered-name forgery vector under the walk-up boundary, (b) add a validated `subject_profile_id` and derive the label server-side, (c) split into two labels and let the feed compose. **(b) is jAIne's lean.** Design call, not a bug fix.
 - **⚠️ Own-session vs per-member-auth — more riding on it than it looks.** **Four open items wait on this one call:** the `adults_only` rewards audience read, the `parents_only` quest details read, the ignored "adult PIN lock isn't tied to real permission checks" finding, and the ignored "any member can submit a redemption attributed to another member" finding. **Items 3 and 4 are marked Ignored in the Lovable dashboard and that panel will never tell you they're conditional.**
@@ -46,7 +47,8 @@
 
 ## NOW (this is the next work)
 
-- **🔴 `master-spec.md` — SIX folds owed, dedicated pass, ALREADY SCHEDULED.** Creator onboarding flow · signup posture · write-once timezone and its heal · Part II's rescoping to household-only · the non-creator first run, the marker seam, and the arrival-state rule · **Part II's v1 shape from 07-28.** Plus corrections: the `actor_label` derive-from-`auth.uid()` prescription is a killed regression, the "fourth activeness surface" note is dead, the `set_enabled_modules` "nothing has ever written that value" claim is false, the Onboarding section still calls the empty-board gap the top structural problem, the COPPA shield is false for a join-by-code minor, **and Part II's client-engine rule cites connectivity as its reason when it actually rests on latency and sunk cost.** **jAIne has read the current version.**
+- **🔴 `master-spec.md` — SEVEN folds owed, dedicated pass.** Creator onboarding flow · signup posture · write-once timezone and its heal · Part II's rescoping to household-only · the non-creator first run, the marker seam, and the arrival-state rule · Part II's v1 shape from 07-28 · **the 2026-07-29 onboarding-sequence change** (the `handoff` cut, the install tutorial as terminal first-run step, the first-screen copy, and the first-quest doorway now confirmed BUILT — which kills the "empty-board gap = top structural problem" line). Plus corrections: the `actor_label` derive-from-`auth.uid()` prescription is a killed regression, the "fourth activeness surface" note is dead, the `set_enabled_modules` "nothing has ever written that value" claim is false, the COPPA shield is false for a join-by-code minor, and Part II's client-engine rule cites connectivity when it rests on latency and sunk cost. **jAIne has read the onboarding + Part-I slices, NOT the full current doc — this is a read-then-regenerate pass, not a blind regen.**
+- **🔴 Install tutorial — publish to prod + walk it live.** Verified in the Lovable preview only. Publish to theemberhold.com, walk creator first-run in a plain Safari tab to `add-to-home` → board. *A preview is not prod.*
 - **🔴 The first-run completion marker — the Lovable half of a finished frontend.** A `profiles` column plus a write path. ⚠️ **Scope the RLS question first: can a member UPDATE their own `profiles` row?** **Three things ship together or the regression returns** — the constant, the read body, the write body.
 - **🔴 `FirstRunGate` reads the account holder, not the switched-into profile.** Ships with the marker or the kid flow never fires for the kids it was built for.
 - **🔴 Redemption approval moves to match the PIN screen's promise.** The string is already live. Make it true.
@@ -54,9 +56,10 @@
 - **Two derivations of role now exist** — `profiles.role` in `FirstRunGate`, `user_roles` in `useMyProfile()`. **The `isActiveQuest` pattern, second occurrence.**
 - **Unapproved weekly/monthly quests never roll forward.** Two stranded on the live board. **Likely also the STALE chip answer — verify that first, it may be one fix.**
 - **Recurrence chip must read `Monthly · 1st` / `Weekly · Mon`.** The anchor arithmetic *discards* the user's chosen day and the UI never says so.
+- **Onboarding dots-count fix.** After the `handoff` cut, `recap` shows 7 segments and `add-to-home` shows 6 — `recap` counts the old `SETUP_STEPS.length`. One line, whenever next in that file.
 - **Onboarding screenshots for screen 3.** Seed a demo hold by hand (~15–20 min), screenshot from the phone. **Test whether this is a Claude Code drop-and-point job first.**
 - **Grant-revoke verification probe job.** Drafted, deferred three times.
-- **The floor — avatar render fallback.** **Check the wall.**
+- **The floor — avatar render fallback.** **Check the wall.** *(Also the resolution path for the empty-roster-seat open decision.)*
 - **Founder tier-tag verification.** Flip ON → confirm 32 lock / 16 open → flip OFF.
 - **Measure the Smith machine offset.** Two minutes with a known weight. **A wrong offset corrupts every Smith e1RM forever, unreconstructably.**
 - **Prod test-object cleanup — deserves its own session.**
@@ -68,6 +71,8 @@
 ### Onboarding, phase three
 
 - **The `/first-run/*` copy deserves a second read once it's live.** The kid array is three beats to the adult's five. **Lean is not automatically wrong**, but nobody has watched an actual kid go through it.
+- **Add the install-tutorial screen to the joiner flow too, once it un-darks.** The creator flow has it; the eight non-creator screens don't. Same screen, copy re-checked at that point.
+- **The stacked-Pip-voice line on the first setup screen.** The yellow "Ember's still warm — let's finish lighting your hearth" now sits under a header that also speaks ("Who's tending the hold?"). Two Pip voices stacked. Cosmetic, low priority.
 - **`member_admitted` renders as `"Mom · Leo"`.** One case in two switches.
 - **The optimistic `true` will flash.** Cosmetic.
 - **The early-approval seam.** Approving a weekly before its due date produces a successor in the same week.
@@ -126,7 +131,8 @@
 - 🅿️ **`/setup/intent` — PARKED WITH A TRIGGER.** Finalized when Forge is *built*. **The trigger has not fired.**
 - **⚠️ Calendar import — a Gate-E thesis risk, not a backlog nicety.** **The thirteen existing accounts will never surface this — they're friends, they'll re-key. A cold family with a full Google Calendar will not.** Import (read-only, theirs → ours) is the cheap 80%. **Decide before Gate D.**
 - **⚠️ COPPA is sharper than the spec says.** A minor joining by code has an email, a password, and an auth row. **The shield the spec leans on doesn't cover the door.**
-- **The service worker.** ⚠️ **Its Forge-driven priority bump is retired** — connectivity was overstated as a Forge constraint (Scott, 07-28). It still matters for strangers and for "installable PWA" being true.
+- **⚠️ `flock.js` analytics — know the surface before Gate C.** A tracker (self-proxied `/~api/analytics`, likely Lovable-injected) fires in the app `<head>`. **It has to be named truthfully in the Gate C privacy policy** — minors are real users. *(Decided as NOTED 2026-07-29; the work is the policy at Gate C.)*
+- **The service worker.** ⚠️ **Its Forge-driven priority bump is retired** — connectivity was overstated as a Forge constraint (Scott, 07-28). **And it is NOT a prerequisite for the install tutorial** (2026-07-29) — install ships on manifest + apple-tags. It still matters for the offline themed shell (a Gate B stranger-proofing item) and **deserves its own careful pass** — a botched offline cache is a silent-stale-content risk.
 - **Ask Lovable what `sandbox_exec` is.** One question, not a project.
 - **Ghost successor cleanup.** **"Forgot PIN" confirm() copy.** **`decisions.md` header nit** — the prose "Status tiers" line omits SUPERSEDED.
 - **Haiku sweep (queued, read-only):** grep repo for `Feast` → swap any user-facing hit to `Hall`; grep every LOCKED decision against the codebase; retire/rebuild `avatar-review.tsx`.
@@ -136,7 +142,7 @@
 - **Quick Add defaults expanded on an empty board.**
 - **A cheap Dim-tier starter reward — DE-PRIORITIZED.**
 - **Wall event-pill member color.** **Wall ticker speed.** **Multi-day calendar events.** **Calendar alerts** — decide push-vs-in-app before building.
-- **Remaining polish burn-down** — Pip install tutorial + help discoverability · reward scarcity limits · yearly/monthly event recurrence · Lists "348 DONE" fossil counter · feed verb drift.
+- **Remaining polish burn-down** — Pip help discoverability · reward scarcity limits · yearly/monthly event recurrence · Lists "348 DONE" fossil counter · feed verb drift. *(Pip install tutorial removed — shipped 2026-07-29.)*
 
 ---
 
@@ -177,7 +183,7 @@
 ---
 
 - **The timezone nudge — a signal, never an inference.** If the household's stored zone has disagreed with every adult's device for ~30 consecutive days, Pip mentions it once. **A human confirms; the system never acts.**
-- **The "how Scott & jAIne work" collaboration profile.** **07-28 supplied another entry, and it's a new species.** jAIne argued a design position by *quoting a LOCKED rationale* — the garage-connectivity clause — rather than testing whether the rationale still applied to a two-person bespoke build. Scott corrected it in one sentence and the conclusion survived on entirely different grounds. **Prior entries:** asserted a route guard's behavior from an agent's prose summary; asserted the marker keyed to the switched-into profile after reading the helper and inferring the consumer; proposed a production stub-flip that would have ambushed thirteen households; invented a wife's name; asserted a repo-capture leak in a working habit; claimed nothing had ever written `'training'`; called four rows a guilt pile without reading `archived`; prescribed a glass check the frontend could not perform. **The profile should encode: fetch before producing · decompose before you promote · read the CONSUMER, not the helper · follow a proposed change downstream before calling it reversible · state a hypothesis as a hypothesis · never invent a fact about Scott's life · RE-DERIVE A LOCKED RULE'S REASON BEFORE USING IT AS AN ARGUMENT.** *Scott has overruled jAIne on the naming call, the module-merge call, the currency call, the layer-collapse call, the screen-3 call, the assign-only call, the plate-inventory call, the silent-timezone call, and the connectivity call.*
+- **The "how Scott & jAIne work" collaboration profile.** **07-28 supplied another entry, and it's a new species.** jAIne argued a design position by *quoting a LOCKED rationale* — the garage-connectivity clause — rather than testing whether it still applied to a two-person bespoke build. Scott corrected it in one sentence and the conclusion survived on entirely different grounds. **Prior entries:** asserted a route guard's behavior from an agent's prose summary; asserted the marker keyed to the switched-into profile after reading the helper and inferring the consumer; proposed a production stub-flip that would have ambushed thirteen households; invented a wife's name; asserted a repo-capture leak in a working habit; claimed nothing had ever written `'training'`; called four rows a guilt pile without reading `archived`; prescribed a glass check the frontend could not perform. *(07-29 added two milder entries — see below.)* **The profile should encode: fetch before producing · decompose before you promote · read the CONSUMER, not the helper · follow a proposed change downstream before calling it reversible · state a hypothesis as a hypothesis · never invent a fact about Scott's life · RE-DERIVE A LOCKED RULE'S REASON BEFORE USING IT AS AN ARGUMENT · CHECK THE DEPLOYED COMMIT BEFORE DIAGNOSING A MISSING FEATURE (07-29: twice bet the install door was un-built; it was there, and the device was on a stale commit) · RIGHT-SIZE THE ARTIFACT TO THE TASK (07-29: sketched a nine-screen state machine for a three-tap gesture).** *Scott has overruled jAIne on the naming call, the module-merge call, the currency call, the layer-collapse call, the screen-3 call, the assign-only call, the plate-inventory call, the silent-timezone call, and the connectivity call.*
 - **Retire identity-first role labels — "Parent/Kid," especially "Kid."** The real distinction is approver vs. submitter. A display-string sweep, not a data migration.
 - **Display / wall / kiosk mode — v1 FOR OWN-HOLD.** Still fenced for the STRANGERS-grade version.
 - **Seed distribution channels — pick one or two, never all.** **The highest-leverage lever is the invite/deep-link loop.** **Don't become a content marketer.**
@@ -193,53 +199,61 @@
 
 ## KILLED / SUPERSEDED
 
+**2026-07-29**
+- ~~**"The install tutorial needs a service worker to work"**~~ — **UNBUNDLED.** Install and standalone launch are delivered by the manifest + iOS meta tags, already live. The SW is offline resilience — a separate Gate B job. On iOS there's no `beforeinstallprompt` and the SW does nothing for install anyway. *(See `decisions.md` 2026-07-29.)*
+- ~~**"The install screen fell out of the sequence / the detection is firing"**~~ — **NEITHER; STALE LOCAL BITS.** The test device sat on an old commit where the screen didn't exist; the pull added it. Not a bug.
+- ~~**"The install tutorial is a route / a nine-illustration, four-branch state machine with a confirmation screen and a persistent settings affordance"**~~ — **RIGHT-SIZED TO ONE SCREEN.** A three-tap gesture riding the existing walkthrough. Deferred: separate desktop branch, confirmation state, persistent affordance.
+- ~~**"Frame the share-sheet screenshot with a painted Pip illustration"**~~ — **REPLACED BY THE REAL SCREENSHOT.** A photo of the actual sheet teaches a utility gesture better than art, and costs zero visual-lane work — framed in a charred forge-window border so it isn't a flat grey rectangle on ember-dark.
+- ~~**"'Now show them' and 'the rest of your hold' are both redundant tour screens, cut both"**~~ — **SPLIT.** "Now show them" (the loop card, third restatement) cut. "The rest of your hold" KEPT — the one breadth-signal that says Emberhold isn't only a chore game. *(See `decisions.md` 2026-07-29.)*
+- ~~**"Auto-default an avatar (or first-of-each-class) for a member who skipped the picker"**~~ — **LEANED AGAINST, UNRATIFIED.** Moved to OPEN DECISIONS above; jAIne's recommendation is the tappable "pick yours" empty seat, wall gets a fallback.
+
 **2026-07-28**
-- ~~**"Forge v1 is a logger with programming bolted on"**~~ — **INVERTED BY USER RESEARCH.** Asked what they valued most about the incumbent, both users named *what exercise* and *what weight*. **Neither named logging.** The log is the commodity every free tier already does well. **v1 is a prescription engine with a log attached**, and that reorders the build.
-- ~~**"The rest timer is polish"**~~ — **FALSE.** Named by Scott as top-three value. Deterministic, trivial, and **the reason the phone is in hand between sets** — the in-session habit hook.
-- ~~**"Injury severity has to be inferred or modeled"**~~ — **KILLED BY ONE TAP.** The flag carries its own resolution at flag time: *reduced load / avoid entirely.* No severity model, no pain scale.
-- ~~**"Injury flags need a duration or a decay timer"**~~ — **KILLED BY SCOTT, and it's better than the alternative.** Re-ask at the next session that touches the flagged region. **The training split IS the expiry mechanism.** No decay logic, and the question fires at the only moment the answer is worth anything.
-- ~~**"Readiness and injury are one 'how are you feeling' dial"**~~ — **KILLED.** A scalar and a filter with different lifespans. **Merging them produces something wrong for both.**
-- ~~**"Make can be the runtime generation engine"**~~ — **KILLED AS RUNTIME, KEPT AS FACTORY.** Latency, quota, and rule 7's guardrail. **Generate the catalog and templates offline, review, ship as data.** Same pattern as the vignette pipeline.
-- ~~**"The client-engine rule exists because a garage has unreliable connectivity"**~~ — **CORRECTED BY SCOTT, and jAIne was reciting rather than deriving.** For a two-person bespoke build connectivity is never a concern. **The rule survives on latency and sunk cost** — a network round-trip mid-set is worse than local math regardless of signal, and the engine is already written and tested. **Unlocks two things:** a Supabase-hosted catalog editable without redeploy, and **live mid-session regeneration** ("rack's taken, give me something else"), which jAIne would have argued against an hour earlier on bad grounds. ⚠️ **This is a `master-spec.md` Part II correction, folded into the scheduled pass.**
-- ~~**"Split view for two concurrent sessions on one screen"**~~ — **KILLED BY THE AVATAR-LANE INSIGHT (Scott's).** The roster component already in display mode *is* the lane structure. **Reuses an existing component instead of inventing a layout**, and side-by-side agendas make collisions visible before they happen.
-- ~~**"Minute-by-minute session scheduling"**~~ — **KILLED.** Real sessions drift; any timeline is wrong within ten minutes. **Bias at generation, don't schedule.**
-- ~~**"A live countdown / session-duration nag"**~~ — **DECLINED BY SCOTT.** The rest-timer nag has an action attached; a duration nag is a verdict you cannot act on. **You can't lift faster.** Interrupt only when there's a move to make.
-- ~~**"Forge display mode is a toggle of the existing wall display mode"**~~ — **CORRECTED, THEN RECONCILED.** The spec already says the garage tablet is a different job: *an input device at arm's length mid-rest, not a display glanced at from across the room.* **But idle-defaults-to-wall resolves it** — precedence, not a new mode, and a second screen is more surface for the habit.
-- ~~**"The wall's never-mints-never-edits rule constrains a Forge screen"**~~ — **DOES NOT BIND.** That rule protects the **ember economy**. Forge has no economy — constitutional rule 2 is the entire reason it's a module and not a register. **A Forge screen that writes sets operates outside the surface the rule protects.** Recorded so it isn't re-litigated in six weeks.
-- ~~**"The pre-session gate lives on a phone, in the kitchen"**~~ — **SUPERSEDED WITHIN THE SAME SESSION.** It lives on the garage screen. One device, one place, and generation latency lands while the user is standing there anyway.
-- ~~**"Equipment presence detection / knowing who is on what rack"**~~ — **CUT ON SIGHT.** The users are ten feet apart and can see the rack. **One button that answers in under two seconds** beats any sensing.
+- ~~**"Forge v1 is a logger with programming bolted on"**~~ — **INVERTED BY USER RESEARCH.** Both users named *what exercise* and *what weight*. **Neither named logging.** **v1 is a prescription engine with a log attached.**
+- ~~**"The rest timer is polish"**~~ — **FALSE.** Named by Scott as top-three value. **The reason the phone is in hand between sets** — the in-session habit hook.
+- ~~**"Injury severity has to be inferred or modeled"**~~ — **KILLED BY ONE TAP.** The flag carries its own resolution at flag time: *reduced load / avoid entirely.*
+- ~~**"Injury flags need a duration or a decay timer"**~~ — **KILLED BY SCOTT.** Re-ask at the next session that touches the flagged region. **The training split IS the expiry mechanism.**
+- ~~**"Readiness and injury are one 'how are you feeling' dial"**~~ — **KILLED.** A scalar and a filter with different lifespans.
+- ~~**"Make can be the runtime generation engine"**~~ — **KILLED AS RUNTIME, KEPT AS FACTORY.** Generate the catalog and templates offline, review, ship as data.
+- ~~**"The client-engine rule exists because a garage has unreliable connectivity"**~~ — **CORRECTED BY SCOTT.** For a two-person bespoke build connectivity is never a concern. **The rule survives on latency and sunk cost.** ⚠️ **A `master-spec.md` Part II correction, folded into the scheduled pass.**
+- ~~**"Split view for two concurrent sessions on one screen"**~~ — **KILLED BY THE AVATAR-LANE INSIGHT (Scott's).**
+- ~~**"Minute-by-minute session scheduling"**~~ — **KILLED.** Bias at generation, don't schedule.
+- ~~**"A live countdown / session-duration nag"**~~ — **DECLINED BY SCOTT.** Interrupt only when there's a move to make.
+- ~~**"Forge display mode is a toggle of the existing wall display mode"**~~ — **CORRECTED, THEN RECONCILED.** Idle-defaults-to-wall — precedence, not a new mode.
+- ~~**"The wall's never-mints-never-edits rule constrains a Forge screen"**~~ — **DOES NOT BIND.** That rule protects the ember economy; Forge has none.
+- ~~**"The pre-session gate lives on a phone, in the kitchen"**~~ — **SUPERSEDED WITHIN THE SAME SESSION.** It lives on the garage screen.
+- ~~**"Equipment presence detection / knowing who is on what rack"**~~ — **CUT ON SIGHT.** One button beats any sensing.
 
 **2026-07-27 (late)**
-- ~~**"The joiner flow is a variant of the existing creator flow, re-routed"**~~ — **KILLED BY PERMISSIONS, NOT BY THE SHELL.** Two of the three writing screens are parent-gated. A kid walked through eats an RLS denial behind a friendly mascot.
-- ~~**"The joiner flow is a genuinely separate artifact"**~~ — **ALSO KILLED.** The answer was neither: **same shell, second step registry.**
-- ~~**"Fix the routing fork in `auth.tsx` so `join` goes to a joiner flow"**~~ — **KILLED.** **The fork is not the seam.**
-- ~~**"Hook the flow to the pending→active transition"**~~ — **KILLED AS AN EVENT.** Admission usually happens with the app closed. **It must be a state check on arrival.**
-- ~~**"'Replay the intro' folds into the joiner flow"**~~ — **KILLED ON MODALITY, and jAIne killed her own proposal.** Opposite knowledge states, opposite exits. **They shared a workshop question, not an artifact.**
-- ~~**"The kid joiner is a rare bird because kids have no auth identity"**~~ — **FALSIFIED BY SCOTT IN ONE SENTENCE.** **Two real doors, not one door plus an edge case.**
-- ~~**"Preserve `requested_role` so the app can tell a demoted joiner what happened"**~~ — **DECLINED.** **The demotion is a household conversation, not a system message.**
-- ~~**"Flip the read stub to `false` in production to walk the flow"**~~ — **WITHDRAWN BY jAIne BEFORE IT RAN, AND IT WAS A BAD PROPOSAL.** It would have handed thirteen households an unskippable walkthrough.
+- ~~**"The joiner flow is a variant of the existing creator flow, re-routed"**~~ — **KILLED BY PERMISSIONS.** Two of three writing screens are parent-gated.
+- ~~**"The joiner flow is a genuinely separate artifact"**~~ — **ALSO KILLED.** **Same shell, second step registry.**
+- ~~**"Fix the routing fork in `auth.tsx`"**~~ — **KILLED.** **The fork is not the seam.**
+- ~~**"Hook the flow to the pending→active transition"**~~ — **KILLED AS AN EVENT.** **A state check on arrival.**
+- ~~**"'Replay the intro' folds into the joiner flow"**~~ — **KILLED ON MODALITY.**
+- ~~**"The kid joiner is a rare bird because kids have no auth identity"**~~ — **FALSIFIED BY SCOTT.** **Two real doors.**
+- ~~**"Preserve `requested_role` so the app can tell a demoted joiner"**~~ — **DECLINED.**
+- ~~**"Flip the read stub to `false` in production to walk the flow"**~~ — **WITHDRAWN BY jAIne BEFORE IT RAN.**
 - ~~**"The `/first-run/*` screens are unverifiable until the column lands"**~~ — **FALSE, AND jAIne SAID IT TWICE.**
-- ~~**"The marker keys to the switched-into profile"**~~ — **FALSE.** True of `redirectIfFirstRunDone`; **false of `FirstRunGate`, which is the thing that actually fires the flow.**
-- ~~**"A derived gate can replace the completion marker"**~~ — **KILLED.** **A derived gate has no way to remember a skip.**
-- ~~**"Put the completion marker in localStorage"**~~ — **KILLED.** On a shared device one profile's marker suppresses every profile's flow.
+- ~~**"The marker keys to the switched-into profile"**~~ — **FALSE of `FirstRunGate`.**
+- ~~**"A derived gate can replace the completion marker"**~~ — **KILLED.** **No way to remember a skip.**
+- ~~**"Put the completion marker in localStorage"**~~ — **KILLED.**
 
 **2026-07-27 (early)**
-- ~~**"Activity-log actor forgery is the top open security item"**~~ — **DOWNGRADED BY ITS OWN RECON.**
+- ~~**"Activity-log actor forgery is the top open security item"**~~ — **DOWNGRADED.**
 - ~~**"Derive `actor_label` from `auth.uid()`"**~~ — **KILLED AS A REGRESSION.**
 - ~~**"Wipe `families.timezone` and let it repopulate"**~~ — **IMPOSSIBLE.**
-- ~~**"Use NTP to solve the timezone problem"**~~ — **WRONG TOOL, RIGHT INSTINCT.**
+- ~~**"Use NTP to solve the timezone problem"**~~ — **WRONG TOOL.**
 - ~~**"Store a UTC offset instead of a zone name"**~~ — **KILLED.**
 - ~~**"Phaeaz's hold was mis-detected at signup"**~~ — **FALSE.**
-- ~~**"Silent auto-correct of the household timezone on any parent login"**~~ — **OVERRULED BY SCOTT, and he was right.**
-- ~~**"Per-member timezones"**~~ — **REJECTED.** A chore is done at a house, not at a person.
+- ~~**"Silent auto-correct of the household timezone"**~~ — **OVERRULED BY SCOTT.**
+- ~~**"Per-member timezones"**~~ — **REJECTED.**
 - ~~**"Build the timezone edit path as a settings form"**~~ — **SUPERSEDED BY THE SET-ONCE HEAL.**
-- ~~**"Constrained plate-count search for prescription snapping"**~~ — **CUT BY SCOTT, then found ALREADY BUILT.**
-- ~~**"Build Forge's equipment model around Scott's gym"**~~ — **OVERRULED BY SCOTT.** **The inventory isn't the mistake — making a user type it in is.**
-- ~~**"Forge must be a full Fitbod replacement"**~~ — **SUPERSEDED.** Replaced by a user test. *(07-28 sharpens what the test is testing: prescription, not logging.)*
-- ~~**"Rebuild Forge as a standalone tool for Scott and May"**~~ — **KILLED THE SAME NIGHT IT WAS RAISED.**
-- ~~**"Forge dilutes Emberhold"**~~ — **STRUCTURALLY IMPOSSIBLE.** The real risk is substitution.
+- ~~**"Constrained plate-count search for prescription snapping"**~~ — **CUT, then found ALREADY BUILT.**
+- ~~**"Build Forge's equipment model around Scott's gym"**~~ — **OVERRULED.**
+- ~~**"Forge must be a full Fitbod replacement"**~~ — **SUPERSEDED** by a user test.
+- ~~**"Rebuild Forge as a standalone tool"**~~ — **KILLED THE SAME NIGHT.**
+- ~~**"Forge dilutes Emberhold"**~~ — **STRUCTURALLY IMPOSSIBLE.**
 - ~~**"Cardio can't be included because a PWA can't validate it"**~~ — **CONFLATED TWO THINGS.**
-- ~~**"Session lane can be inferred from location"**~~ — **FALSIFIED WITHIN ONE CONVERSATION.**
+- ~~**"Session lane can be inferred from location"**~~ — **FALSIFIED.**
 - ~~**"Rest-period design leaks out of the repo"**~~ — **FALSE.**
 
 **2026-07-26**
@@ -248,13 +262,13 @@
 - ~~**"Monthly recurrence may clamp and drift"**~~ — **STRUCTURALLY IMPOSSIBLE.**
 - ~~**"The routing fork determines whether a new household sees onboarding at all"**~~ — **FALSE.**
 - ~~**"Nothing has ever written `'training'` to `enabled_modules`"**~~ — **FALSE.**
-- ~~**Screen 3's feature overview as a FOOTER**~~ — **OVERRULED BY SCOTT, correctly.**
+- ~~**Screen 3's feature overview as a FOOTER**~~ — **OVERRULED BY SCOTT.**
 - ~~**"The first quest must be assigned to a named hearthmate"**~~ — **OVERRULED.**
 - ~~**Scripted screenshot capture**~~ — **DECLINED.** · ~~**Lovable generating the screen-3 imagery**~~ — **DECLINED.**
 - ~~**Module intent as a first-run screen**~~ — **CUT, not killed.** · ~~**Back navigation in the setup flow**~~ — **DECLINED for now.**
 
 **2026-07-25 (late)**
-- ~~**The four registers as four functional layers**~~ — **SUPERSEDED ONE DAY AFTER IT WAS LOCKED, by decomposition.**
+- ~~**The four registers as four functional layers**~~ — **SUPERSEDED ONE DAY AFTER IT WAS LOCKED.**
 - ~~**"Sparks" as a Forge-local currency**~~ — **MOOT.** · ~~**Four charters with three stubbed**~~ — **CUT.**
 - ~~**The vocabulary noun "layer"**~~ — **RETIRED.** · ~~**Renaming `enabled_modules` → `enabled_layers`**~~ — **REVERSED.**
 - ~~**Porting Endure's systems into Emberhold**~~ — **CUT ON A PLATFORM WALL.**
@@ -266,7 +280,7 @@
 - ~~**Loot rolls, salvage, and a Resources currency**~~ — **CUT.** · ~~**The Hold / clans / blueprints**~~ — **CUT.**
 
 **2026-07-22**
-- ~~**"Match Wanmine's feature breadth"**~~ — **REJECTED ON SIGHT.** Their business has **zero incentive to solve day 8**.
+- ~~**"Match Wanmine's feature breadth"**~~ — **REJECTED ON SIGHT.**
 - ~~**"Capacitor / app-store path"**~~ — **DECLINED** with two named reopen triggers.
 - ~~**"The app store is a distribution channel"**~~ — **FALSIFIED.**
 
