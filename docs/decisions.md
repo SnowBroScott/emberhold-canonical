@@ -12,6 +12,36 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
+——
+DECISION: The PWA install tutorial ships without a service worker. A valid manifest + the iOS apple-mobile-web-app-* meta tags deliver home-screen install and standalone launch (presence); the service worker delivers offline resilience, a separate Gate B concern. The two were welded in status.md ("service worker = what makes installable PWA true") and are now unbundled.
+DATE: 2026-07-29
+WHY: Recon of the live head proved the app already had a valid manifest (name, start_url, display:standalone, 192+512 icons) and correct iOS tags (apple-mobile-web-app-capable=yes, apple-touch-icon, apple-mobile-web-app-title=Emberhold). Install already worked; nothing was blocking it. On iOS — most of the beta — there is no beforeinstallprompt and no automatic prompt ever, so a service worker does nothing for install there; the flow is Share → Add to Home Screen regardless. Building an SW "to enable the tutorial" would have delivered a benefit iPhone users never receive and delayed a shipped feature behind an unrelated one. The SW still matters (offline themed shell, a Gate B stranger-proofing item) and is deferred there, not cancelled — and it deserves its own careful pass, because a botched offline cache is exactly the silent-stale-content failure this project is paranoid about. Rejected alternative: build the SW first to unlock the Android automatic install banner — declined because that also needs the SW, benefits only Android, and both platforms are manual-gesture walkthroughs without it anyway.
+REPLACES: Supersedes the status.md framing that treated the service worker as the prerequisite for "installable PWA." New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The install tutorial is ONE screen appended as the terminal step of creator first-run — not a route, not a modal fired from elsewhere, not a multi-screen state machine. Its instructional asset is a real captured iOS Safari share-sheet screenshot framed in a charred "forge-window" ember border, not a painted illustration. It carries platform-conditional copy (iOS Share→Add to Home Screen; Android menu→Install app), a webview-escape line ("Not seeing Share? Open theemberhold.com in Safari first"), and a suppress-if-installed check (display-mode: standalone / navigator.standalone).
+DATE: 2026-07-29
+WHY: The first sketch was a nine-illustration, four-branch state machine with a confirmation screen and a persistent settings affordance — bloat wearing a thoroughness costume for a three-tap gesture. Right-sized to one screen riding the walkthrough that already exists (out-habit, don't out-feature, applied to onboarding itself). A real screenshot teaches a utility gesture better than an illustration — "your screen will look exactly like this, tap the highlighted row" is unambiguous — and it cost zero visual-lane work. The webview-escape line is not gold-plating: invite links open in Messages/Gmail in-app browsers where the Share→Add option does not exist, and that is the single most likely silent failure for a real cold install; it is one sentence and cutting it saves nothing. The forge-window border exists because a raw iOS share sheet is flat grey and would read as a foreign object dropped into an ember-dark flow (the "never flat or gray" floor). Deferred deliberately: a separate desktop branch, a confirmation/success screen, a persistent install affordance — deletable for beta.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Creator first-run is contextual setup, not a feature tour. The "Now show them" screen (the second four-beat loop recap, built as handoff.tsx) is cut. The "Welcome to Emberhold" overview (recap.tsx) and "The rest of your hold" surfaces-showcase (the-hold) are KEPT — even though the showcase is not strictly setup.
+DATE: 2026-07-29
+WHY: master-spec is explicit — first-run is contextual setup, not a feature tour, and the four-beat loop card is assigned to the landing page and on-demand help, not first-run. Two tour screens had drifted in. "Now show them" was the loop card restated a THIRD time in one sequence and had no defense — cut. "The rest of your hold" was kept against the strict letter of the rule on a deliberate call: it is the one moment that signals Emberhold is not only a chore game (Lists, Calendar, Campaigns live here too), which points directly at the thesis of owning the family-jobs Google does badly. That single breadth-signal earns its place; a third loop-recap does not. Future-jAIne: do NOT "finish the cleanup" by cutting "the rest of your hold" too — the deviation is intentional and reasoned, not an oversight. Mechanical note (in status): handoff carried the flow's terminal navigation (finish() → recap → the standalone check → add-to-home), so the cut required transplanting that wiring onto recap or the chain to the install screen would have been severed. Related: the first-quest doorway is now confirmed BUILT, which makes the master-spec "empty board / no path to first quest = top structural gap" line stale — a spec fold, not a decision.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: A first-party analytics tracker (flock.js, self-proxied via /~api/analytics) is present in the app <head>, most likely injected by Lovable. It must be named truthfully in the Gate C privacy policy.
+DATE: 2026-07-29
+WHY: Spotted during the head-tag recon. Cookieless-looking and gentle, but minors are genuine users (a join-by-code kid has a real auth row), so whatever it logs has to be disclosed when the privacy policy is written at Gate C. Recorded so a future session doesn't rediscover it cold while drafting the policy — know your surface before you write the policy. Not a this-session problem, and not a faces problem: there are no photos anywhere; avatars are illustrated.
+REPLACES: Nothing — new decision.
+STATUS: NOTED
 
 ---
 DECISION: Forge v1 is a prescription engine with a log attached, not a logger with programming bolted on
