@@ -1,25 +1,21 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-07-29** — *the install-tutorial session.* Built the Pip-guided Add-to-Home-Screen step, cleaned the creator first-run flow, and cut a redundant feature-tour screen. **A design + Lovable session. Verified on the glass in the Lovable preview. Publish-to-prod walk still owed.**
+Last session: **2026-07-29 (late)** — *the master-spec fold + the completion marker.* A design + Lovable + Code session. **`master-spec.md` regenerated against a full read — all seven owed folds closed.** Then, on 3.5 Lovable credits, the first-run completion marker shipped and **critical-path item #1 is closed.**
 
-**The install door was already 90% built — the recon proved it twice.** Live-head inspection found a valid manifest (`name`, `short_name`, `display: standalone`, `start_url: /`, 192 + 512 icons) and correct iOS tags (`apple-mobile-web-app-capable=yes`, `apple-touch-icon` → `/icon-180.png`, `apple-mobile-web-app-title=Emberhold`, `theme-color=#1A110B`). Install and standalone launch already worked. **What was missing was guidance, not machinery** — nobody knew to install, and on iOS the gesture is non-obvious. So this was never a "build PWA infrastructure" job; it was "show people the door that already exists."
+**The seven-fold pass is DONE and it was a read-then-regenerate, not a blind regen.** jAIne read all 455 lines of the current spec plus every `decisions.md` entry from 07-26 through 07-29 before writing a line. Six non-mechanical calls were surfaced for objection before the file was produced: Part II retitled from "SHAPE UNDECIDED" to Option-A-as-design-truth; the weekly/monthly lingering line reversed to a defect; rule 7's test case marked suspended rather than deleted; the COPPA shield qualified rather than removed; the `actor_label` prescription replaced with an explicit DO-NOT; the Forge onboarding branch written as designed-and-parked. **No objections raised.**
 
-**The service worker got unbundled from install, and it matters.** `status.md` had welded "service worker" to "makes installable PWA true." They are two jobs. Manifest + apple-tags deliver **presence** (home-screen install, standalone launch); the SW delivers **offline resilience** — a separate Gate B stranger-proofing item. On iOS — most of the beta — there is no `beforeinstallprompt` and the SW does nothing for install; the flow is Share → Add to Home Screen regardless. **The tutorial ships without an SW. The SW stays in Gate B, and it earns its own careful pass** — a botched offline cache is exactly the silent-stale-content failure this project is paranoid about. *(See `decisions.md` 2026-07-29.)*
+**The marker shipped and was walked end to end.** `profiles.first_run_completed_at`, backfilled in the same migration, written through a SECURITY DEFINER RPC, `EXECUTE` to `authenticated` then `PUBLIC` revoked, zero table grants on `profiles`. **The three-part tripwire shipped as one change** — the constant, the read body and the write body — which is the regression that would have hurt most.
 
-**First-run had drifted back into a feature tour, and the drift got cut.** `master-spec` is explicit: first-run is contextual setup, not a feature tour; the four-beat loop card belongs to the landing page and on-demand help. Two tour screens had wedged in. **"Now show them" (the loop card restated a THIRD time in one flow, built as `handoff.tsx`) was cut. "The rest of your hold" (the Lists/Calendar/Campaigns showcase) was KEPT on a deliberate call** — it's the one moment that signals Emberhold isn't only a chore game, which points straight at the thesis. *(See `decisions.md` 2026-07-29 — and do not "finish the cleanup" by cutting it later; the deviation is intentional.)*
+**A live bug was created and caught on the first fresh-creator walk.** The arrival gate exempted `/first-run/` only. A brand-new creator is born with a NULL marker, the marker is role-agnostic, and the gate fires on every shell mount — so the creator was yanked out of `/onboarding/add-family` into the joiner tour. **Shipped live, caught in the same session, fixed by Claude Code at zero credits.** *(jAIne's DO-NOT-BUILD list fenced the exact file that needed the fix — the switch was armed and the panel it controls was taped over.)*
 
-**The cut had a trap the free Code recon caught.** "Now show them" (`handoff.tsx`) carried the flow's terminal navigation — its `finish()` routed to `recap` → which runs the `isStandaloneInstalled()` check → which is what reaches the install screen at all. A naive delete would have **severed the chain to the install tutorial**. The build transplanted that wiring onto `recap`. Verified on the glass: chain holds, install screen shows, "Now show them" gone.
+**Two pending-verifies closed in the same publish walk:** the install-tutorial prod walk (owed since 07-29 early) and the joiner flow's first real run.
 
-**The first-quest doorway is confirmed BUILT.** Both `master-spec` and this board have long called "a new hold lands on an empty board with no path to a first quest" the *top structural gap*. It's closed — the "Post your first quest" screen exists, pre-filled chips, "Light the quest," verified in the flow. **That line in `master-spec` is now stale and is a fold, not a build.**
+Last session (prior): **2026-07-29 (early)** — the install tutorial. Manifest launch-polish, the Add-to-Home-Screen step, the `handoff` cut, first-screen copy.
 
-**Nothing this session moved a gate.** The install tutorial is a **Gate D** funnel item built ahead of Gates B and C completing. Good to have banked; it does not change the ladder.
+Last session (prior): **2026-07-28** — Forge design, zero code. v1 inverted to prescription-first; the pre-session gate; the catalog as the single blocking dependency.
 
-Last session (prior): **2026-07-28** — Forge design, zero code. v1 inverted to prescription-first; the pre-session gate; the catalog named as the single blocking dependency; contention resolution; Forge display mode and the avatar-as-session-lane layout.
-
-Last session (prior): **2026-07-27 (late)** — the joiner-flow session. Eight non-creator first-run screens built and published dark. A live regression created and caught in the same session.
-
-Last session (prior): **2026-07-26** — table grants closed, `anon` at zero across fifteen tables. Five-screen Pip-guided first run shipped and cold-walked.
+Last session (prior): **2026-07-27 (late)** — the joiner-flow session. Eight non-creator first-run screens built and published dark.
 
 Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PARKED · 🔵 VALIDATED (no build needed)
 
@@ -27,15 +23,17 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## Where the platform is
 
-**Structurally complete, published, with a working activation path for creators — now including a Pip-guided install tutorial as the terminal first-run step — and a built-but-dark one for everyone else.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, the 48-avatar roster, a household-local date model, a tenant-isolation model verified under live authenticated attack, clean function and table grant surfaces, a five-screen creator first run **ending in the Add-to-Home-Screen tutorial**, and eight non-creator first-run screens behind an inert gate.
+**Structurally complete, published, with a working activation path for EVERY role.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, the 48-avatar roster, a household-local date model, a tenant-isolation model verified under live authenticated attack, clean function and table grant surfaces, a six-step creator first run ending in the install tutorial, and **eight non-creator first-run screens that are no longer dark.**
 
-**The creator first-run sequence is now:** add-family → first-quest → stock-vault → the-hold ("the rest of your hold") → recap ("Welcome to Emberhold") → **add-to-home** → board. Five setup steps then the install step. `handoff` ("Now show them") removed.
+**The creator sequence:** add-family → first-quest → stock-vault → the-hold → recap → add-to-home → board.
+**The adult joiner sequence (verified on the glass):** board → approving → vault → pin → quests → the real board.
+**The kid joiner sequence:** three beats, built, not yet walked by an actual kid.
 
 **Emberhold is a ONE-module product with ONE module.** Registers are aesthetic only. **Fitness (Forge) is the sole module, it is not built, and it is scoped to the Draper household.**
 
-> **`master-spec.md` owes SEVEN folds now.** The six already tracked — creator onboarding flow · signup posture · write-once timezone and its heal · Part II's rescoping to household-only · the non-creator first run (completion-marker seam + arrival-state rule) · Part II's v1 shape from 07-28 — **plus a seventh: the 2026-07-29 onboarding-sequence change** (the `handoff` cut, the install tutorial as the terminal first-run step, the first-screen copy fix, and the confirmation that the first-quest doorway is BUILT — which kills the "empty-board gap = top structural problem" line). Plus the standing corrections: `actor_label` derive-from-`auth.uid()` is a killed regression, the "fourth activeness surface" note is dead, the `set_enabled_modules` "nothing has ever written that value" claim is false, the COPPA "kids have no auth identity" shield is false for a join-by-code minor, and Part II's client-engine rule cites connectivity when it rests on latency and sunk cost. **jAIne has read the onboarding + Part-I slices this session but NOT the full current doc — a real regeneration needs a dedicated spec pass, not a blind regen.**
+> **`master-spec.md` owes ZERO folds.** Regenerated 2026-07-29 against a full read, then amended the same session for the marker's shipped shape, the answered RLS question, the kid-marker cancellation finding, the arrival-gate exemption rule, and the breached redemption deadline. **The next spec pass is not owed until new design truth accumulates.**
 
-> **`north-star.md` is current.** One sentence still drifts: *"the auth email is now load-bearing in a way it wasn't"* — sender identity is fixed, only deliverability remains. Fold on the spec pass or its own pass. Nothing 2026-07-29 touched it.
+> **`north-star.md` is current.** One sentence still drifts: *"the auth email is now load-bearing in a way it wasn't"* — sender identity is fixed, only deliverability remains. Its own small pass, or fold it into the next spec session.
 
 ---
 
@@ -43,57 +41,57 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 | # | Item | Blocks |
 |---|---|---|
-| **1** | **🔴 The first-run completion marker.** A `profiles` column plus a write path. **The eight non-creator screens are dark until it lands.** ⚠️ **Answer the RLS question before scoping: can a member UPDATE their own `profiles` row?** If not, this is a column *plus* an RPC. Lovable lane. **Untouched 2026-07-29 — creator flow only this session.** | Gate D. Activation for everyone who isn't the hold creator. |
-| **2** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. Check #1 is closed. | Gate B honesty. |
-| **3** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. |
-| **4** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
+| **1** | **🔴 Redemption approval must record the PIN-verified adult.** `approve_redemption` hardcodes `decided_by = auth.uid()`. **THE DEADLINE IS BREACHED** — the rule was "true before the arrival gate goes live," and the gate went live 2026-07-29. The `/first-run/adult/pin` screen names redemption explicitly. **First prompt of the next build window.** Lovable lane. | Gate B honesty. A live promise the product doesn't honor. |
+| **2** | **🔴 The marker's read and write, fixed as ONE change.** `FirstRunGate` reads the account holder; `mark_first_run_complete()` writes `WHERE id = auth.uid()`. A kid sub-profile's row id is not any `auth.uid()`, so a kid's write **no-ops silently**. ⚠️ **The two bugs cancel — fixing the read alone produces an infinite flow loop.** Needs a validated `profile_id` parameter, family-checked server-side. Migration + frontend. | The kid joiner flow on shared devices. Gate D. |
+| **3** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. Check #1 is closed. | Gate B honesty. |
+| **4** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. |
+| **5** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
 
 **Downgraded off the critical path: auth email.** Sender identity fixed by the project rename; one of six providers still spams. **Tracked, not worked.**
 
-**Off the critical path and household-scoped: Forge.** Design is a rest-period activity and costs no build lane. Build waits for V1. **Design is well ahead of the build — see the Forge section in `parking-lot.md`.**
+**Off the critical path and household-scoped: Forge.** Design is a rest-period activity and costs no build lane. **Design is well ahead of the build — see the Forge section in `parking-lot.md`.**
 
 ---
 
-## 🟢 CLOSED / RESOLVED — 2026-07-29 (the install tutorial)
+## 🟢 CLOSED / RESOLVED — 2026-07-29 (late)
 
-### The install door — already real
-- ✅ **Valid manifest already live.** `name`, `short_name`, `description`, `start_url: /`, `display: standalone`, portrait, 192 + 512 ember-castle icons.
-- ✅ **iOS meta tags already correct.** `apple-mobile-web-app-capable=yes`, `apple-touch-icon`→`/icon-180.png` (180×180), `apple-mobile-web-app-title=Emberhold`, `theme-color=#1A110B`. **iPhone install launches a real standalone app, not a Safari-tab bookmark.**
-- ✅ **Launch polish shipped.** `background_color` set to `#1A110B` (was unset → white splash flash on launch) and `apple-mobile-web-app-status-bar-style=black-translucent` added (was absent → white iOS status bar). Boot is now ember-dark edge-to-edge.
+### The master-spec fold
+- ✅ **All seven folds closed.** Creator onboarding flow and shell · signup posture · write-once timezone and its heal · Part II rescoped to household-only · non-creator first run + marker seam + arrival-state rule · Part II's v1 shape · the 07-29 onboarding-sequence change and PWA install door.
+- ✅ **Six standing corrections landed.** The `actor_label` derive-from-`auth.uid()` prescription is now an explicit **DO-NOT** (it is a killed regression, and it sat in the doc three sessions on a summary nobody re-derived) · the "fourth activeness surface" note removed as dead · the `set_enabled_modules` "nothing has ever written that value" claim corrected to **false**, making the `'training'`→`'fitness'` change a data migration rather than a string edit · the COPPA shield qualified (partial — it does not cover join-by-code) · grant drift downgraded to a bounded platform residual · Part II's client-engine rule re-grounded on latency and sunk cost rather than connectivity.
+- ✅ **The "empty board / no path to a first quest = top structural gap" line is GONE.** The doorway is built.
+- ✅ **Part II retitled.** Option A is design truth; Option B is the only remaining fork.
 
-### The tutorial
-- ✅ **ONE screen, appended as the terminal step of creator first-run.** Not a route, not a modal fired from elsewhere, not a state machine. Rides the walkthrough that already exists. *(Right-sized down from a nine-illustration, four-branch sketch — out-habit, don't out-feature, applied to onboarding.)*
-- ✅ **A real captured iOS share-sheet screenshot, framed in a charred "forge-window" ember border** — glow bleeding inward from the edges, top-edge catch-light. Not a painted illustration. Landed on the first border pass. **Do not modify — `onboarding.add-to-home.tsx`.**
-- ✅ **Platform-conditional copy.** iOS: "Tap Share, then Add to Home Screen" + the screenshot. Android/desktop: caption only — "Open your browser's menu and choose Install app."
-- ✅ **The webview-escape line.** "Not seeing the Share button? Open theemberhold.com in Safari first." **This is the single most likely silent failure** — invite links open in Messages/Gmail webviews where the Share→Add option does not exist.
-- ✅ **Suppress-if-installed.** `display-mode: standalone` / `navigator.standalone` — never shows to someone who already installed.
-- ✅ **iPad routing baked in** — iPadOS reports a "Macintosh" UA, so a Mac UA with `maxTouchPoints > 1` routes to the iOS branch.
+### The completion marker
+- ✅ **`profiles.first_run_completed_at timestamptz NULL`**, with the backfill (`SET … = now() WHERE … IS NULL`) in the **same migration** as the column add. No established household sees the flow.
+- ✅ **`mark_first_run_complete()`** — SECURITY DEFINER, `search_path` pinned, `WHERE id = auth.uid() AND first_run_completed_at IS NULL`. Single-row and idempotent by construction.
+- ✅ **Grants in the correct order:** `GRANT EXECUTE … TO authenticated` then `REVOKE EXECUTE … FROM PUBLIC`. **Zero table grants added on `profiles`.**
+- ✅ **The tripwire held.** `FIRST_RUN_MARKER_AVAILABLE`, the real read, and the real write shipped in one change.
+- ✅ **Both exits mark.** Terminal handoffs (`onboarding.recap`, `onboarding.add-to-home`, `first-run.adult.quests`, `first-run.kid.embers`) and `SetupShell.handleSkip()`. Non-blocking — navigation never waits on the write.
+- ✅ **The RLS recon was skipped deliberately and it cost nothing.** Routing through an RPC works either way. *(The question is now answered anyway: a member CAN update their own `profiles` row — and it wouldn't have mattered, because that policy has the same `id = auth.uid()` ceiling.)*
 
-### The onboarding-flow cleanup
-- ✅ **"Now show them" (`handoff.tsx`) cut** — the loop card restated a third time. Removed from `SETUP_STEPS`, route deleted.
-- ✅ **Its terminal wiring transplanted onto `recap`** so the chain to `add-to-home` survives. **This was the trap:** handoff carried the forward navigation and the `isStandaloneInstalled()` handoff to the install screen. Verified the chain holds end-to-end on the glass.
-- ✅ **"The rest of your hold" (the-hold) KEPT** — deliberate deviation from "setup not tour," on the thesis-signal argument.
-- ✅ **First-screen copy fixed** — "Your household's quest board / Your whole home, finally in one place" (a tagline over a name+avatar form) → **"Who's tending the hold? / Your name, your face, and your role in the hold."** Task instruction, not a marketing headline.
-- ✅ **The replay-intro handler** — "Replay the intro" in Pip's Help now launches the intro walkthrough rather than re-opening the help menu.
-- ✅ **Welcome copy conditional** — first-run reads "Welcome to Emberhold"; "back" only on replay.
-- ✅ **Loading copy deduped** — the transition screen no longer stacks a second "one more" against the install screen's "one more thing."
-- ✅ **The first-quest doorway is BUILT** — confirmed in the flow. Closes the long-standing "top structural gap." *(A `master-spec` fold.)*
+### The arrival-gate exemption
+- ✅ **Fixed.** `pathname.startsWith("/first-run/") || pathname.startsWith("/onboarding/")`. One line, Claude Code, zero credits, `origin/main` at `943a633`.
+- ✅ **Verified four ways**, including the one the prompt never named: `/board` with a NULL marker **still redirects**. That path is the whole feature and it survived.
+
+### Glass checks
+- ✅ **Fresh creator signup — walked the full sequence to `add-to-home`.** Stays on `add-family`, no bounce.
+- ✅ **Fresh join-by-code from a never-signed-in device — walked all five adult screens to the real board.**
+- ✅ **Install tutorial prod walk — CLOSED.** Same publish pass.
+- ✅ **Onboarding dots-count fixed and verified.** Creator 6, adult joiner 5. **The prompt was corrected before it ran** — jAIne's first draft told Lovable to derive from "a single source of truth," which would have collapsed three deliberately different registry lengths into one and broken a joiner trail that was already correct.
 
 ---
 
 ## 🟡 PENDING VERIFY
 
-- 🟡 **🔴 Install tutorial — publish-to-prod + prod walk.** Verified in the **Lovable preview** (final screenshots show the `lovable.dev` editor). **Not confirmed published to theemberhold.com.** Publish, then walk creator first-run in a **plain Safari tab** (not the installed icon, or the suppress hides it) all the way to `add-to-home` → board. *This is the "verify the live artifact, not the preview" gate.*
-- 🟡 **Dots-count cosmetic.** After the `handoff` cut, `recap` shows a **7-segment** trail while `add-to-home` shows **6** — `recap` is still counting the old `SETUP_STEPS.length`. Harmless, one-line fix whenever next in that file. Polish.
-- 🟡 **🔴 Signup checks #2 and #3.** (2) Cold join-path signup — no PIN field, no error toast, lands as pending. (3) Original-tab path — sign up, ignore the email, press "I confirmed," sign in; should land on finish-setup identically to check #1.
+- 🟡 **The kid joiner flow has never been walked by a kid.** Three beats to the adult's five. Built, published, unexercised. **Blocked in practice on the shared-device path by critical-path #2.**
 - 🟡 **The timezone heal — DRAFT until proven from a non-Pacific device.** **Phaeaz's next login is the natural test.**
 - ⚠️ **Wall adult-verified turn-in.** Code writes the PIN-verified adult (`adultId`), not the session owner. Verify: approve → PIN → wrong/kid PIN mints nothing → correct PIN commits.
 - 🟡 **Monthly post-fix is technically unexercised.** Failure window: approving on the last evening of a month after UTC has rolled. Narrow.
 - 🟡 **STALE chip predicate.** Likely `due_date < today`, which the two stranded past-due weeklies would fully explain.
-- 🟡 **Grant-revoke verification probe job — DRAFTED, DEFERRED THREE TIMES.** `SQLSTATE 42501` = FAIL; any application-level error = PASS. *Sonnet · auto-accept OFF · read-only.*
+- 🟡 **Grant-revoke verification probe job — DRAFTED, DEFERRED FOUR TIMES.** `SQLSTATE 42501` = FAIL; any application-level error = PASS. *Sonnet · auto-accept OFF · read-only.*
 - 🅿️ **`/setup/intent` — PARKED WITH A TRIGGER.** Finalized when Forge is built. **The trigger has not fired.**
 - 🟡 **The ember progress trail** — visual success criterion, Scott only.
-- 🟡 **Avatar render fallback ("the floor")** — pull up a not-yet-re-forged member. **Check the wall specifically.** *(Now also the resolution path for the empty-roster-seat question — see parking-lot OPEN DECISIONS.)*
+- 🟡 **Avatar render fallback ("the floor")** — pull up a not-yet-re-forged member. **Check the wall specifically.** *(Also the resolution path for the empty-roster-seat question.)*
 - 🟡 **Founder tier-tag verification.** Flip gate ON, confirm **32 lock / 16 open**, flip back OFF.
 - 🟡 **Routing fix (`28ab40d`)** — sign out from a pending waiting screen, back in, confirm you land on the waiting screen and auto-advance on admission.
 - 🟡 **Lists collapsible sections** (`fb6aa99`) — landed, not exercised across a full session.
@@ -106,28 +104,24 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 ## ⬜ OPEN — Forge, from 2026-07-28
 
 - ⬜ **🔴 THE CATALOG IS THE FIRST BUILD, AND IT IS A MAKE JOB.** Movement pattern · muscle attribution · equipment requirement · substitution map. **Generated offline, reviewed by Scott, shipped as data.** Everything good in the module is downstream of it.
-- ⬜ **🔴 `progression.ts` has no progression axis except load.** `NextLoad` returns `{loadLb, reason, holdsAfter}` — no reps, no sets, no tempo. **Cannot express "175 instead of 185, so give me 8 instead of 5,"** now half the differentiator. **Claude Code job: pure TypeScript, ten tests, zero Supabase imports, zero credits.** Parallel to the catalog.
-- ⬜ **The engine cannot accept a pre-session constraint.** RPE autoregulation is backward-looking. The pre-session gate needs a forward input path. **Scope with the rep-compensation job.**
+- ⬜ **🔴 `progression.ts` has no progression axis except load.** **Cannot express "175 instead of 185, so give me 8 instead of 5,"** now half the differentiator. **Claude Code job: pure TypeScript, ten tests, zero Supabase imports, zero credits.** Parallel to the catalog.
+- ⬜ **The engine cannot accept a pre-session constraint.** RPE autoregulation is backward-looking. **Scope with the rep-compensation job.**
 - ⬜ **Equipment records need `exclusive` vs `shareable`.** One field, needed before contention resolution means anything.
 - ⬜ **Rep-compensation needs a validity floor.** Below some deviation the app must say *"that's a different exercise now."* Unsized.
 - ⬜ **The Smith machine offset is assumed, not measured.** Two minutes with a known weight. **A wrong offset corrupts every Smith e1RM forever, unreconstructably.**
 - ⬜ **"Adults only" is a proxy for "trains" and will not hold.** When it breaks it is a per-member flag. Do not build it now.
-- ⬜ **Module navigation is unresolved.** Seven tabs is one past mobile comfort. **Forge's contained-route posture defers this entirely.**
 - ⬜ **`enabled_modules` has no consumer.** Named future consumer is the gated `/forge` route.
 
 ## ⬜ OPEN — carried
 
-- ⬜ **`approved_by` vs `decided_by` — RESOLVED IN DIRECTION, UNBUILT.** Quest approval's behavior wins; redemption aligns.
-- ⬜ **🔴 `FirstRunGate` reads the ACCOUNT HOLDER, not the switched-into profile.** On a shared device a kid switching in is checked against the account holder's marker and role. **Fix before the marker column lands or the kid flow never runs for the people it was built for.**
-- ⬜ **🔴 THE MARKER TRIPWIRE — one change, three parts.** `FIRST_RUN_MARKER_AVAILABLE`, `hasCompletedFirstRun`, and `markFirstRunComplete` go live together or the `/onboarding/*` regression returns. **In the build brief, not a code comment.**
-- ⬜ **Two derivations of role now exist.** `FirstRunGate` reads `profiles.role`; `useMyProfile()` derives from `user_roles`. **The `isActiveQuest` defect pattern re-appearing.**
-- ⬜ **Redemption approval must move to match the PIN screen's promise.** The string is live. **Deadline: true before the arrival gate goes live.**
+- ⬜ **🔴 The redemption `decided_by` fix.** CRITICAL PATH #1.
+- ⬜ **🔴 The marker read/write pair.** CRITICAL PATH #2.
+- ⬜ **Two derivations of role now exist.** `FirstRunGate` reads `profiles.role`; `useMyProfile()` derives from `user_roles`. **The `isActiveQuest` divergence pattern, second occurrence.** *(Distinct from the marker's cancellation problem — see `decisions.md`.)*
 - ⬜ **What does `actor_label` mean?** `actor_id` is server-derived and truthful; only the rendered name is client-supplied. **Design call, needs Scott** — see parking-lot OPEN DECISIONS.
 - ⬜ **`campaign.$id.tsx` gates quest creation on `isParent`; the FAB and QuickAddTray do not.** Consistency question.
 - ⬜ **`routeTree.gen.ts` was hand-edited, toolchain drift underneath.** **Probably self-healing**, but local `npm run dev`/`build` is a trap.
 - ⬜ **`member_admitted` renders as `"Mom · Leo"`.** No case in either feed consumer's switch.
-- ⬜ **The COPPA shield in `master-spec.md` is false for a real path.** A minor joining by code has an email, password, and auth row. **Qualify in the fold.**
-- ⬜ **Unapproved weekly and monthly quests never roll forward.** **Two stranded** — *Grocery Shopping* (07-06, claimed) and *Take out the trash* (07-21, submitted).
+- ⬜ **Unapproved weekly and monthly quests never roll forward.** **Two stranded** — *Grocery Shopping* (07-06, claimed) and *Take out the trash* (07-21, submitted). **Now recorded in the spec as a defect, not as correct behavior.**
 - ⬜ **The early-approval seam.** Approving a weekly before its due date produces a same-week successor.
 - ⬜ **Quest creation is ungated and DELIBERATELY STAYS THAT WAY.** What changes is the curriculum.
 - ⬜ **`sandbox_exec`** — pre-existing platform role holding EXECUTE on every function in `public`. **Ask Lovable. One question.**
@@ -142,7 +136,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 **Ignored — validated, all correct:**
 - ✅ **"Forgot PIN" takeover (CRITICAL) — FALSE POSITIVE.** *(Minor: `confirm()` copy inaccurate.)*
-- ✅ **Join-code → Parent admin (CRITICAL) — FALSE POSITIVE.** Real tier set by parent-gated `admit_pending_member`.
+- ✅ **Join-code → Parent admin (CRITICAL) — FALSE POSITIVE.**
 - 🔵 **Adult PIN lock not tied to real permission checks — KNOWN-ACCEPTED, CONDITIONALLY.**
 - 🔵 **Redemption submitted on behalf of another member — BY DESIGN, CONDITIONALLY.**
 - ✅ **Signed-in users can execute SECURITY DEFINER (lint 0029) — PERMANENTLY IGNORED.**
@@ -151,12 +145,12 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - ✅ Public/anon SECURITY DEFINER execute (lint 0028) · `founder_gate_enabled()` + `my_household_is_founder()` · `anon` CRUD on `families` · `anon` CRUD on the other fourteen tables · Adult PIN plaintext in `localStorage` (closed by deletion).
 
 **Real, open:**
+- ⬜ **`approve_redemption` records the session owner, not the PIN-verified adult.** **Now a live broken promise** — CRITICAL PATH #1.
 - ⬜ **`actor_label` display forgery — DOWNGRADED, RE-SCOPED AS DESIGN.**
-- ⬜ **`approved_by` accepts any adult from any parent session.** Direction resolved; build owed.
 - ⬜ **Kids read `adults_only` reward names/costs** and ⬜ **kids read `parents_only` quest details** — **same class; fix together**, *with* the own-session-vs-per-member-auth decision. **Top open security items.**
 - ⬜ **`supabase_admin` default-privilege residual** — unreachable from this connection, platform-scoped.
-- ⬜ **Forge display mode is a semi-public surface.** Injury flags and body-weight numbers must not be ambient where guests walk. Fine for the Drapers' garage; a real question at stranger scale.
-- ⬜ **NEW — `flock.js` analytics tracker in the app `<head>`** (self-proxied `/~api/analytics`, likely Lovable-injected). **Must be named in the Gate C privacy policy** — minors are real users. *(See `decisions.md` 2026-07-29, NOTED.)* Not a this-session problem.
+- ⬜ **Forge display mode is a semi-public surface.** Injury flags and body-weight numbers must not be ambient where guests walk. Fine for the Drapers' garage.
+- ⬜ **`flock.js` analytics tracker in the app `<head>`.** **Must be named in the Gate C privacy policy** — minors are real users.
 
 **Dependency scan:** `npm audit` = 0 against `package-lock.json`; the real lockfile is `bun.lock`. Run `bun audit`.
 
@@ -168,29 +162,29 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - ⬜ **Rewards + quests audience reads** — fix *with* the own-session-vs-per-member-auth decision, together.
 - ⬜ **Grant-revoke verification probe job.**
 - ⬜ **Ask Lovable what `sandbox_exec` is.**
-- ⬜ **Service worker + app-shell cache.** **Deliberately NOT bundled with the install tutorial — install never needed it** (2026-07-29). Still makes "offline shows a themed shell" true for strangers, a Gate B item. **Deserves its own careful pass** — a botched offline cache is a silent-stale-content risk.
+- ⬜ **Service worker + app-shell cache.** **Deliberately NOT bundled with the install tutorial — install never needed it.** Still makes "offline shows a themed shell" true for strangers, a Gate B item. **Deserves its own careful pass** — a botched offline cache is a silent-stale-content risk.
 - ⬜ **Backup posture.** Data has no backup; Lovable's to grant. A distribution blocker.
-- ⬜ **Prod test-object cleanup — deserves its own session.**
+- ⬜ **Prod test-object cleanup — deserves its own session.** **Now includes the test holds created by this session's two glass checks.**
 
 ## ⬜ OUTSTANDING — ship-blocking debt
 
-- ⬜ **The first-run completion marker.** CRITICAL PATH #1.
-- ⬜ **`FirstRunGate` profile-switch bug.** Ships with the marker or the kid flow is dead on arrival.
+- ⬜ **Redemption `decided_by`.** CRITICAL PATH #1.
+- ⬜ **The marker read/write pair.** CRITICAL PATH #2.
 - ⬜ **Vault favorites → real per-profile persistence** — currently `localStorage`.
 - ⬜ **Quality — a rating with no consumer.** Direction LOCKED (signal, never an ember modifier).
 - ⬜ **Re-forge reach across the 13.** Only the member who logs in is prompted.
 
 ## ⬜ OUTSTANDING — polish
 
-⬜ **Onboarding dots-count (recap 7 vs add-to-home 6)** · **The stacked-Pip-voice line on the first setup screen** (yellow "Ember's still warm" sits under a header that now also speaks — cosmetic) · **Feed verb drift** · **`member_admitted` feed line** · **Recurrence chip legibility** · **The early-approval seam** · **Onboarding screenshots for screen 3** · **Quick Add default EXPANDED on empty board** · **Lists "5 OPEN · 348 DONE"** fossil counter · **Pip help discoverability** · **Reward scarcity limits** · **Yearly/monthly event recurrence** · **Multi-day calendar events** · **Calendar alerts** · **Wall ticker speed** · **Wall calendar event-pill member color** · **"Forgot PIN" confirm() copy** · **STALE chip predicate** · **`decisions.md` header "Status tiers" line missing SUPERSEDED**.
+⬜ **The stacked-Pip-voice line on the first setup screen** · **`points` surfacing as a user-facing noun** on `/first-run/adult/approving` ("the points on that quest become real, spendable embers" — a string-law violation; queued for the free Haiku sweep) · **Feed verb drift** · **`member_admitted` feed line** · **Recurrence chip legibility** · **The early-approval seam** · **Onboarding screenshots for screen 3** · **Quick Add default EXPANDED on empty board** · **Lists "5 OPEN · 348 DONE"** fossil counter · **Pip help discoverability** · **Reward scarcity limits** · **Yearly/monthly event recurrence** · **Multi-day calendar events** · **Calendar alerts** · **Wall ticker speed** · **Wall calendar event-pill member color** · **"Forgot PIN" confirm() copy** · **STALE chip predicate** · **`decisions.md` header "Status tiers" line missing SUPERSEDED**.
 
-*(Removed from polish: "Pip install tutorial" — SHIPPED 2026-07-29.)*
+*(Removed from polish: onboarding dots-count — SHIPPED 2026-07-29.)*
 
 ---
 
 ## 🅿️ PARKED
 
-See `parking-lot.md`. **Forge's Option-B game** · **Endure as a native product** · **Living-hold theme packs — monetization SKU #2** · **QA #5 super-admin / tier-2 support role** · **Own-session vs per-member-auth** · **empty-roster-seat: auto-default vs tappable "pick yours" (NEW, unratified)** · Favorites on the wall · role-label retirement ("Parent/Kid") · #8b admin-reporting · kid-vs-kid impersonation · kid-auth (declined) · photo avatars · cosmetic drop #2 · Capacitor (DECLINED) · flat/peer holds · scripted screenshot capture (DECLINED) · the "how Scott & jAIne work" collaboration profile · the timezone nudge · injury-prescription liability posture at stranger scale · commercial-gym equipment model · **the service worker (offline shell, Gate B — no longer Forge-driven)**.
+See `parking-lot.md`. **Forge's Option-B game** · **Endure as a native product** · **Living-hold theme packs — monetization SKU #2** · **QA #5 super-admin / tier-2 support role** · **Own-session vs per-member-auth** · **empty-roster-seat: auto-default vs tappable "pick yours"** · Favorites on the wall · role-label retirement ("Parent/Kid") · #8b admin-reporting · kid-vs-kid impersonation · kid-auth (declined) · photo avatars · cosmetic drop #2 · Capacitor (DECLINED) · flat/peer holds · scripted screenshot capture (DECLINED) · the "how Scott & jAIne work" collaboration profile · the timezone nudge · injury-prescription liability posture at stranger scale · commercial-gym equipment model · **the service worker (offline shell, Gate B)**.
 
 ---
 
@@ -202,10 +196,15 @@ Switching into a PIN-less adult profile hard-gates correctly. The "active member
 
 ## 🔵 THE BUILD MODEL — holding
 
-- **STALE LOCAL BITS MIMIC A MISSING FEATURE. (NEW — 2026-07-29.)** The install screen "wasn't showing" because the test device sat on an old commit (`369164e`); the pull to `d9b8356` had already added it. Not a bug — stale state. **Verify the deployed/pulled commit before diagnosing a missing feature.**
-- **RIGHT-SIZE THE GUIDANCE TO THE GESTURE. (NEW — 2026-07-29.)** A three-tap install does not need a nine-screen state machine. Out-habit, don't out-feature — applied to onboarding itself. The bloat instinct wears a thoroughness costume.
-- **UNBUNDLE WELDED ASSUMPTIONS. (NEW — 2026-07-29.)** "Service worker = installable PWA" was two jobs fused in a doc. Install needs manifest + apple-tags; the SW is offline resilience. Fusing them would have delayed a shipped feature behind an unrelated one that iOS users never benefit from.
-- **NAME EVERY CONSUMER OF A ROUTE BEFORE REMOVING IT. (NEW — 2026-07-29.)** `handoff` looked like a redundant screen; it carried the terminal navigation that reached the install tutorial. A blind delete severs the chain. The free recon caught it.
+- **TWO BUGS THAT CANCEL ARE WORSE THAN ONE THAT SHOWS. (NEW — 2026-07-29.)** The marker's read and write are both account-holder-scoped. Wrong in the *same direction*, so nothing misbehaves — and fixing either alone produces an infinite loop. **Divergence announces itself; cancellation hides.** Distinct from the `isActiveQuest` pattern and mislabelling it as that would teach the wrong lesson.
+- **A GUARD WRITTEN FOR ONE AUDIENCE WILL MEET ANOTHER. (NEW — 2026-07-29.)** The arrival gate exempted `/first-run/` because it was written for joiners, who never touch `/onboarding/`. **The creator case didn't exist until the constant flipped, and then it shipped live.**
+- **DON'T FENCE THE FILE THAT HOLDS THE FIX. (NEW — 2026-07-29.)** jAIne's DO-NOT-BUILD list said "do not touch `FirstRunGate`," meaning the profile-resolution bug — but the route exemption lives in the same file. **The switch was armed and the panel it controls was taped over.**
+- **SWEEP THE CLASS ONLY WHEN IT IS ONE. (NEW — 2026-07-29.)** jAIne's first dots prompt said "derive from a single source of truth," which would have collapsed three deliberately different registry lengths and broken a correct joiner trail. **The sweep instinct is right by default and wrong when the instances differ on purpose.**
+- **"SYNCS TO `origin/main` BEFORE READING" IS NOT SELF-ENFORCING. (NEW — 2026-07-29.)** Code's local clone was **16 commits stale** and found out at push time, not before reading. Clean rebase, fix re-verified, no harm — but the recon and the edit were both made against a stale file. **Same shape as the install screen "missing" on a stale device.**
+- **STALE LOCAL BITS MIMIC A MISSING FEATURE.** Verify the deployed/pulled commit before diagnosing.
+- **RIGHT-SIZE THE GUIDANCE TO THE GESTURE.** The bloat instinct wears a thoroughness costume.
+- **UNBUNDLE WELDED ASSUMPTIONS.** "Service worker = installable PWA" was two jobs fused in a doc.
+- **NAME EVERY CONSUMER OF A ROUTE BEFORE REMOVING IT.**
 - **A GUARD THAT PROTECTS A ROUTE CAN BREAK THE FLOW THAT USES IT.**
 - **"INERT" IS NOT ONE BEHAVIOR.** *Don't fire* versus *don't block*.
 - **DELETING A FEATURE MADE THE PRODUCT BETTER.**
@@ -231,10 +230,11 @@ Switching into a PIN-less adult profile hard-gates correctly. The "active member
 
 ## ✅ EARLIER — SHIPPED (compressed; git owns the detail)
 
-- **2026-07-29** — the install tutorial. Manifest launch-polish (`background_color`, iOS status-bar style); Add-to-Home-Screen step as terminal creator first-run screen (real share-sheet screenshot, forge-window border, platform-conditional copy, webview escape, suppress-if-installed); `handoff` ("Now show them") cut with terminal wiring transplanted to `recap`; first-screen copy fixed; replay-intro handler fixed; first-quest doorway confirmed built. Verified in preview; prod walk owed.
+- **2026-07-29 (late)** — the master-spec fold (seven folds, six corrections, Part II retitled) + the first-run completion marker (column, backfill, RPC, tripwire, both exits) + the arrival-gate exemption fix (`943a633`) + the onboarding dots-count fix. Creator and joiner flows both walked end to end on prod. Critical-path #1 closed.
+- **2026-07-29 (early)** — the install tutorial. Manifest launch-polish; Add-to-Home-Screen step as terminal creator first-run screen; `handoff` cut with terminal wiring transplanted to `recap`; first-screen copy fixed; first-quest doorway confirmed built.
 - **2026-07-28** — Forge design session, zero code. v1 inverted to prescription-first; the pre-session gate; the catalog named as the single blocking dependency; contention resolution; Forge display mode and the avatar-as-session-lane layout.
-- **2026-07-27 (late)** — the non-creator first run: eight screens, two step arrays, arrival gate, route guards, the marker seam. Published dark. A live regression created and caught in the same session.
-- **2026-07-27 (early/mid)** — the `families.timezone` update path and the hold-settings hierarchy pass. Two read-only Code recons.
+- **2026-07-27 (late)** — the non-creator first run: eight screens, two step arrays, arrival gate, route guards, the marker seam. Published dark.
+- **2026-07-27 (early/mid)** — the `families.timezone` update path and the hold-settings hierarchy pass.
 - **2026-07-26** — table grants closed; `anon` at zero across fifteen tables. Five-screen Pip-guided first run. Signup rebuilt; the `pending_setup` stash and its plaintext PIN deleted.
 - **2026-07-25 (late)** — the constitution restructure. `master-spec.md` fully regenerated.
 - **2026-07-25 (early)** — the module reframe. An eight-table parallel tenancy built and dropped the same night.
