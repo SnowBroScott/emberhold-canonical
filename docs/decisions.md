@@ -15,6 +15,36 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 
 
 ---
+DECISION: Redemption approval records the PIN-verified adult via a validated optional parameter.
+DATE: 2026-07-30
+WHY: `approve_redemption` and `deny_redemption` now take `(_redemption_id uuid, _approver_id uuid DEFAULT NULL)`. NULL resolves to `auth.uid()`, which is correct on the Vault page where each co-parent is signed into their own account. Non-NULL is validated server-side for same-family AND active-adult, and RAISES on failure — never falls back to `auth.uid()`, because a silent fallback makes a rejected approver indistinguishable from an accepted one. The authority gate did not move; the acting session must still hold the parent role. The parameter refines ATTRIBUTION only. The defect was WALL-ONLY: the kiosk is the only surface where one session serves two adults, and `wall.tsx` was already computing the correct PIN-verified profile id and discarding it in the mutation's destructuring one hop before the RPC. Mechanical note that cost nothing only because it was caught in the brief: a defaulted parameter added via CREATE OR REPLACE creates a SECOND OVERLOAD, not a replacement, and every existing one-arg call then fails as ambiguous — the old signatures were dropped, recreated, and re-granted. REJECTED: fixing the `/first-run/adult/pin` string instead (ratifies the weaker behavior and has to be unfixed later); a mandatory parameter (breaks the Vault page); a silent fallback on validation failure. ⚠️ THE PRIORITY REASONING IN THE DOCS WAS WRONG AND IS RECORDED HERE SO IT ISN'T RE-DERIVED: `decided_by` has ZERO consumers — fetched by `select("*")`, rendered by nothing. It was carried as a breached-deadline 🔴 on a promise no user can falsify. It shipped because it cost ~1 credit and zero taps, and because leaving it open cost a re-argument every session. Verified on live data, not on glass — nothing renders the column.
+REPLACES: The master-spec prescription that redemption should "move to match" quest approval. Supersedes the breached-deadline severity framing carried since 2026-07-29.
+STATUS: LOCKED
+
+---
+
+DECISION: `profiles.role` is the authoritative role source for an arbitrary profile id. `has_role()` is valid only for the acting session.
+DATE: 2026-07-30
+WHY: There are TWO KINDS OF ADULT PROFILE and they are not interchangeable. A join-code adult has a matching `auth.users` row (`profiles.id = auth_user_id`). An adult minted by `create_adult_profile` has a `profiles.id` and NO auth user at all — they exist only as a sub-profile reached by profile-switch and PIN. `has_role()` reads `user_roles.user_id`, which only exists for auth-backed identities, so it returns FALSE for a legitimate, PIN-verified `create_adult_profile` adult — it would have rejected the exact co-parent the redemption fix exists to record. `profiles.role` + `profiles.status = 'active'` is authoritative for an arbitrary profile id and is trigger-protected by `enforce_profile_role_change` (parents only). `has_role(auth.uid(), 'parent')` remains correct for the acting session and only for it. This was surfaced by Lovable, not by jAIne — jAIne flagged profile-id-vs-user-id as a schema pedantry check in the build brief and it turned out to be a live false negative. It also sharpens the carried "two derivations of role" item: `FirstRunGate` (`profiles.role`) and `useMyProfile()` (`user_roles`) are not a style divergence — they genuinely disagree for one whole class of adult, and only one of them is correct.
+REPLACES: Nothing — new decision. Sharpens the open "two derivations of role" item.
+STATUS: LOCKED
+
+---
+
+DECISION: Quest approval is NOT the correctness model. `quests.approved_by` is the weaker path and the sweep target.
+DATE: 2026-07-30
+WHY: `master-spec.md` stated that quest approval's behavior was correct and redemption should move to match it. A recon briefed to DISPROVE killed it. `enforce_quest_update_authority` checks that the SESSION OWNER holds the parent role and that non-parents cannot change `approved_by`; `enforce_quest_family_refs` checks only that the written value names a profile in the same family. NEITHER checks that `approved_by` names an adult at all — a client can write a kid's profile id into it and both triggers pass, and nothing ties the value to the PIN-verified identity from that request. Redemption now validates strictly MORE than the thing we were told to copy. Tolerable rather than correct: intra-household under the walk-up trust boundary, no cross-tenant path, no consumer rendering it. Not scheduled — recorded so the next person reaching for a model reaches for `approve_redemption` instead. THE GENERAL LESSON: a prescription written in canon is still a hypothesis. Canon is the best current answer, not an exemption from testing, and briefing recon to disprove is what surfaces the difference.
+REPLACES: The master-spec line "Quest approval's behavior is the correct one and redemption moves to match it."
+STATUS: LOCKED
+
+---
+
+DECISION: NOTED — the discard-the-resolved-identity habit. Three confirmed sites, one prescribed shape.
+DATE: 2026-07-30
+WHY: Three places in this codebase where a caller correctly resolves an identity, hands it downstream, and the callee discards it for `auth.uid()`: (1) `wall.tsx` → `approve_redemption` — the `approverId` was destructured away one hop before the RPC, now FIXED; (2) `markFirstRunComplete` — contains a literal `void profileId;` and `mark_first_run_complete()` writes `WHERE id = auth.uid()`, still OPEN as critical path #1; (3) `actor_label` — the column does two jobs, sometimes "who clicked" and sometimes "who gets credit," still an open design call. These are NOT coupled: D5 was briefed to establish a shared dependency and FAILED. Redemption's identity comes from `verify_profile_pin` against the adults list; the marker's comes from `getActiveMemberIdSync()`. No shared helper, hook, or RPC — jAIne had put the coupling at better than even and was wrong. They share a HABIT, not a dependency, and the habit is a predictable consequence of the shared-session topology: `auth.uid()` is always available and always feels safe, so it wins by default whenever a function needs an actor. THE PRESCRIBED SHAPE, now with a shipped precedent in `approve_redemption`: a validated optional actor id, defaulting NULL to the session owner, checked server-side for same-family AND required role, raising on failure. Reuse it for the marker's `profile_id` and for `actor_label`'s `subject_profile_id`. Look for this habit wherever a client already knows who and a server function takes no actor parameter.
+REPLACES: Nothing — new observation.
+STATUS: NOTED
+---
 
 DECISION: The first-run completion marker ships as profiles.first_run_completed_at, written through a SECURITY DEFINER RPC scoped WHERE id = auth.uid(), with the backfill in the same migration as the column add.
 DATE: 2026-07-29
