@@ -1,21 +1,23 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-07-29 (late)** — *the master-spec fold + the completion marker.* A design + Lovable + Code session. **`master-spec.md` regenerated against a full read — all seven owed folds closed.** Then, on 3.5 Lovable credits, the first-run completion marker shipped and **critical-path item #1 is closed.**
+Last session: **2026-07-30** — *the redemption `decided_by` fix.* A design + Lovable + Code session on 5 credits, closed with ~1.2 remaining. **CRITICAL PATH #1 is CLOSED and verified on live data.** `approve_redemption` and `deny_redemption` now accept a validated optional approver id; the wall passes the PIN-verified adult it was already computing and silently discarding.
 
-**The seven-fold pass is DONE and it was a read-then-regenerate, not a blind regen.** jAIne read all 455 lines of the current spec plus every `decisions.md` entry from 07-26 through 07-29 before writing a line. Six non-mechanical calls were surfaced for objection before the file was produced: Part II retitled from "SHAPE UNDECIDED" to Option-A-as-design-truth; the weekly/monthly lingering line reversed to a defect; rule 7's test case marked suspended rather than deleted; the COPPA shield qualified rather than removed; the `actor_label` prescription replaced with an explicit DO-NOT; the Forge onboarding branch written as designed-and-parked. **No objections raised.**
+**The item was built for a different reason than the one the docs were shouting.** Scott challenged the priority directly — *where does anyone actually see who approved this?* — and recon confirmed the answer: **nowhere.** `vault.tsx` selects `decided_by` into every row and no component renders or branches on it. The 🔴 had been carried since 07-29 on the strength of a breached-deadline framing and a PIN-screen promise no user can falsify. **It got built because it turned out to cost ~1 credit and zero taps, not because it was urgent.** Second instance of *severity in a doc outliving the evidence for it*, and the first where the challenge came from Scott rather than from recon.
 
-**The marker shipped and was walked end to end.** `profiles.first_run_completed_at`, backfilled in the same migration, written through a SECURITY DEFINER RPC, `EXECUTE` to `authenticated` then `PUBLIC` revoked, zero table grants on `profiles`. **The three-part tripwire shipped as one change** — the constant, the read body and the write body — which is the regression that would have hurt most.
+**The recon was briefed to disprove and two of five disproofs landed — both against jAIne's expectations.**
+- **D4 FAILED, which inverts the spec's own prescription.** `master-spec.md` said quest approval's behavior was correct and redemption should move to match it. It isn't. `quests.approved_by` is validated for same-family membership and for the *session owner* holding the parent role — **never that the written value names an adult at all.** A client can write a kid's profile id into `approved_by` and both triggers pass. **Redemption now validates strictly more than the thing we were told to copy.**
+- **D5 FAILED, and jAIne had put it at better than even.** The redemption identity comes from `verify_profile_pin` against the adults list; the first-run marker's comes from `getActiveMemberIdSync()`. No shared helper, hook, or RPC. **Critical path #1 and #2 share a pattern, not a dependency** — #2 was left completely untouched, as scoped.
 
-**A live bug was created and caught on the first fresh-creator walk.** The arrival gate exempted `/first-run/` only. A brand-new creator is born with a NULL marker, the marker is role-agnostic, and the gate fires on every shell mount — so the creator was yanked out of `/onboarding/add-family` into the joiner tour. **Shipped live, caught in the same session, fixed by Claude Code at zero credits.** *(jAIne's DO-NOT-BUILD list fenced the exact file that needed the fix — the switch was armed and the panel it controls was taped over.)*
+**Lovable's role-source answer was better than the one jAIne would have written.** The brief flagged profile-id-vs-user-id as a pedantry check; it is a live false negative. `has_role()` reads `user_roles.user_id`, which only exists for profiles backed by an `auth.users` account — so it would have **rejected the exact co-parent the feature exists to record.** `profiles.role` + `status = 'active'` is authoritative for an arbitrary profile id, and is trigger-protected by `enforce_profile_role_change`. The session-owner authority gate still uses `has_role(auth.uid(), 'parent')`, unchanged.
 
-**Two pending-verifies closed in the same publish walk:** the install-tutorial prod walk (owed since 07-29 early) and the joiner flow's first real run.
+**Verified on live data, because there is no glass.** Nothing renders `decided_by` — which is what made the fix cheap and what makes "verified on the glass" structurally unavailable. A wall approval under the co-parent's PIN produced the **first row in the table's history where `decided_by` is not the account holder**, and the validation branch passed without raising, meaning the server independently confirmed the id was an active adult in-family.
 
-Last session (prior): **2026-07-29 (early)** — the install tutorial. Manifest launch-polish, the Add-to-Home-Screen step, the `handoff` cut, first-screen copy.
+Last session (prior): **2026-07-29 (late)** — the master-spec fold + the first-run completion marker. *(That session's log called the marker "critical-path #1"; it was #1 at the time. The table has since renumbered twice. **Numbers move; use the item name.**)*
 
-Last session (prior): **2026-07-28** — Forge design, zero code. v1 inverted to prescription-first; the pre-session gate; the catalog as the single blocking dependency.
+Last session (prior): **2026-07-29 (early)** — the install tutorial.
 
-Last session (prior): **2026-07-27 (late)** — the joiner-flow session. Eight non-creator first-run screens built and published dark.
+Last session (prior): **2026-07-28** — Forge design, zero code.
 
 Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PARKED · 🔵 VALIDATED (no build needed)
 
@@ -23,7 +25,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## Where the platform is
 
-**Structurally complete, published, with a working activation path for EVERY role.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, the 48-avatar roster, a household-local date model, a tenant-isolation model verified under live authenticated attack, clean function and table grant surfaces, a six-step creator first run ending in the install tutorial, and **eight non-creator first-run screens that are no longer dark.**
+**Structurally complete, published, with a working activation path for EVERY role.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, the 48-avatar roster, a household-local date model, a tenant-isolation model verified under live authenticated attack, clean function and table grant surfaces, a six-step creator first run ending in the install tutorial, eight non-creator first-run screens, and **redemption approval that records the adult who actually signed off.**
 
 **The creator sequence:** add-family → first-quest → stock-vault → the-hold → recap → add-to-home → board.
 **The adult joiner sequence (verified on the glass):** board → approving → vault → pin → quests → the real board.
@@ -31,9 +33,9 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 **Emberhold is a ONE-module product with ONE module.** Registers are aesthetic only. **Fitness (Forge) is the sole module, it is not built, and it is scoped to the Draper household.**
 
-> **`master-spec.md` owes ZERO folds.** Regenerated 2026-07-29 against a full read, then amended the same session for the marker's shipped shape, the answered RLS question, the kid-marker cancellation finding, the arrival-gate exemption rule, and the breached redemption deadline. **The next spec pass is not owed until new design truth accumulates.**
+> **`master-spec.md` owes ZERO folds.** Regenerated 2026-07-29 against a full read; amended 2026-07-30 against a full read for the shipped redemption fix, the corrected quest-approval posture, and the two-kinds-of-adult finding.
 
-> **`north-star.md` is current.** One sentence still drifts: *"the auth email is now load-bearing in a way it wasn't"* — sender identity is fixed, only deliverability remains. Its own small pass, or fold it into the next spec session.
+> **`north-star.md` is current.** One sentence still drifts: *"the auth email is now load-bearing in a way it wasn't"* — sender identity is fixed, only deliverability remains.
 
 ---
 
@@ -41,89 +43,84 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 | # | Item | Blocks |
 |---|---|---|
-| **1** | **🔴 Redemption approval must record the PIN-verified adult.** `approve_redemption` hardcodes `decided_by = auth.uid()`. **THE DEADLINE IS BREACHED** — the rule was "true before the arrival gate goes live," and the gate went live 2026-07-29. The `/first-run/adult/pin` screen names redemption explicitly. **First prompt of the next build window.** Lovable lane. | Gate B honesty. A live promise the product doesn't honor. |
-| **2** | **🔴 The marker's read and write, fixed as ONE change.** `FirstRunGate` reads the account holder; `mark_first_run_complete()` writes `WHERE id = auth.uid()`. A kid sub-profile's row id is not any `auth.uid()`, so a kid's write **no-ops silently**. ⚠️ **The two bugs cancel — fixing the read alone produces an infinite flow loop.** Needs a validated `profile_id` parameter, family-checked server-side. Migration + frontend. | The kid joiner flow on shared devices. Gate D. |
-| **3** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. Check #1 is closed. | Gate B honesty. |
-| **4** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. |
-| **5** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
+| **1** | **🔴 The marker's read and write, fixed as ONE change.** `FirstRunGate` reads via `getActiveMemberIdSync() ?? auth.uid()`; `mark_first_run_complete()` writes `WHERE id = auth.uid()` and `markFirstRunComplete` literally contains `void profileId;`. A kid sub-profile's row id is not any `auth.uid()`, so a kid's write **no-ops silently**. ⚠️ **The two bugs cancel — fixing the read alone produces an infinite flow loop.** Needs a validated `profile_id` parameter, family-checked server-side. Migration + frontend. **Confirmed independent of the redemption fix (D5).** | The kid joiner flow on shared devices. Gate D. |
+| **2** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. Check #1 is closed. | Gate B honesty. |
+| **3** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. |
+| **4** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
 
 **Downgraded off the critical path: auth email.** Sender identity fixed by the project rename; one of six providers still spams. **Tracked, not worked.**
 
-**Off the critical path and household-scoped: Forge.** Design is a rest-period activity and costs no build lane. **Design is well ahead of the build — see the Forge section in `parking-lot.md`.**
+**Off the critical path and household-scoped: Forge.** Design is a rest-period activity and costs no build lane.
 
 ---
 
-## 🟢 CLOSED / RESOLVED — 2026-07-29 (late)
+## 🟢 CLOSED / RESOLVED — 2026-07-30
 
-### The master-spec fold
-- ✅ **All seven folds closed.** Creator onboarding flow and shell · signup posture · write-once timezone and its heal · Part II rescoped to household-only · non-creator first run + marker seam + arrival-state rule · Part II's v1 shape · the 07-29 onboarding-sequence change and PWA install door.
-- ✅ **Six standing corrections landed.** The `actor_label` derive-from-`auth.uid()` prescription is now an explicit **DO-NOT** (it is a killed regression, and it sat in the doc three sessions on a summary nobody re-derived) · the "fourth activeness surface" note removed as dead · the `set_enabled_modules` "nothing has ever written that value" claim corrected to **false**, making the `'training'`→`'fitness'` change a data migration rather than a string edit · the COPPA shield qualified (partial — it does not cover join-by-code) · grant drift downgraded to a bounded platform residual · Part II's client-engine rule re-grounded on latency and sunk cost rather than connectivity.
-- ✅ **The "empty board / no path to a first quest = top structural gap" line is GONE.** The doorway is built.
-- ✅ **Part II retitled.** Option A is design truth; Option B is the only remaining fork.
+### The redemption `decided_by` fix
+- ✅ **`approve_redemption` and `deny_redemption` re-signed to `(_redemption_id uuid, _approver_id uuid DEFAULT NULL)`.** Old one-arg signatures **dropped, not replaced** — a defaulted parameter added via `CREATE OR REPLACE` creates a second overload and makes every existing one-arg call ambiguous (`function is not unique`). Grants re-issued after the drop: `GRANT EXECUTE TO authenticated`, then `REVOKE FROM PUBLIC`, then `FROM anon`.
+- ✅ **`_approver_id` NULL → `decided_by = auth.uid()`, exactly as before.** This is what keeps the Vault page working untouched.
+- ✅ **`_approver_id` NOT NULL → validated server-side before use.** Must be in the caller's family and an active adult. **Raises on failure — no silent fallback to `auth.uid()`,** because a silent fallback makes a rejected approver look like a successful one.
+- ✅ **Authority gate unmoved.** The session owner must still hold the parent role. The new parameter refines **attribution only** — it never grants authority.
+- ✅ **`wall.tsx` sends `_approver_id: approverId`.** The value was already correct at that call site and was being dropped by the `mutationFn`'s destructuring one hop before the RPC. **The stale comment above the mutation — which described the old behavior as unavoidable — is replaced.**
+- ✅ **Wall has no deny path**, so `deny_redemption` gained the parameter and no caller. Correct: sweep the class in the migration, don't invent a UI.
+- ✅ **VERIFIED ON LIVE DATA.** Wall approval under the co-parent's PIN wrote `decided_by = 744982a0…` against `requested_by = b2cad7a8…` — the first non-account-holder value in the column's history. Every prior row stamped `9bdb0243…`.
 
-### The completion marker
-- ✅ **`profiles.first_run_completed_at timestamptz NULL`**, with the backfill (`SET … = now() WHERE … IS NULL`) in the **same migration** as the column add. No established household sees the flow.
-- ✅ **`mark_first_run_complete()`** — SECURITY DEFINER, `search_path` pinned, `WHERE id = auth.uid() AND first_run_completed_at IS NULL`. Single-row and idempotent by construction.
-- ✅ **Grants in the correct order:** `GRANT EXECUTE … TO authenticated` then `REVOKE EXECUTE … FROM PUBLIC`. **Zero table grants added on `profiles`.**
-- ✅ **The tripwire held.** `FIRST_RUN_MARKER_AVAILABLE`, the real read, and the real write shipped in one change.
-- ✅ **Both exits mark.** Terminal handoffs (`onboarding.recap`, `onboarding.add-to-home`, `first-run.adult.quests`, `first-run.kid.embers`) and `SetupShell.handleSkip()`. Non-blocking — navigation never waits on the write.
-- ✅ **The RLS recon was skipped deliberately and it cost nothing.** Routing through an RPC works either way. *(The question is now answered anyway: a member CAN update their own `profiles` row — and it wouldn't have mattered, because that policy has the same `id = auth.uid()` ceiling.)*
-
-### The arrival-gate exemption
-- ✅ **Fixed.** `pathname.startsWith("/first-run/") || pathname.startsWith("/onboarding/")`. One line, Claude Code, zero credits, `origin/main` at `943a633`.
-- ✅ **Verified four ways**, including the one the prompt never named: `/board` with a NULL marker **still redirects**. That path is the whole feature and it survived.
-
-### Glass checks
-- ✅ **Fresh creator signup — walked the full sequence to `add-to-home`.** Stays on `add-family`, no bounce.
-- ✅ **Fresh join-by-code from a never-signed-in device — walked all five adult screens to the real board.**
-- ✅ **Install tutorial prod walk — CLOSED.** Same publish pass.
-- ✅ **Onboarding dots-count fixed and verified.** Creator 6, adult joiner 5. **The prompt was corrected before it ran** — jAIne's first draft told Lovable to derive from "a single source of truth," which would have collapsed three deliberately different registry lengths into one and broken a joiner trail that was already correct.
+### Recon findings that changed the design
+- ✅ **`decided_by` has ZERO consumers.** Fetched by `select("*")`, rendered by nothing, branched on by nothing. The severity language was wrong and is corrected in the spec.
+- ✅ **The bug was wall-only.** A join-code co-parent has their own `auth.uid()`, so the Vault page's hardcode names them correctly. **The kiosk is the only surface where one session serves two adults.**
+- ✅ **THERE ARE TWO KINDS OF ADULT PROFILE.** Join-code adults have a matching `auth.users` row (`profiles.id = auth_user_id`); adults minted by `create_adult_profile` have a `profiles.id` with **no auth user at all**. This is now recorded in the spec — it invalidates any check that assumes an adult profile id is also a user id.
+- ✅ **`parent_self_redeem` never calls `approve_redemption`** — separate INSERT, stamps `auth.uid()` at insert time, correct, untouched.
+- ✅ **`wall_request_redemption` never touches the decision column.** Untouched.
 
 ---
 
 ## 🟡 PENDING VERIFY
 
-- 🟡 **The kid joiner flow has never been walked by a kid.** Three beats to the adult's five. Built, published, unexercised. **Blocked in practice on the shared-device path by critical-path #2.**
+- 🟡 **The Vault-page approval path is unverified post-migration.** Single adult, approve a pending kid redemption from the Vault page — should behave exactly as before via the NULL default. **Cheap, do it next session.**
+- 🟡 **The kid joiner flow has never been walked by a kid.** **Blocked in practice on the shared-device path by critical-path #1.**
 - 🟡 **The timezone heal — DRAFT until proven from a non-Pacific device.** **Phaeaz's next login is the natural test.**
-- ⚠️ **Wall adult-verified turn-in.** Code writes the PIN-verified adult (`adultId`), not the session owner. Verify: approve → PIN → wrong/kid PIN mints nothing → correct PIN commits.
-- 🟡 **Monthly post-fix is technically unexercised.** Failure window: approving on the last evening of a month after UTC has rolled. Narrow.
+- ⚠️ **Wall adult-verified turn-in (quests).** Verify: approve → PIN → wrong/kid PIN mints nothing → correct PIN commits.
+- 🟡 **Monthly post-fix is technically unexercised.** Narrow failure window.
 - 🟡 **STALE chip predicate.** Likely `due_date < today`, which the two stranded past-due weeklies would fully explain.
-- 🟡 **Grant-revoke verification probe job — DRAFTED, DEFERRED FOUR TIMES.** `SQLSTATE 42501` = FAIL; any application-level error = PASS. *Sonnet · auto-accept OFF · read-only.*
-- 🅿️ **`/setup/intent` — PARKED WITH A TRIGGER.** Finalized when Forge is built. **The trigger has not fired.**
+- 🟡 **Grant-revoke verification probe job — DRAFTED, DEFERRED FIVE TIMES.** `SQLSTATE 42501` = FAIL; any application-level error = PASS. *Sonnet · auto-accept OFF · read-only.*
+- 🅿️ **`/setup/intent` — PARKED WITH A TRIGGER.** Finalized when Forge is built.
 - 🟡 **The ember progress trail** — visual success criterion, Scott only.
-- 🟡 **Avatar render fallback ("the floor")** — pull up a not-yet-re-forged member. **Check the wall specifically.** *(Also the resolution path for the empty-roster-seat question.)*
+- 🟡 **Avatar render fallback ("the floor")** — **check the wall specifically.**
 - 🟡 **Founder tier-tag verification.** Flip gate ON, confirm **32 lock / 16 open**, flip back OFF.
-- 🟡 **Routing fix (`28ab40d`)** — sign out from a pending waiting screen, back in, confirm you land on the waiting screen and auto-advance on admission.
+- 🟡 **Routing fix (`28ab40d`)** — sign out from a pending waiting screen, back in, confirm auto-advance on admission.
 - 🟡 **Lists collapsible sections** (`fb6aa99`) — landed, not exercised across a full session.
-- 🟡 **Phaeaz cold-account retest** — open since the hiatus. **Now the test case for the timezone heal.**
+- 🟡 **Phaeaz cold-account retest** — now the test case for the timezone heal.
 - 🟡 **Min password length 6→8; re-auth on password change ON** — verify persisted.
 - 🟡 **Wall — full end-to-end membrane loop** — claim → turn-in → approve on a separate device.
 
 ---
 
+## ⬜ OPEN — the next design job
+
+- ⬜ **🔴 UNAPPROVED WEEKLIES AND MONTHLIES NEVER ROLL FORWARD. Two are stranded on the live board** — *Grocery Shopping* (07-06, claimed) and *Take out the trash* (07-21, submitted). **Recorded in the spec as a defect, not correct behavior.** ⚠️ **NEEDS A DESIGN PASS BEFORE A PROMPT** — the roll-forward rule for unapproved recurring quests is not decided, and a migration against an undecided rule is not writable. **The STALE chip predicate is probably the same fix.** Highest-value remaining item with a pixel attached.
+
 ## ⬜ OPEN — Forge, from 2026-07-28
 
-- ⬜ **🔴 THE CATALOG IS THE FIRST BUILD, AND IT IS A MAKE JOB.** Movement pattern · muscle attribution · equipment requirement · substitution map. **Generated offline, reviewed by Scott, shipped as data.** Everything good in the module is downstream of it.
-- ⬜ **🔴 `progression.ts` has no progression axis except load.** **Cannot express "175 instead of 185, so give me 8 instead of 5,"** now half the differentiator. **Claude Code job: pure TypeScript, ten tests, zero Supabase imports, zero credits.** Parallel to the catalog.
-- ⬜ **The engine cannot accept a pre-session constraint.** RPE autoregulation is backward-looking. **Scope with the rep-compensation job.**
-- ⬜ **Equipment records need `exclusive` vs `shareable`.** One field, needed before contention resolution means anything.
-- ⬜ **Rep-compensation needs a validity floor.** Below some deviation the app must say *"that's a different exercise now."* Unsized.
-- ⬜ **The Smith machine offset is assumed, not measured.** Two minutes with a known weight. **A wrong offset corrupts every Smith e1RM forever, unreconstructably.**
-- ⬜ **"Adults only" is a proxy for "trains" and will not hold.** When it breaks it is a per-member flag. Do not build it now.
-- ⬜ **`enabled_modules` has no consumer.** Named future consumer is the gated `/forge` route.
+- ⬜ **🔴 THE CATALOG IS THE FIRST BUILD, AND IT IS A MAKE JOB.** Movement pattern · muscle attribution · equipment requirement · substitution map. **Generated offline, reviewed by Scott, shipped as data.**
+- ⬜ **🔴 `progression.ts` has no progression axis except load.** **Claude Code job: pure TypeScript, ten tests, zero Supabase imports, zero credits.**
+- ⬜ **The engine cannot accept a pre-session constraint.** **Scope with the rep-compensation job.**
+- ⬜ **Equipment records need `exclusive` vs `shareable`.**
+- ⬜ **Rep-compensation needs a validity floor.**
+- ⬜ **The Smith machine offset is assumed, not measured.** **A wrong offset corrupts every Smith e1RM forever.**
+- ⬜ **"Adults only" is a proxy for "trains" and will not hold.** Per-member flag when it breaks. Do not build now.
+- ⬜ **`enabled_modules` has no consumer.**
 
 ## ⬜ OPEN — carried
 
-- ⬜ **🔴 The redemption `decided_by` fix.** CRITICAL PATH #1.
-- ⬜ **🔴 The marker read/write pair.** CRITICAL PATH #2.
-- ⬜ **Two derivations of role now exist.** `FirstRunGate` reads `profiles.role`; `useMyProfile()` derives from `user_roles`. **The `isActiveQuest` divergence pattern, second occurrence.** *(Distinct from the marker's cancellation problem — see `decisions.md`.)*
-- ⬜ **What does `actor_label` mean?** `actor_id` is server-derived and truthful; only the rendered name is client-supplied. **Design call, needs Scott** — see parking-lot OPEN DECISIONS.
-- ⬜ **`campaign.$id.tsx` gates quest creation on `isParent`; the FAB and QuickAddTray do not.** Consistency question.
-- ⬜ **`routeTree.gen.ts` was hand-edited, toolchain drift underneath.** **Probably self-healing**, but local `npm run dev`/`build` is a trap.
-- ⬜ **`member_admitted` renders as `"Mom · Leo"`.** No case in either feed consumer's switch.
-- ⬜ **Unapproved weekly and monthly quests never roll forward.** **Two stranded** — *Grocery Shopping* (07-06, claimed) and *Take out the trash* (07-21, submitted). **Now recorded in the spec as a defect, not as correct behavior.**
+- ⬜ **🔴 The marker read/write pair.** CRITICAL PATH #1.
+- ⬜ **🟠 `quests.approved_by` is validated more weakly than `redemptions.decided_by` now is.** `enforce_quest_update_authority` checks the *session owner's* role; `enforce_quest_family_refs` checks only same-family membership. **Neither checks that the written value names an adult** — a client can write a kid's profile id into `approved_by`. **Upgraded from a footnote: quest approval is now the weaker of the two paths, and redemption has the pattern to sweep toward.** Not urgent — intra-household under the walk-up boundary — but the spec no longer holds it up as the model.
+- ⬜ **Two derivations of role now exist.** `FirstRunGate` reads `profiles.role`; `useMyProfile()` derives from `user_roles`. ⚠️ **The 07-30 finding sharpens this: they are not interchangeable.** `has_role()` is only valid for auth-backed identities; `profiles.role` is authoritative for an arbitrary profile id.
+- ⬜ **What does `actor_label` mean?** **Design call, needs Scott.**
+- ⬜ **`campaign.$id.tsx` gates quest creation on `isParent`; the FAB and QuickAddTray do not.**
+- ⬜ **`routeTree.gen.ts` was hand-edited, toolchain drift underneath.**
+- ⬜ **`member_admitted` renders as `"Mom · Leo"`.**
 - ⬜ **The early-approval seam.** Approving a weekly before its due date produces a same-week successor.
-- ⬜ **Quest creation is ungated and DELIBERATELY STAYS THAT WAY.** What changes is the curriculum.
+- ⬜ **Quest creation is ungated and DELIBERATELY STAYS THAT WAY.**
 - ⬜ **`sandbox_exec`** — pre-existing platform role holding EXECUTE on every function in `public`. **Ask Lovable. One question.**
 - ⬜ **`quests.due_date` still carries `DEFAULT CURRENT_DATE` — deliberately.**
 - ⬜ **Ghost successor cleanup.** **Quest Log applies no `due_date` filter — by design or by omission?** **Feed verb drift.**
@@ -142,15 +139,16 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - ✅ **Signed-in users can execute SECURITY DEFINER (lint 0029) — PERMANENTLY IGNORED.**
 
 **Fixed:**
+- ✅ **`approve_redemption` / `deny_redemption` attribution — CLOSED 2026-07-30.** Validated optional approver id; raises rather than falling back.
 - ✅ Public/anon SECURITY DEFINER execute (lint 0028) · `founder_gate_enabled()` + `my_household_is_founder()` · `anon` CRUD on `families` · `anon` CRUD on the other fourteen tables · Adult PIN plaintext in `localStorage` (closed by deletion).
 
 **Real, open:**
-- ⬜ **`approve_redemption` records the session owner, not the PIN-verified adult.** **Now a live broken promise** — CRITICAL PATH #1.
+- ⬜ **`quests.approved_by` accepts any in-family profile id, including a kid's.** Intra-household under the walk-up boundary; the sweep target now that redemption is correct.
 - ⬜ **`actor_label` display forgery — DOWNGRADED, RE-SCOPED AS DESIGN.**
 - ⬜ **Kids read `adults_only` reward names/costs** and ⬜ **kids read `parents_only` quest details** — **same class; fix together**, *with* the own-session-vs-per-member-auth decision. **Top open security items.**
 - ⬜ **`supabase_admin` default-privilege residual** — unreachable from this connection, platform-scoped.
-- ⬜ **Forge display mode is a semi-public surface.** Injury flags and body-weight numbers must not be ambient where guests walk. Fine for the Drapers' garage.
-- ⬜ **`flock.js` analytics tracker in the app `<head>`.** **Must be named in the Gate C privacy policy** — minors are real users.
+- ⬜ **Forge display mode is a semi-public surface.**
+- ⬜ **`flock.js` analytics tracker in the app `<head>`.** **Must be named in the Gate C privacy policy.**
 
 **Dependency scan:** `npm audit` = 0 against `package-lock.json`; the real lockfile is `bun.lock`. Run `bun audit`.
 
@@ -158,27 +156,24 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## ⬜ OUTSTANDING — security & distribution
 
-- ⬜ **Auth email deliverability.** Downgraded to tracked-not-worked. ⚠️ *Inspect any NS-record request before pasting.*
-- ⬜ **Rewards + quests audience reads** — fix *with* the own-session-vs-per-member-auth decision, together.
+- ⬜ **Auth email deliverability.** Tracked-not-worked. ⚠️ *Inspect any NS-record request before pasting.*
+- ⬜ **Rewards + quests audience reads** — fix *with* the own-session-vs-per-member-auth decision.
 - ⬜ **Grant-revoke verification probe job.**
 - ⬜ **Ask Lovable what `sandbox_exec` is.**
-- ⬜ **Service worker + app-shell cache.** **Deliberately NOT bundled with the install tutorial — install never needed it.** Still makes "offline shows a themed shell" true for strangers, a Gate B item. **Deserves its own careful pass** — a botched offline cache is a silent-stale-content risk.
+- ⬜ **Service worker + app-shell cache.** Gate B. **Deserves its own careful pass.**
 - ⬜ **Backup posture.** Data has no backup; Lovable's to grant. A distribution blocker.
-- ⬜ **Prod test-object cleanup — deserves its own session.** **Now includes the test holds created by this session's two glass checks.**
+- ⬜ **Prod test-object cleanup — deserves its own session.** **Now also includes:** the *"Testing redemption tracking"* quest, whatever reward Mia redeemed for the 07-30 verification, and the test holds from the 07-29 glass checks.
 
 ## ⬜ OUTSTANDING — ship-blocking debt
 
-- ⬜ **Redemption `decided_by`.** CRITICAL PATH #1.
-- ⬜ **The marker read/write pair.** CRITICAL PATH #2.
+- ⬜ **The marker read/write pair.** CRITICAL PATH #1.
 - ⬜ **Vault favorites → real per-profile persistence** — currently `localStorage`.
 - ⬜ **Quality — a rating with no consumer.** Direction LOCKED (signal, never an ember modifier).
 - ⬜ **Re-forge reach across the 13.** Only the member who logs in is prompted.
 
 ## ⬜ OUTSTANDING — polish
 
-⬜ **The stacked-Pip-voice line on the first setup screen** · **`points` surfacing as a user-facing noun** on `/first-run/adult/approving` ("the points on that quest become real, spendable embers" — a string-law violation; queued for the free Haiku sweep) · **Feed verb drift** · **`member_admitted` feed line** · **Recurrence chip legibility** · **The early-approval seam** · **Onboarding screenshots for screen 3** · **Quick Add default EXPANDED on empty board** · **Lists "5 OPEN · 348 DONE"** fossil counter · **Pip help discoverability** · **Reward scarcity limits** · **Yearly/monthly event recurrence** · **Multi-day calendar events** · **Calendar alerts** · **Wall ticker speed** · **Wall calendar event-pill member color** · **"Forgot PIN" confirm() copy** · **STALE chip predicate** · **`decisions.md` header "Status tiers" line missing SUPERSEDED**.
-
-*(Removed from polish: onboarding dots-count — SHIPPED 2026-07-29.)*
+⬜ **The stacked-Pip-voice line on the first setup screen** · **`points` surfacing as a user-facing noun** on `/first-run/adult/approving` · **Feed verb drift** · **`member_admitted` feed line** · **Recurrence chip legibility** · **The early-approval seam** · **Onboarding screenshots for screen 3** · **Quick Add default EXPANDED on empty board** · **Lists "5 OPEN · 348 DONE"** fossil counter · **Pip help discoverability** · **Reward scarcity limits** · **Yearly/monthly event recurrence** · **Multi-day calendar events** · **Calendar alerts** · **Wall ticker speed** · **Wall calendar event-pill member color** · **"Forgot PIN" confirm() copy** · **STALE chip predicate** · **`decisions.md` header "Status tiers" line missing SUPERSEDED**.
 
 ---
 
@@ -192,26 +187,31 @@ See `parking-lot.md`. **Forge's Option-B game** · **Endure as a native product*
 
 Switching into a PIN-less adult profile hard-gates correctly. The "active member" switch is cosmetic, not a security boundary — physical possession of an unlocked parent session = parent authority. In the shared-session model a device-kid holds the owner's ambient parent JWT. **This is intra-household, not cross-tenant** — `current_family_id()` derives server-side from `auth.uid()`. Accepted for household use. **Three findings are ignored or downgraded *because of* this boundary.** Deciding the own-session-vs-per-member-auth fork revives all three. The fork is parked.
 
+**⚠️ Sharpened 2026-07-30:** the boundary is why `quests.approved_by` accepting any in-family profile id is tolerable rather than critical. It is not why it is *correct*. Redemption now does better on the same surface, which is the argument for eventually sweeping quests toward it.
+
 ---
 
 ## 🔵 THE BUILD MODEL — holding
 
-- **TWO BUGS THAT CANCEL ARE WORSE THAN ONE THAT SHOWS. (NEW — 2026-07-29.)** The marker's read and write are both account-holder-scoped. Wrong in the *same direction*, so nothing misbehaves — and fixing either alone produces an infinite loop. **Divergence announces itself; cancellation hides.** Distinct from the `isActiveQuest` pattern and mislabelling it as that would teach the wrong lesson.
-- **A GUARD WRITTEN FOR ONE AUDIENCE WILL MEET ANOTHER. (NEW — 2026-07-29.)** The arrival gate exempted `/first-run/` because it was written for joiners, who never touch `/onboarding/`. **The creator case didn't exist until the constant flipped, and then it shipped live.**
-- **DON'T FENCE THE FILE THAT HOLDS THE FIX. (NEW — 2026-07-29.)** jAIne's DO-NOT-BUILD list said "do not touch `FirstRunGate`," meaning the profile-resolution bug — but the route exemption lives in the same file. **The switch was armed and the panel it controls was taped over.**
-- **SWEEP THE CLASS ONLY WHEN IT IS ONE. (NEW — 2026-07-29.)** jAIne's first dots prompt said "derive from a single source of truth," which would have collapsed three deliberately different registry lengths and broken a correct joiner trail. **The sweep instinct is right by default and wrong when the instances differ on purpose.**
-- **"SYNCS TO `origin/main` BEFORE READING" IS NOT SELF-ENFORCING. (NEW — 2026-07-29.)** Code's local clone was **16 commits stale** and found out at push time, not before reading. Clean rebase, fix re-verified, no harm — but the recon and the edit were both made against a stale file. **Same shape as the install screen "missing" on a stale device.**
-- **STALE LOCAL BITS MIMIC A MISSING FEATURE.** Verify the deployed/pulled commit before diagnosing.
-- **RIGHT-SIZE THE GUIDANCE TO THE GESTURE.** The bloat instinct wears a thoroughness costume.
-- **UNBUNDLE WELDED ASSUMPTIONS.** "Service worker = installable PWA" was two jobs fused in a doc.
-- **NAME EVERY CONSUMER OF A ROUTE BEFORE REMOVING IT.**
-- **A GUARD THAT PROTECTS A ROUTE CAN BREAK THE FLOW THAT USES IT.**
-- **"INERT" IS NOT ONE BEHAVIOR.** *Don't fire* versus *don't block*.
+- **A 🔴 WITH NO CONSUMER IS NOT A 🔴. (NEW — 2026-07-30.)** The redemption item was carried as first-prompt-of-the-next-window on a breached-deadline framing and a PIN-screen promise. **Nothing read the column.** Second instance of *severity in a doc outliving its evidence*, and the first where **Scott caught it, not recon** — jAIne briefed execution instead of testing whether the item deserved the slot. **Before writing a prompt for a carried 🔴, ask what reads it.**
+- **THE FIX WAS RIGHT AND THE REASON WAS WRONG. (NEW — 2026-07-30.)** It shipped because it cost ~1 credit, added zero taps, and stopped a recurring re-litigation — not because the deadline mattered. **Recording the real reason is what stops the next session re-arguing it from the old one.**
+- **A PRESCRIPTION IN THE SPEC IS STILL A HYPOTHESIS. (NEW — 2026-07-30.)** `master-spec.md` said "quest approval's behavior is the correct one and redemption moves to match it." **D4 killed it** — quest approval never validates that `approved_by` names an adult. **A recon briefed to disprove killed a line in canon, which is the mechanism working.**
+- **AN ADULT PROFILE ID IS NOT ALWAYS A USER ID. (NEW — 2026-07-30.)** `create_adult_profile` mints profiles with no `auth.users` row. **`has_role()` would have false-negatived the exact co-parent the fix exists to record.** Lovable caught this; jAIne had flagged it as pedantry. **Two kinds of adult exist and any check that conflates them is wrong for one of them.**
+- **A DEFAULTED PARAMETER DOES NOT REPLACE A FUNCTION. (NEW — 2026-07-30.)** `CREATE OR REPLACE` with an added `DEFAULT NULL` arg creates a **second overload**, and existing one-arg calls then fail as ambiguous. **Drop, recreate, re-grant.**
+- **WHEN THERE IS NO GLASS, VERIFY THE DATA. (NEW — 2026-07-30.)** Nothing renders `decided_by`, so "verified on the glass" was structurally unavailable. **The standard is the live artifact, not the screen** — and an agent's shipped-report is neither.
+- **TWO BUGS THAT CANCEL ARE WORSE THAN ONE THAT SHOWS.** The marker's read and write are both account-holder-scoped. **Divergence announces itself; cancellation hides.**
+- **A GUARD WRITTEN FOR ONE AUDIENCE WILL MEET ANOTHER.**
+- **DON'T FENCE THE FILE THAT HOLDS THE FIX — OR THE ONE THE FIX DEPENDS ON.** *(Extended 2026-07-30: the recon DO-NOT was scoped to edits, not reads, specifically so the profile-resolution surface could be examined without being touched. That is the correct shape.)*
+- **SWEEP THE CLASS ONLY WHEN IT IS ONE.** *(`deny_redemption` was a genuine class member and got the parameter; the wall deny UI was not invented to use it.)*
+- **"SYNCS TO `origin/main` BEFORE READING" IS NOT SELF-ENFORCING.** Report the hashes first, before reading.
+- **STALE LOCAL BITS MIMIC A MISSING FEATURE.**
+- **RIGHT-SIZE THE GUIDANCE TO THE GESTURE.** *(Nine reads were briefed where four would have done. Trimming AFTER Scott had already fired the brief is the wrong sequence for a right-sizing.)*
+- **UNBUNDLE WELDED ASSUMPTIONS.** · **NAME EVERY CONSUMER OF A ROUTE BEFORE REMOVING IT.**
+- **A GUARD THAT PROTECTS A ROUTE CAN BREAK THE FLOW THAT USES IT.** · **"INERT" IS NOT ONE BEHAVIOR.**
 - **DELETING A FEATURE MADE THE PRODUCT BETTER.**
-- **A CLAIM ABOUT CODE IS NOT VERIFIED BY THE AGENT'S SUMMARY OF IT.** Read the consumer, not the helper.
+- **A CLAIM ABOUT CODE IS NOT VERIFIED BY THE AGENT'S SUMMARY OF IT.**
 - **RECON CAN KILL YOUR RECOMMENDATION, AND THAT IS THE POINT.**
-- **PLAIN-SPEAK THE PROBLEM BEFORE BUILDING THE FIX.**
-- **SEVERITY IN A DOC OUTLIVES THE EVIDENCE FOR IT.**
+- **PLAIN-SPEAK THE PROBLEM BEFORE BUILDING THE FIX.** · **SEVERITY IN A DOC OUTLIVES THE EVIDENCE FOR IT.**
 - **RLS AND GRANTS ARE TWO GATES, NOT ONE.**
 - **FIX THE MECHANISM, NOT THE INSTANCE.** · **BUILD THE FRAME BEFORE THE CONTENT.** · **DECOMPOSE BEFORE YOU PROMOTE.**
 - **Fetch the canon before producing anything.** · **A prompt's DO-NOT-BUILD list is not self-enforcing.**
@@ -230,18 +230,19 @@ Switching into a PIN-less adult profile hard-gates correctly. The "active member
 
 ## ✅ EARLIER — SHIPPED (compressed; git owns the detail)
 
-- **2026-07-29 (late)** — the master-spec fold (seven folds, six corrections, Part II retitled) + the first-run completion marker (column, backfill, RPC, tripwire, both exits) + the arrival-gate exemption fix (`943a633`) + the onboarding dots-count fix. Creator and joiner flows both walked end to end on prod. Critical-path #1 closed.
-- **2026-07-29 (early)** — the install tutorial. Manifest launch-polish; Add-to-Home-Screen step as terminal creator first-run screen; `handoff` cut with terminal wiring transplanted to `recap`; first-screen copy fixed; first-quest doorway confirmed built.
-- **2026-07-28** — Forge design session, zero code. v1 inverted to prescription-first; the pre-session gate; the catalog named as the single blocking dependency; contention resolution; Forge display mode and the avatar-as-session-lane layout.
-- **2026-07-27 (late)** — the non-creator first run: eight screens, two step arrays, arrival gate, route guards, the marker seam. Published dark.
+- **2026-07-30** — the redemption `decided_by` fix. `approve_redemption` + `deny_redemption` re-signed with a validated optional approver id, old signatures dropped and re-granted; `wall.tsx` stops discarding the PIN-verified adult. Verified on live data. Recon killed the spec's own prescription (D4) and jAIne's coupling hypothesis (D5).
+- **2026-07-29 (late)** — the master-spec fold (seven folds, six corrections, Part II retitled) + the first-run completion marker + the arrival-gate exemption fix (`943a633`) + the onboarding dots-count fix.
+- **2026-07-29 (early)** — the install tutorial.
+- **2026-07-28** — Forge design session, zero code.
+- **2026-07-27 (late)** — the non-creator first run: eight screens, two step arrays, arrival gate, route guards, the marker seam.
 - **2026-07-27 (early/mid)** — the `families.timezone` update path and the hold-settings hierarchy pass.
-- **2026-07-26** — table grants closed; `anon` at zero across fifteen tables. Five-screen Pip-guided first run. Signup rebuilt; the `pending_setup` stash and its plaintext PIN deleted.
-- **2026-07-25 (late)** — the constitution restructure. `master-spec.md` fully regenerated.
-- **2026-07-25 (early)** — the module reframe. An eight-table parallel tenancy built and dropped the same night.
+- **2026-07-26** — table grants closed; `anon` at zero across fifteen tables. Five-screen Pip-guided first run. Signup rebuilt.
+- **2026-07-25 (late)** — the constitution restructure.
+- **2026-07-25 (early)** — the module reframe.
 - **2026-07-23** — the household-local date seam. `families.timezone` + `household_today()`.
 - **2026-07-21 (late)** — the SECURITY DEFINER grant surface.
 - **2026-07-21 (evening)** — recurring-quest visibility. `isActiveQuest` unified.
-- **2026-07-19** — P4×L8 tenant-isolation audit RUN, BREACHED, FIXED, VERIFIED. Wall display-mode fine-tune. Avatar transport end-to-end.
+- **2026-07-19** — P4×L8 tenant-isolation audit RUN, BREACHED, FIXED, VERIFIED.
 - **2026-07-16** — roster "no members" root-caused. Pending→admission routing fixed.
 - **2026-07-15** — admit-on-approval shipped. Live privilege-escalation fixed.
 - **2026-07-14** — admit-on-approval data layer. Recurrence reworked to fixed calendar anchors.
