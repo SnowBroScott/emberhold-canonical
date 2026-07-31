@@ -12,7 +12,77 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
+DECISION: Brightness on the Slate means STATE and nothing else. The ember tier ramp does not drive row heat there.
+DATE: 2026-07-30
+WHY: The Slate was specced to run two brightness signals on one row — the ember value's DIM→WARM→HOT→BLAZING ramp and the row's live/handled state — on the reasoning that the board already does this. Scott killed it. The board can carry two signals because the ember number IS the point there; the Slate's entire health read is "is this hold well-kept," and a dial that means two things cannot answer one question. The ember value still renders on the row (it must, because it is editable there) — it just stops setting the glow. Rejected alternative: keeping both and pinning a rule that a Blazing current duty must still sit dim. That rule was already written into the spec as a ⚠️ warning telling future sessions not to "fix" it, which is a tell — a signal needing a permanent guard against its own obvious reading is the wrong signal. The Ledger inherits this for free: everything in it is finished, so nothing in it demands anything, and a uniformly flat Ledger is the honest render rather than a missing feature.
+REPLACES: Supersedes the master-spec warning "TWO BRIGHTNESS SIGNALS COEXIST ON ONE ROW AND THIS WILL LOOK LIKE A BUG" (2026-07-30 late). That warning must be REMOVED at the spec regeneration, not softened.
+STATUS: LOCKED
 
+---
+
+DECISION: Retire writes a new nullable column, quests.retired_at. It does NOT reuse archived.
+DATE: 2026-07-30
+WHY: Spec assumed Retire could reuse `archived` for free, since the column exists and isActiveQuest already filters on it. It cannot. `roll_missed_dailies` has been writing archived=true for stale daily instances since it shipped, so a Retired section filtered on `archived` would render every row the engine has ever swept as a duty a human deliberately retired. Two different meanings, one column. Rejected alternatives: a backfill distinguishing engine-archived from human-archived (requires judgment about historical rows nobody can reconstruct); a status enum value (touches the lifecycle machinery for a display concern). One nullable timestamptz, no backfill, historical residue stays invisible. It also records WHEN, which archived never did.
+REPLACES: Supersedes the master-spec line "Costs nothing — archived already exists and isActiveQuest already filters on it."
+STATUS: LOCKED
+
+---
+
+DECISION: Retire replaces Delete on any bounty that has ever been approved. Delete survives only on never-approved bounties.
+DATE: 2026-07-30
+WHY: Under roll-forward the two operations genuinely diverge. Delete ends the duty and erases it; Retire ends the duty and keeps it visible so nobody recreates it in six weeks — which is the entire reason the Slate exists. Before this, nothing user-facing wrote `archived` at all (only the rollover engine, server-side), so the spec's promised "Retired duties stay visible" section would have been decorative — a section that never fills. Deleting an approved bounty also destroys minted-ember history. Delete stays available on never-approved rows because there is nothing to preserve and without it a mistyped bounty is immortal.
+REPLACES: Nothing — new decision. Completes the retired-duties behavior the 07-30 (late) Slate decision promised without a mechanism.
+STATUS: LOCKED
+
+---
+
+DECISION: The Ledger is one list, role-filtered, read-only, sourced from quests and not activity_log.
+DATE: 2026-07-30
+WHY: The record-vs-scrapbook fork was FALSE and dissolved rather than being decided. The difference between an audit line and a trophy is who is reading, not what the data is — "Cade · Take out the trash · Jul 28 · +15" is both. Role-aware depth is one of the three disciplines: same data, different lens, filters never separate systems. So: one list, kid defaults to self, adult defaults to the hold. Sourced from `quests WHERE status='approved'` rather than activity_log, which is the intuitive choice and the wrong one — activity_log carries known verb drift, the member_admitted two-switch bug, and an unresolved question about what actor_label means. The quests table gives title, embers, member and timestamp clean. READ-ONLY is a deliberate capability REMOVAL from Quest Log, which allowed editing embers on an approved bounty: editing history on a surface that governs a currency is incoherent whether or not it retro-mints. Deferred, not decided: grouping beyond day headers.
+REPLACES: Supersedes the master-spec line "ITS SHAPE IS NOT DECIDED" and the parking-lot OPEN DECISION "WHAT DOES THE LEDGER ACTUALLY SHOW?"
+STATUS: LOCKED
+
+---
+
+DECISION: Neither the Slate nor the Ledger gets a tab. They replace Quest Log's existing Briefing card. The Hearth Log is deleted outright.
+DATE: 2026-07-30
+WHY: The nav question resolved cheaper than feared once the entry point was actually looked at: Quest Log lived in a Briefing card labeled ARCHIVE. The surface had already been demoted to a junk drawer by its own label. Tab bar stays at seven — one past mobile comfort and not worth making eight — with the Slate primary and the Ledger reached by a secondary link from it. "Does this already exist" is a creation-time question, not a daily-driver destination. Rejected: a symmetric segment control (jAIne's earlier lean), which implies equal weight between the two and would have lied about how often the Ledger gets opened. The Hearth Log is NOT inherited by the Ledger: it is raw activity_log rows behind a card reading VERIFICATION · TEMPORARY, a debug window shipped to production. Letting the Ledger absorb its job builds the admin/reporting surface, which north-star fences explicitly. Two cards became two cards by coincidence of position, not function.
+REPLACES: Answers the master-spec navigation open question and the parking-lot OPEN DECISION "DOES THE SLATE REPLACE A TAB, OR ADD ONE?"
+STATUS: LOCKED
+
+---
+
+DECISION: Under the All filter, One-offs render ABOVE Standing. Under a cadence filter, the One-offs section does not render at all.
+DATE: 2026-07-30
+WHY: Scott's call from the first live render. Under All, One-offs sat below fifteen standing rows — the transient section, the one that actually changes week to week, buried under the permanent one. Two rows on top costs nothing and Standing is still the first thing the eye lands on. The second half matters more: under Daily/Weekly/Monthly the section rendered an empty state reading "Filtered out by cadence," which is copy explaining why a section that shouldn't exist is empty. A one-off has no cadence, so under a cadence filter the section is INAPPLICABLE, not empty — no header, no counter, no empty state. Shipped free via Claude Code rather than Lovable, because it is frontend-only, bounded and eyeball-verifiable.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The Slate's empty state is the product's only lesson in recurrence.
+DATE: 2026-07-30
+WHY: A brand-new hold has no standing duties, so the "does this already exist" surface answers "nothing does" — which reads as a dead end unless it is doing another job. Nothing anywhere else in Emberhold teaches that a bounty can repeat. Pip's line names concrete duties (the trash, the dishes, Monday laundry) and states the mechanic plainly: it appears here once and stays. Paired with a create affordance that opens with recurrence already on, so the lesson ends in the thing it taught. Rejected: a generic "nothing here yet" empty state, which spends a real onboarding moment on nothing.
+REPLACES: Answers the parking-lot OPEN DECISION "What is the SLATE's empty state?"
+STATUS: LOCKED
+
+---
+
+DECISION: Two canon facts about the stranded past-due rows were wrong and are corrected here.
+DATE: 2026-07-30
+WHY: Canon recorded "Take out the trash" as SUBMITTED, due 2026-07-21, stranded. It is approved/archived with a future-dated successor at 2026-08-03; the Ledger renders its approval on Monday Jul 27. And there was ONE stranded past-due row, not two. This matters twice. First, the "submitted does NOT roll" guarantee — the only asymmetry in the roll-forward rule, the rule that protects a kid from an adult's lag — has ZERO live evidence, because no submitted row exists anywhere in the hold to test it against. It is built and unexercised, not verified. Second, the guilt-pile argument was built on an empirical base half the size canon claimed. The rule still stands on its own merits: unbounded accumulation across cycles is wrong whether or not it had happened yet. But it is recorded here that the conclusion outlived the evidence cited for it, and that the recon which produced both errors has not been audited.
+REPLACES: Corrects the factual claims in the 2026-07-30 (late) roll-forward entry and in master-spec's recurring-lifecycle section. The RULE is unchanged; only the evidence behind it is.
+STATUS: NOTED
+
+---
+
+DECISION: Claude Code draws zero Lovable credits — measured, not assumed.
+DATE: 2026-07-30
+WHY: Canon asserted this in three places and it was load-bearing for the entire lane-routing rule: the row primitive, the recon jobs, the grant probe and roughly half the parked work are all queued as "free, Code lane." Nobody had ever checked, and the two-way GitHub sync between the repos made it plausible that a Code push could draw down the meter on Lovable's re-sync. Scott measured the count before a full Code job (read, edit, build, commit, push, Lovable re-sync) and after. Zero change. Recorded as evidence rather than assumption so it is not re-litigated, and because if it had gone the other way, every "free" job in the parking lot would have needed re-scoping at once.
+REPLACES: Nothing — converts a standing assumption into a verified fact.
+STATUS: NOTED
+
+—-
 DECISION: "Bounty" is the universal object term. "Quest" is retired entirely.
 DATE: 2026-07-30
 WHY: The Quest/Bounty question had been LOCKED twice — 07-04 ("Quest is universal, Bounty
