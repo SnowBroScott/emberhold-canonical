@@ -13,6 +13,231 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
 
+DECISION: "Bounty" is the universal object term. "Quest" is retired entirely.
+DATE: 2026-07-30
+WHY: The Quest/Bounty question had been LOCKED twice — 07-04 ("Quest is universal, Bounty
+     survives only as a proper noun for the Briefing's Open Bounties strip") and 07-11
+     (enforcement: Bounty banned from card-level UI). It kept resurfacing anyway, roughly
+     monthly. THE DIAGNOSIS IS THE VALUABLE PART: the rule was not being violated, it was
+     incoherent. It permitted BOTH WORDS ON SCREEN SIMULTANEOUSLY in different jobs — a rule
+     a designer can hold in his head and a user structurally cannot. May sees two nouns for
+     one object. So does a kid, so does a stranger, so does Scott every time he looks at the
+     board. The repeated re-litigation was the correct response to an incoherent rule, not a
+     failure of discipline. THE FIX WAS KILLING THE CARVE-OUT, NOT PICKING A WINNER.
+     WHY BOUNTY WON, in order of strength: (1) TAXONOMY — Campaign > Quest is mush because
+     both nouns imply narrative and neither says which is bigger; Campaign > Bounty is clean,
+     the campaign is the arc and the bounties are the paid work inside it. (2) THE BOARD
+     METAPHOR — bounties get posted on boards, and Emberhold has a board; quests get handed to
+     you by an NPC. (3) THE VERB IS ALREADY OURS — you CLAIM a bounty, you ACCEPT a quest, and
+     "claim" has been live in the product for weeks. (4) HONESTY — the ember economy is
+     transactional; bounty says what the app actually is.
+     THE 07-04 ARGUMENT THAT NO LONGER HOLDS: "Quest being universally understood is a FEATURE,
+     the differentiation budget is already spent on ember/hold/hearth/Vault/Ranks." That was a
+     real argument and it was defensible; Scott's counter is that the personality budget wants
+     more, and the taxonomy argument above is independent of personality anyway.
+     IDENTIFIERS DO NOT CHANGE. The `quests` table, the `bounty_posted` enum, every column
+     name — all stay. Per the 07-11 identifiers-vs-copy rule this is a display-string sweep,
+     not a migration.
+     THE LANDING CHECK IS THE WHOLE RISK AND IT IS NAMED: the sweep rides on the Slate build
+     prompt, never as a standalone job. A LOCKED rename with no landing is a wish — Feast→Hall
+     sat unshipped for ten days after being LOCKED, and the 07-11 sweep was reported clean by
+     Lovable and had OPEN BOUNTY stamped on six cards an hour later. REQUIRE THE GREP, file by
+     file, with a justification for every survivor.
+     KNOWN DEBT CREATED: `master-spec.md` lines 41-42 now contradict this entry and the spec's
+     core object noun is wrong across 669 lines. The install-prompt description is its own
+     LOCKED decision containing "quests" twice and needs its own supersede when the sweep runs.
+     north-star's membrane line inherits the rename. All tracked in status and parking-lot.
+REPLACES: SUPERSEDES "Quest is the universal object term. Bounty survives only as a proper
+          noun" (2026-07-04) and moots its enforcement entry "Bounty is banned from card-level
+          UI" (2026-07-11). Both stay visible per append-only; this entry governs.
+STATUS: LOCKED
+
+---
+
+DECISION: The Slate and the Ledger replace Quest Log. The Slate holds anything with a FUTURE; the Ledger holds anything FINISHED.
+DATE: 2026-07-30
+WHY: May's QA item was "it's hard to see if a quest already exists for something weekly or
+     monthly — high potential for duplication." THE MECHANISM: there is no object representing
+     "the weekly trash duty." There are only instances, chained by approval — handle_quest_
+     approval() mints the successor on the approval transition, so a recurrence exists only as
+     a chain of rows each spawned by the last one's approval. Break the chain and the
+     recurrence silently stops existing. To answer "does one already exist" you must inspect
+     instances: the board hides future-dated successors (correct, LOCKED 07-21), and Quest Log
+     applies no due_date filter so it is live instances, resting successors, stranded
+     past-dues and completed history in one undifferentiated pile. NEITHER SURFACE ANSWERS THE
+     QUESTION. Duplication was the correct thing to expect.
+     THE SHAPE: two sections, because there are two object shapes and Quest Log's sin is
+     treating them as one list. STANDING duties = one row per duty, forever, never leaving the
+     Slate because there is always a next cycle; their individual completions go to the Ledger.
+     ONE-OFFS = a single instance that lives on the Slate until approved, then moves to the
+     Ledger permanently. Live/submitted/approved are STATES ON THE ROW for a duty, not separate
+     rows; for a one-off, approved is what evicts it.
+     RETIRED DUTIES STAY VISIBLE, dimmed and collapsed. This is not sentiment: if archiving a
+     duty makes it vanish, someone re-creates it in six weeks and we are back at the
+     duplication complaint that started this. The Slate has one job and "does this already
+     exist" includes the ones you turned off. Costs nothing — `archived` already exists and
+     isActiveQuest already filters on it. No new column, no migration.
+     BRIGHTNESS IS THE STATE DIAL, REUSED NOT INVENTED. Bright = demands you now; dim =
+     handled. Consequence worth having: A DIM SLATE IS A WELL-KEPT HOLD — the health read is
+     visual before it is numeric, and the "X of Y current" counter is a derived nicety rather
+     than the mechanism. WATCH FOR THIS LOOKING LIKE A BUG: two brightness signals coexist on
+     one row, the ember value's Dim→Blazing tier ramp and the row's state heat. Not a conflict;
+     the board already runs both on one card. But a Blazing 500-ember duty that is CURRENT must
+     still sit dim, because the health read comes from the row and not the number.
+     SCOTT SUPPLIED THE HALF THAT MATTERS AND jAIne DID NOT HAVE IT: there is no completion
+     state for a cycle. Nothing anywhere says "the hold is well-kept this month." That is a
+     missing habit loop sitting dead-centre of the thesis — out-habit, don't out-feature —
+     and it was on no list.
+     REJECTED — embers off the Slate on membrane grounds ("it becomes a second board"). This
+     was jAIne's position and Scott overruled it with the better argument: jAIne was reasoning
+     about READING, Scott about EDITING. Correcting a mis-valued bounty today costs a
+     delete-and-recreate, which destroys the row's history and, for a recurring duty, breaks
+     the succession chain. The Slate is the only surface where that correction is coherent.
+     Embers render on the row and are editable there.
+     REJECTED — a claim action on the Slate. Claiming happens on the board. The Slate reads and
+     edits; it does not play. Keeps the membrane clean.
+     DECOMPOSITION, per the north-star rule: this needs NO new object. `recurrence`,
+     `recurrence_day`, `archived` and title are already on the rows. It is a grouping, a filter
+     and a view. Content and structure, not architecture.
+     DISSOLVED BY THIS ENTRY: "Quest Log applies no due_date filter — by design or by
+     omission?" carried as an open decision since 07-26. It was never answerable as posed. The
+     real question was what the surface is FOR, and the Slate answers it.
+     STILL OPEN AND TRACKED IN PARKING-LOT: what the Ledger actually shows (record vs
+     scrapbook), and whether Slate+Ledger replaces one tab or adds one against a nav already
+     at seven.
+REPLACES: Retires the Quest Log surface. Dissolves the 2026-07-26 open decision on Quest Log's
+          missing due_date filter.
+STATUS: LOCKED
+
+---
+
+DECISION: Unapproved recurring instances roll FORWARD as the same row. `open` and `claimed` roll; `submitted` does not.
+DATE: 2026-07-30
+WHY: Closes the design pass that 2026-07-26 opened and left explicitly unwritable ("a migration
+     against an undecided rule is not writable"). Two instances are stranded on the live board —
+     Grocery Shopping (due 07-06, claimed) and Take out the trash (due 07-21, submitted) —
+     because roll_missed_dailies() filters on recurrence = 'daily' and nothing else in the
+     system rolls anything.
+     THE RULE: move the spawn trigger off approval. A weekly exists because it is the week, not
+     because last week's got signed off. Extend the existing roll_missed_dailies() mechanism to
+     all three cadences, ROLLING THE SAME ROW to the current anchor rather than spawning a
+     successor. SAME ROW MOVING = NO GUILT PILE. NEW ROW SPAWNING = THE PILE. This is sweeping
+     the class, and the shape is already shipped and proven for dailies.
+     WHY `submitted` IS EXEMPT: a submitted bounty is sitting in the ADULT'S approval queue, not
+     waiting on the kid. Rolling it forward moves a kid's completed work because an adult was
+     slow. Take out the trash therefore stays put until someone approves it, which is correct
+     pressure applied to the correct person. `claimed` rows keep their claim on roll, consistent
+     with the 07-21 lifecycle decision that assignment is permanent and only the cycle resets.
+     ROLL-FORWARD IS THE PRECONDITION FOR THE SLATE, NOT A COMPANION FIX. One row per duty only
+     holds if the row moves. Spawn-on-approval without roll-forward gives three stranded trash
+     rows by August and an unreadable Slate on day one. These ship together.
+     SCOTT'S OBJECTION AND WHY IT WAS HALF RIGHT: he read the proposal as producing permanent
+     board clutter — ten monthlies always sitting there with no way to tell what is left. The
+     factual correction is that successor-spawning is ALREADY SHIPPED and LOCKED since 07-21;
+     the successors exist the moment you approve and are merely hidden by isActiveQuest until
+     their due date. So on August 1 every monthly lands on the board at once, today, with no
+     change from us. This decision only alters the UNAPPROVED case, which currently strands
+     forever. BUT THE OBJECTION WAS RIGHT ABOUT THE REAL GAP and produced the Slate.
+     BOARD CLUTTER IS REAL, SEPARATE, AND CHEAP: a live monthly is real work someone should
+     claim, so do not hide it — group it. Reuse the Lists collapsible sections (fb6aa99).
+     Reuse over new systems.
+     LIKELY SECOND PAYOFF, UNVERIFIED: the STALE chip predicate is probably `due_date < today`,
+     which the stranded past-dues would fully explain. Verify before building anything separate.
+REPLACES: Resolves "Unapproved weekly and monthly quests never roll forward" (2026-07-26,
+          NOTED). Formally reverses the 2026-07-21 call that a weekly/monthly roll-forward job
+          was redundant — that call was correct for approved quests and blind to unapproved ones.
+STATUS: LOCKED
+
+---
+
+DECISION: Title truncation is ONE class — the title is the only element permitted to shrink. The fix is a shared row primitive.
+DATE: 2026-07-30
+WHY: Reported by May as a wall problem; Scott corrected it in the same breath — it is wherever
+     bounty strings run long. Photos confirm it on Vault manage rows, the wall's Claimable list,
+     and the wall's Recently Completed list. In every case the ember value, timestamp and action
+     icons are protected from shrinking and the title absorbs the entire squeeze. Rows are
+     vertically generous and horizontally starved: enormous Vault rows clipping a three-word
+     title to fit.
+     THE SUSPECTED MECHANISM, STATED AS A HYPOTHESIS BECAUSE THAT IS WHAT IT IS: on the Vault
+     manage list, three rows carry the ADULTS ONLY audience badge and all three truncate; six
+     rows lack it and none truncate. Three-for-three, six-for-six. That is a correlation
+     observed IN A PHOTOGRAPH, not a finding read out of code, and jAIne initially asserted it
+     as the latter. A read-only recon is briefed to DISPROVE it, along with three companions:
+     that N independent row implementations exist with no shared primitive, that the title is
+     always the flexible child, and that title length is not the variable.
+     THE FIX: one shared row primitive — shrink-to-fit down to a legibility floor, then wrap,
+     capped at two lines; badge drops below the title rather than beside it. Fix the mechanism,
+     not the three instances. This is the isActiveQuest pattern wearing a different hat: N
+     copies of one concept all making the same wrong call.
+     REJECTED — MARQUEE / SCROLLING TEXT, which is what May actually asked for. The wall is a
+     walk-past surface; scrolling text makes you stand and wait for the sentence to complete,
+     which on a glanceable kiosk is worse than truncation because truncation at least fails
+     instantly. The Claimable panel shows six rows — six simultaneously scrolling titles is a
+     slot machine. Motion was requested because truncation felt broken; the fix is to stop
+     truncating.
+     REJECTED — A TITLE maxLength AT CREATION, AND IT WAS jAIne'S PROPOSAL. Killed inside one
+     exchange by the photos: "Wash/Load Dishwasher" is 20 characters and "10 min massage" is 14.
+     The names are not long; the containers are narrow. A cap would have made users pay for a
+     layout defect. THE GENERAL TELL: when the "cheap upstream fix" constrains the user rather
+     than the code, it is the wrong fix.
+     LANE: Claude Code, not Lovable. Scott asked for it as its own Lovable push so it would be
+     easy to revert; the real requirement was ISOLATED AND TRIVIALLY REVERTIBLE, which Code
+     serves better — one commit, git revert, zero credits, and it is frontend-only so it is
+     Code's lane under the one-writer rule anyway. READ THE REQUIREMENT, NOT THE NAMED TOOL.
+     Auto-accept ON; bounded, reversible, eyeball-verifiable.
+     ACCEPTED RISK, NAMED: a SHARED primitive touches Vault, wall and board at once — wider
+     blast radius than a one-surface patch. Shared is still right, because three implementations
+     making the same wrong call IS the finding, and the revert is still one commit. But Scott
+     eyeballs three surfaces, not one. Do not stack this push with other changes.
+REPLACES: Nothing — new decision.
+STATUS: DRAFT — the badge-as-culprit mechanism is unverified. The named verification is the
+        four-hypothesis read-only recon (H1 badge, H2 implementation count, H3 which element
+        shrinks, H4 length as a variable). The DIRECTION is settled regardless of the outcome;
+        what the recon can change is the shape of the primitive.
+
+---
+
+DECISION: DECLINED — the wall's mid-row clip at a scroll container's bottom edge is not a defect.
+DATE: 2026-07-30
+WHY: jAIne flagged that "Vacuum Upstairs" is cut through the middle of its row at the bottom of
+     the Claimable panel, and argued that on an ambient display a half-row reads as broken
+     rather than abbreviated — arguably worse than the ellipses. Scott declined it flatly from
+     daily live use: he has looked at that wall every day and has never once read it as a bug.
+     Recording it because an un-written rejected idea comes back every six weeks, and because a
+     future instance looking at the same screenshot will flag the same thing.
+     THE PROCESS NOTE IS THE REASON THIS ENTRY IS WORTH ITS SPACE: jAIne raised this unprompted
+     while already holding two accepted findings from the same photos. That is finding-inflation
+     — the instinct to return a full slate from a read rather than only what is there. The
+     person who uses the surface daily outranks the agent reading a photograph of it, and there
+     was no evidence offered beyond "it looks wrong to me," from an agent that cannot see.
+REPLACES: Nothing — new decision.
+STATUS: DECLINED
+
+---
+
+DECISION: User-authored content is out of scope for vocabulary audits. The string law governs app copy only.
+DATE: 2026-07-30
+WHY: jAIne flagged the reward "Video Game" as a Title Case violation sitting among sentence-case
+     siblings, and filed it as string-law drift. Scott corrected it: a reward name is something
+     a human in the household typed. It lives in their hold and on their board and it is not
+     ours to normalise. "That's you letting humans be humans."
+     THIS IS THE PRECISE INVERSE OF THE 2026-07-11 FINDING and that is why it needs writing down.
+     That entry established that rendered strings derived from database identifiers ARE copy and
+     must be audited as such — the test being "does it appear on screen," not "is it derived from
+     code." Applied without this counterweight, that test sweeps up every reward name, quest
+     title, list item and hold name a family has ever typed. THE COMPLETE TEST IS TWO-SIDED: does
+     it appear on screen AND did the product author it. Both, or it is out of scope.
+     A future vocabulary audit WILL flag this — the 07-11 rule is written down and this one was
+     not until now. The Haiku sweep is already queued with three grep targets and would have
+     "corrected" a family's typing on the way past.
+     PRACTICAL BOUNDARY for the sweeps: app copy is anything shipped in the repo — labels,
+     headers, Pip's lines, feed verb templates, empty states, onboarding text. Household content
+     is anything a user typed into a form: bounty titles, reward names, list items, hold and
+     member names, campaign names. Never rewrite the second category, in any sweep, for any
+     reason, including the Bounty rename.
+REPLACES: Nothing — this BOUNDS "Rendered strings derived from database identifiers are COPY,
+          not identifiers" (2026-07-11), which stands unchanged within its scope.
+STATUS: LOCKED
 
 ---
 DECISION: Redemption approval records the PIN-verified adult via a validated optional parameter.
