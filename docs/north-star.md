@@ -1,12 +1,12 @@
 # Emberhold — North Star
 The index card taped to the front of the binder. Read this first, cold, at the start of any session.
 
-Last updated: 2026-07-26
+Last updated: 2026-07-31
 
 ---
 
 ## What it is, in one line
-A gamified household operating system. Chores become **quests** worth **embers**; kids claim and complete them, adults approve, embers buy real rewards at the **Vault**. Mobile-first installable PWA, live at **theemberhold.com**.
+A gamified household operating system. Chores become **bounties** worth **embers**; kids claim and complete them, adults approve, embers buy real rewards at the **Vault**. Mobile-first installable PWA, live at **theemberhold.com**.
 
 ## The thesis (the whole bet)
 **Out-habit, don't out-feature.**
@@ -51,10 +51,10 @@ Not growth. Not a business. Emberhold pays for the tools that build it, across S
 - **MODULE** — an optional functional area a hold may enable. **There is exactly one: fitness.** Stored in `families.enabled_modules`; product name on the glass is **Forge**.
 - **REGISTER** — one of Forge · Garden · Keep · Hall. **Aesthetic only** — an avatar class and an ambient theme. Gates nothing. A hold runs mixed registers.
 
-*"Layer" is retired.* It was coined to name four functional areas; three decomposed entirely into quests, lists and campaigns, and the fourth is a module.
+*"Layer" is retired.* It was coined to name four functional areas; three decomposed entirely into bounties, lists and campaigns, and the fourth is a module.
 
 ## The three disciplines (what keeps us a master, not a jack)
-- **The membrane.** The game lives in **quests only**. Other modules and surfaces stay clean utilities that may *optionally* spawn a quest. Gamify the chore, not the grocery item. *(The wall extends this cleanly — it SHOWS and PROPOSES; it never mints, spends, approves, or edits.)*
+- **The membrane.** The game lives in **bounties only**. Other modules and surfaces stay clean utilities that may *optionally* spawn a bounty. Gamify the chore, not the grocery item. *(**The wall is a full participant, not a display.** It mints, spends and approves — turn-in, redemption request, and adult approval behind a PIN. What it does not do is become a second game: it carries no separate economy, no separate rules, and nothing happens there that could not happen on a phone. **A doc that said the wall "never mints, spends, approves, or edits" stood here until 2026-07-31 and was false for two weeks of shipped behavior. It cost a session's worth of misdiagnosis.**)*
 - **Two backbones.** One timeline (**the calendar**) and one economy (**embers**), with **no conversion** between economies if a second ever exists. The `+` is the single universal capture point.
 - **Role-aware depth.** Kids see a game; adults see operations. Same data, different lens — filters, never separate systems.
 
@@ -70,6 +70,8 @@ Not growth. Not a business. Emberhold pays for the tools that build it, across S
 **The security gate is clean in both directions.** Tenant isolation verified sound under live authenticated attack (07-19). Function grants provably clean (07-21). **Table grants closed 07-26** — `anon` at zero across every table, and the Postgres default that caused six instances of grant drift is fixed at the mechanism rather than the symptom.
 
 **What's missing is not a module. It's that Emberhold has never met a stranger.** "Ready" means the app survives a family that has no Scott in it.
+
+**As of 2026-07-31 a sub-profile can spend embers from the Vault.** It never could before — the `redemptions` INSERT policy required `requested_by = auth.uid()`, and in the shared-session model `auth.uid()` is always the household owner. **The path had failed since it was written and nobody had exercised it.** The wall worked because its RPC bypasses table RLS. **The economy had a working mint and a half-working sink, and the docs said "shipped."**
 
 **Platform posture:** stays a web PWA. No app store, no Apple review, no payment-rail tax (~97% retained via Stripe). Capacitor assessed and **DECLINED** with two named reopen triggers: PWA push proving load-bearing at Gate E, or an appliance play after Gate E returns retention driven by the wall.
 
@@ -132,6 +134,8 @@ All real. All good. **All after strangers are in.**
 
 **Drift is the enemy, and it runs in both directions.** A LOCKED decision with no landing check is a wish — the Feast→Hall rename sat unshipped for ten days. And shipped work can go undocumented — a full wall shipped while these docs still called it fenced.
 
+**And the third direction, learned 2026-07-31: TWO CANON DOCS CAN CONTRADICT EACH OTHER AND AN AGENT WILL READ BOTH.** This doc said the wall never spends; `status.md` listed wall-approve-with-PIN as a pending verify. Both were fetched in the same session. jAIne reasoned off the principle rather than the shipped behavior and called a working feature a membrane breach. **When two canon docs disagree, the one describing SHIPPED BEHAVIOR wins — and the contradiction is itself a finding to be logged, never silently resolved.**
+
 **The harder version, learned expensively: STATE LIVES IN THE REPO OR IT DOESN'T EXIST.** On 2026-07-12 the entire shape of first-run onboarding was decided in conversation and never committed. Two weeks later it was rebuilt from a one-line summary in `status.md`, wrong, and Scott had to catch it. **A decision that only exists in a chat log is not a decision. It's a memory, and the next session doesn't have it.**
 
 ---
@@ -143,4 +147,4 @@ Lovable and Code engineer; jAIne translates; **Scott decides — and Scott is th
 
 **Two standing rules that keep this honest:**
 - **Recon before build, every time — and brief the recon to DISPROVE, not to confirm.** A brief that asks "confirm X" gets X.
-- **"Shipped" means a completed end-to-end loop, verified on the glass.** Not a screen rendering. Not a green checkmark. Not HTTP 200. **A catalog read proves the code is right, never that the behavior is.**
+- **"Shipped" means a completed end-to-end loop, verified on the glass.** Not a screen rendering. Not a green checkmark. Not HTTP 200. **A catalog read proves the code is right, never that the behavior is.** ⚠️ **And "verified" must name WHO walked it.** The Vault's Redeem button worked for every adult who ever tried it and had never once been pressed by a kid. **Never-worked and broke look identical from the glass; ask whether anyone has ever exercised a path before asking what changed.**
