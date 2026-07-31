@@ -27,7 +27,9 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 **Emberhold is a ONE-module product with ONE module.** Registers are aesthetic only. **Fitness (Forge) is the sole module, it is not built, and it is scoped to the Draper household.**
 
-> **⚠️ `master-spec.md` OWES A FULL REGENERATION. UNBLOCKED, DEFERRED TWICE, FIRST IN THE QUEUE.** Six of the 07-30 decisions override its current lines, including a pinned ⚠️ that 07-30 superseded. **jAIne has read ~200 of 669 lines and has twice declined to fake a regeneration.** Dedicated session. **Until then the 07-30 and 07-31 LOCKED decisions govern over the spec's older lines — this is now a standing instruction to every fresh instance, not a note.**
+> **✅ `master-spec.md` WAS CORRECTED 2026-07-31 AND THE STALE-SPEC FLAG IS CLOSED.** ⚠️ **status.md was itself wrong about this, and Scott caught it:** it carried "669 lines, owes a full regeneration, six items stale" — a number and a verdict written *before* the 07-30 (late) fold and never revised after. **The 07-30 fold had already landed the Bounty rename, the Slate and the Ledger.** The real defect was the inverse: **nine lines described decided, shipped things as open** — the Retired column (claimed `archived`, actually `retired_at`), the two-brightness ⚠️, the Slate's empty state, **the Ledger's "ITS SHAPE IS NOT DECIDED / do not build from this section"** while the Ledger was live, the navigation unknown, the title-shrink DRAFT and its superseded row primitive, the rename's "not on the glass yet" banner, and **the wall's false "NEVER MINTS, SPENDS, APPROVES" absolute.** All corrected; today's redemption-path truth folded in. **736 → 773 lines.**
+
+> ⚠️ **A REMAINING GAP, STATED HONESTLY:** the correction pass read the header, the Slate/Ledger region, the Vault section, navigation, the design system and the operating lessons closely. **Roughly 400 lines — Part II (Forge), the onboarding sections, and the schema detail — were not re-read today.** They were folded 07-29/07-30 and are believed current. **A full cold read is still worth doing eventually; it is no longer urgent.**
 
 > **`north-star.md` WAS REGENERATED TODAY.** Its membrane parenthetical asserted the wall *"never mints, spends, approves, or edits"* — false about two weeks of shipped behavior, and **it misled jAIne into calling a working wall redemption a membrane breach.** The wall mints, spends and approves through adult PIN by design. Two rename strings folded in the same pass.
 
@@ -38,10 +40,9 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 | # | Item | Blocks |
 |---|---|---|
 | **1** | **🔴 The marker's read and write, fixed as ONE change.** `FirstRunGate` reads via `getActiveMemberIdSync() ?? auth.uid()`; `mark_first_run_complete()` writes `WHERE id = auth.uid()`. A kid sub-profile's row id is not any `auth.uid()`, so a kid's write **no-ops silently.** ⚠️ **The two bugs cancel — fixing the read alone produces an infinite flow loop.** Needs a validated `profile_id` parameter, family-checked server-side. Migration + frontend, Lovable lane. ⚠️ **Today's Vault bug was the same class and the same root cause. This is now the second confirmed instance, not a theory.** | The kid joiner flow on shared devices. Gate D. |
-| **2** | **🔴 `master-spec.md` FULL REGENERATION.** Dedicated session, needs the full 669-line read. **Deferred twice.** | Every fresh instance reasoning off stale LOCKED lines. |
-| **3** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. | Gate B honesty. |
-| **4** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. |
-| **5** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
+| **2** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. | Gate B honesty. |
+| **3** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. |
+| **4** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
 
 **Downgraded off the critical path: auth email.** Sender identity fixed by the project rename; one of six providers still spams. **Tracked, not worked.**
 
@@ -86,7 +87,6 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 ## ⬜ OPEN — the next work, in order
 
 - ⬜ **🔴 THE MARKER READ/WRITE PAIR.** Critical path #1. Lovable lane, needs credits. **Second confirmed instance of the profile-id-vs-auth-id class.**
-- ⬜ **🔴 `master-spec.md` FULL REGENERATION.** Dedicated session.
 - ⬜ **🟠 `verbLabel()` LEAKS THE ENUM.** `hearth-log.tsx` special-cases only `bounty_posted`; everything else falls through to `verb.replace("_"," ")`, rendering **QUEST APPROVED** on the glass. **Grep structurally cannot find this — no line spells "quest."** The file is the protected rollback path, so it was correctly untouched. ⚠️ **The real question is whether the same fallback exists in the three surfaces that STAY — wall ticker, Briefing, NotificationBell. Code says their renderers already output "completed." One cheap confirmation.**
 - ⬜ **🟠 FOUR INDEPENDENT "VERB → DISPLAY LINE" IMPLEMENTATIONS.** `wall.tsx`, `Briefing.tsx`, `NotificationBell.tsx`, `hearth-log.tsx`. **Third occurrence of the divergence class, after `isActiveQuest` and the two derivations of role. It is why a rename can land in three places and miss the fourth.**
 - ⬜ **🟠 THE SCREEN COPY PASS — RUNNING.** See parking-lot. **Slate ✅ · Ledger ✅ · everything else unreviewed.**
@@ -188,7 +188,6 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 ## ⬜ OUTSTANDING — ship-blocking debt
 
 - ⬜ **The marker read/write pair.** CRITICAL PATH #1.
-- ⬜ **`master-spec.md` full regeneration.** CRITICAL PATH #2.
 - ⬜ **Vault favorites → real per-profile persistence** — currently `localStorage`.
 - ⬜ **Quality — a rating with no consumer.** Direction LOCKED (signal, never an ember modifier).
 - ⬜ **Re-forge reach across the 13.**
