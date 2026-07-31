@@ -13,7 +13,12 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
 
-
+---
+DECISION: status.md's own stale-doc flag was stale. A tracking item outlived the work it tracked by a full day.
+DATE: 2026-07-31
+WHY: status.md carried "master-spec.md owes a full regeneration — 669 lines, six items stale, deferred twice, first in the queue" through an entire session. It was wrong on every count. The doc was folded on 2026-07-30 (late), which landed the Bounty rename, the Slate and the Ledger; it stood at 736 lines, not 669; and the fold was not owed. jAIne read that flag at session open, never fetched the file, and copied both the number and the verdict into status.md, parking-lot.md and a session-close reconciliation line — declaring "master-spec: no change" about a document she had not opened. Scott caught it with two facts: it was updated yesterday, and the line count is wrong. THE ACTUAL DEFECT WAS THE INVERSE OF THE ONE TRACKED, WHICH IS WHY IT SURVIVED. master-spec was not missing decisions; it was retaining superseded ones. Nine lines described decided, shipped things as open — most dangerously the Ledger's "ITS SHAPE IS NOT DECIDED... do not build the Ledger from this section alone," sitting in a LOCKED doc while the Ledger was live in production. A fresh instance reading that would decline to build a surface that already exists. THE RULE: A TRACKING ITEM IS A CLAIM ABOUT A DOCUMENT, NOT THE DOCUMENT. Verifying it costs one fetch. This is the same failure as reasoning off north-star's stale wall line, twice in one session, both by trusting a doc's description of another doc instead of reading the other doc. State lives in the repo — but so does staleness, and a status board is exactly as capable of rotting as the thing it tracks. Corollary: a fold and its status-board entry must be updated in the same commit, or the entry starts lying immediately.
+REPLACES: Closes the "master-spec.md owes a full regeneration" item carried in status.md and parking-lot.md since 2026-07-29.
+STATUS: NOTED
 ---
 DECISION: The Vault's redemption request routes through wall_request_redemption. The direct client insert is deleted.
 DATE: 2026-07-31
