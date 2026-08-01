@@ -14,6 +14,53 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 
 
 ---
+
+DECISION: /quest-log and /hearth-log are a kept debug surface, removed at Gate C, not deletion-pending
+DATE: 2026-08-01
+WHY: The standing plan deleted both routes "once the Slate is trusted." The Slate is now trusted and the routes stay anyway, because the gate was wrong: it assumed the only reason to keep them was doubt about their replacement. The Hearth Log is a working debug surface with a live consumer — Scott — and it earned that twice in two days as the readable record of what the activity feed actually wrote, including the wall's missing logActivity write. Rejected: deleting them now, which would have killed the verbLabel enum leak for free but cost a real diagnostic tool at the exact moment we are still finding feed bugs. Rejected: keeping them indefinitely, which leaves an unswept vocabulary surface reachable in production. The scheduled removal joins prod test-object cleanup on the Gate C shelf — both exist because we are still building, and both come out immediately before a stranger can reach the product. ACCEPTED COST: the Hearth Log is deliberately unswept, so it will eventually say "quest" while every other screen says bounty, and someone will read it late at night and believe it.
+REPLACES: The 2026-07-30 posture that route deletion follows once the Slate is trusted
+STATUS: LOCKED
+
+---
+
+DECISION: Fixing the verbLabel enum leak is DECLINED
+DATE: 2026-08-01
+WHY: hearth-log.tsx's verbLabel() special-cases only bounty_posted and falls through to verb.replace("_"," "), rendering QUEST APPROVED. Read-only recon on 2026-08-01 quoted the source of all three surviving surfaces — wall.tsx's tickerLine, Briefing.tsx's pulseLine, NotificationBell.tsx's lineFor — and proved they are word-for-word the same switch, five named verbs plus a default returning `${who} · ${obj}` that never touches row.verb. hearth-log.tsx is therefore the only place in the codebase that derives display text from a raw enum value, and it is an unlinked page reachable only by clicking through the board feed. A fix would spend a job changing a string nobody encounters by accident, on a file scheduled for removal. Rejected: fixing it anyway for tidiness. Rejected: deleting the file to moot it, which is the same trade with a worse side effect (see the entry above). BONUS FINDING: activity_verb has seven values and every renderer names five; member_admitted and member_denied fall to the label-only default, which is why the feed reads "Mom · Leo." That is two missing cases in three identical switches, not a display bug — a cheaper fix than the polish list assumed.
+REPLACES: Nothing — new decision
+STATUS: LOCKED
+
+---
+
+DECISION: No em dashes in user-facing copy, and none in briefs handed to Lovable
+DATE: 2026-08-01
+WHY: Scott flagged the em dash as the current strongest tell that copy was machine-written. The mechanism is already documented for design-rationale phrasing — jAIne writes a brief, Lovable renders jAIne's phrasing as UI — and punctuation escapes by the identical route, which is why the rule has to cover the brief and not just the glass. The 08-01 sweep removed 125 em/en dash characters across 43 files. Rejected: treating this as a one-time cleanup, because the source is jAIne's writing habit and it will re-offend on the next build prompt. BOUNDED, and these stay: en dashes in time and date ranges are correct typographic convention rather than the tell, and a bare — used as a "nothing set" placeholder is a display value, not prose. Also unchanged: user-authored content is out of scope for every sweep. SECOND-ORDER EFFECT WORTH KNOWING: removing a dash sometimes removes structure, not just punctuation — slate.tsx's standing-duties parenthetical now sags as commas and needs a second look.
+REPLACES: Nothing — new decision
+STATUS: LOCKED
+
+---
+
+DECISION: One resolver, not one expression copied twice — and the validated-actor-id RPC is now the standard for the profile-id-vs-auth-id class
+DATE: 2026-08-01
+WHY: The first-run marker's read and write were both scoped to the account holder in different ways: mark_first_run_complete() wrote WHERE id = auth.uid(), markFirstRunComplete contained a literal void profileId that discarded the id it was handed, and FirstRunGate read a route-context profile fetched WHERE id = data.user.id. Three points of failure, and the two that cancelled meant fixing either alone produced an infinite first-run loop. The fix drops the zero-arg function outright — not a defaulted parameter, which would leave the old signature callable as an overload — and creates mark_first_run_complete(_profile_id uuid), SECURITY DEFINER, validating household membership and active status server-side without ever comparing against auth.uid(). That is the third shipped instance of this pattern after approve_redemption and wall_request_redemption, and it is now the default answer whenever a caller correctly resolves an identity and the callee discards it. The frontend half went further than specified: rather than writing the same resolution expression in two files, both readers call one shared resolveFirstRunProfileId(). Two identical copies of an expression is how isActiveQuest and the four verb renderers got where they are; a single resolver cannot drift. Rejected: fixing the read alone. Rejected: a defaulted parameter. VERIFIED ON THE GLASS by switching to a kid, completing first run, and switching back — the second entry is the test.
+REPLACES: Nothing — new decision
+STATUS: LOCKED
+
+---
+
+DECISION: Plan mode for every migration, reviewed in ONE pass — and invariants stated as explicit lines in the brief
+DATE: 2026-08-01
+WHY: Plan mode was correct for the marker migration because a code revert is not a database revert: a wrong migration is not undone, it is followed by a second migration, which costs a second spend on top of the first. Plan mode makes the schema decision reviewable before it is a fact. THE COST DISCOVERED: a plan iteration is billed like a build. Two round trips over one constraint consumed two of five credits, and the whole build came to roughly 2.8. Therefore the review is a single pass — every objection goes in one message or it goes in the next session. THE DEEPER MISS: the constraint that drove both iterations was that FirstRunGate's null fallback must match the writer's. jAIne wrote "the read and the write must resolve identically" as prose intent and left the fallback implicit, then bought it back at a credit per turn. Loose briefs remain correct for execution latitude — Scott's best avatars came from them and the over-specified ones were weakest — but an invariant is not latitude. The thing that must be true gets its own line.
+REPLACES: Nothing — new decision
+STATUS: LOCKED
+
+---
+
+DECISION: Same-row roll-forward is verified for monthly and the submitted exclusion works — and "last done" is what makes a moving row auditable
+DATE: 2026-08-01
+WHY: August 1 read five monthly rows, all MONTHLY · 1ST, all Due now, zero duplicates, no archive-and-spawn. The throwaway daily created and claimed the previous evening sat unmoved at July 31 still awaiting approval ten hours later, which is the only condition that exercises the submitted exclusion — a row past its anchor with somewhere to move. Both legs pass. THE CONTROL PARTLY FAILED AND THE PRODUCT SAVED IT: the banked discriminator was Cade's claims on two rows, and Cade actually did those chores overnight, so approval moved the rows before the rollover did and the claim evidence went with it. The board stayed legible only because each row carries "last done Jul 31." A row that moves instead of respawning has no history unless it carries one, and that field turned an ambiguous morning into a self-explaining one without a query. It was designed as a convenience and it is load-bearing. LESSON FOR FUTURE CONTROLS: a snapshot taken from a live household can be consumed by the household. Prefer a control the working product cannot erase, or make the row carry its own history. STILL OPEN: this is an incidental exercise of the monthly branch, not its verification — successor arithmetic and roll-forward are different tests and the clean natural one is 2026-09-01.
+REPLACES: Nothing — new decision
+STATUS: NOTED
+---
 DECISION: status.md's own stale-doc flag was stale. A tracking item outlived the work it tracked by a full day.
 DATE: 2026-07-31
 WHY: status.md carried "master-spec.md owes a full regeneration — 669 lines, six items stale, deferred twice, first in the queue" through an entire session. It was wrong on every count. The doc was folded on 2026-07-30 (late), which landed the Bounty rename, the Slate and the Ledger; it stood at 736 lines, not 669; and the fold was not owed. jAIne read that flag at session open, never fetched the file, and copied both the number and the verdict into status.md, parking-lot.md and a session-close reconciliation line — declaring "master-spec: no change" about a document she had not opened. Scott caught it with two facts: it was updated yesterday, and the line count is wrong. THE ACTUAL DEFECT WAS THE INVERSE OF THE ONE TRACKED, WHICH IS WHY IT SURVIVED. master-spec was not missing decisions; it was retaining superseded ones. Nine lines described decided, shipped things as open — most dangerously the Ledger's "ITS SHAPE IS NOT DECIDED... do not build the Ledger from this section alone," sitting in a LOCKED doc while the Ledger was live in production. A fresh instance reading that would decline to build a surface that already exists. THE RULE: A TRACKING ITEM IS A CLAIM ABOUT A DOCUMENT, NOT THE DOCUMENT. Verifying it costs one fetch. This is the same failure as reasoning off north-star's stale wall line, twice in one session, both by trusting a doc's description of another doc instead of reading the other doc. State lives in the repo — but so does staleness, and a status board is exactly as capable of rotting as the thing it tracks. Corollary: a fold and its status-board entry must be updated in the same commit, or the entry starts lying immediately.
