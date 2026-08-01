@@ -14,6 +14,12 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 
 
 ---
+DECISION: The offline shell drops to LATER; installability is promoted to a Gate B blocker
+DATE: 2026-08-01
+WHY: Gate B has carried "service worker" as one item with one justification — an offline themed shell instead of Chrome's dinosaur. Setting up the permanent wall tablet split that item in two and inverted their priorities. Android Chrome will not offer to install Emberhold, the manifest is valid and serves correctly, and the remaining installability requirement Chrome enforces is a registered service worker with a fetch handler, which has never been built. iOS enforces no such thing, which is why every install we have ever done worked and hid the problem. So a stranger on the non-Apple half of the market cannot install the app at all, and Gate B's real exit criterion is that they can — not that an offline screen looks nice. NOT YET CONFIRMED: nobody has checked whether an SW is registered at all; Lovable's stack may have shipped one. THE OFFLINE SHELL ITSELF IS DEPRIORITIZED DELIBERATELY, on Scott's call: household wifi is effectively pervasive, a chore board is not the thing anyone needs in a dead zone, and a cache strategy carries the single failure mode on this board that cannot be repaired by pushing a fix, because the broken mechanism is also the delivery mechanism. Rejected: building both together as one careful pass, which was the standing plan and which welds a low-value feature to a blocking one. Rejected: declining the offline shell outright — it reopens automatically if PWA push is ever built, since push and service workers are the same mechanism. CONSEQUENCE: the minimal SW is now SAFER than the version canon feared, because caching nothing leaves no stale state to trap a user in. Hard invariant regardless: never cache a response carrying an auth header, which would reintroduce tenant isolation failure at the cache layer.
+REPLACES: The Gate B framing of the service worker as offline-shell polish
+STATUS: DRAFT — contingent on confirming no service worker is currently registered
+---
 
 DECISION: /quest-log and /hearth-log are a kept debug surface, removed at Gate C, not deletion-pending
 DATE: 2026-08-01
