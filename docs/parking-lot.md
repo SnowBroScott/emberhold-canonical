@@ -15,7 +15,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 ## Inbox (untriaged)
 
-*(empty — triaged 2026-08-01)*
+- **`ledger.tsx` and `slate.tsx` each carry their own `og:title`; the other 31 routes do not.** Surfaced during the 08-01 page-title sweep. Not a defect. **But two routes share to social differently from the rest** — either 31 are missing it or 2 have extra. **Cheap either way; needs a call on which is right.**
 
 ---
 
@@ -35,7 +35,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 | Screen | State | Notes |
 |---|---|---|
-| **The Slate** | ✅ **Reviewed 07-31** | Eyebrow → EVERYTHING THAT'S LIVE. Standing + One-offs subtitles deleted. ⚠️ **The standing-duties blurb needs a SECOND look post-em-dash-sweep — the dashes were structural and the commas sag. Deletion is likelier than repunctuation.** |
+| **The Slate** | ✅ **Reviewed 07-31, revisited 08-01 late** | Eyebrow → EVERYTHING THAT'S LIVE. Standing + One-offs subtitles deleted. ✅ **Collapsed-group label `{n} more current` → `{n} done`** — that group holds only completed rows and "current" said the opposite. ⚠️ **The standing-duties text is an EMPTY STATE (`SlateEmpty()`), not a persistent blurb. Rewrite briefed, not yet run.** |
 | **The Ledger** | ✅ **Reviewed 07-31** | Own copy already clean; inherits the Slate's link. |
 | **Auth / sign-in** | ✅ **Reviewed 08-01** | Subhead deleted. WHAT IS EMBERHOLD block kept — it earns its place and says the same thing better. |
 | **Campaigns** | ✅ **Reviewed 08-01** | Description deleted entirely. The tab is labeled, the bounties are grouped on screen, the bar is visibly filling. |
@@ -87,17 +87,13 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 ## NOW (this is the next work)
 
-- **🔴 `master-spec.md` OWES A NAMED FOLD — FOUR REGIONS, FIFTEEN MINUTES.** Line 8 (the `verbLabel` open question, now answered). Lines 298–299 (the marker's read/write ⚠️, now shipped). Line 482 (`/quest-log` + `/hearth-log` as "deletion is a follow-up," now reclassified as a kept debug surface until Gate C). Line 753 (the copy-discipline section, needs the em-dash rule). ⚠️ **jAIne named these from a grep, not a read. Do the fold from a read.** **Open the next session with it.**
-- **🟠 PAGE TITLES USE A COLON AND SHOULD NOT.** `Board: Emberhold` across 32 route files plus `__root.tsx`'s title/og:title/twitter:title. **A colon implies containment; the convention for a tab title is a pipe or a middot — `Board · Emberhold`.** The sweep picked a form jAIne never specified. **Free Code, mechanical, do it before it lands in link previews.**
+- **🔴 THE ANDROID INSTALL PROMPT HAS NOT APPEARED.** The service worker is registered and running on the live origin, which was the missing criterion. **It may not have been the only one.** Restart the tablet, load fresh in Chrome proper, check the menu for "Install app." ⚠️ **Fully Kiosk Browser uses its own webview and will never show the prompt.** If Chrome still withholds it, remote-debug over USB: **Chrome's Manifest panel names the failing criterion in plain text**, which beats another round of theories.
+- **🟠 THE `SlateEmpty()` REWRITE — BRIEFED, NOT YET RUN.** Replacement: **"Repeating bounties live here. The trash, the dishes, Monday laundry."** The current string does three jobs and one earns its place: it restates the empty condition, explains roll-forward mechanics to a nine-year-old, and duplicates the CTA sitting directly below it. Mascot and CTA untouched. ⚠️ **It also contains `laundry,it` — a missing space introduced by the em-dash sweep and shipped.**
 - **🟠 DELETE THE THROWAWAY TEST BOUNTY.** "Do Not Approve Testing Roll-Over." Purpose served, never approved, Delete available. **One tap.**
-- **🟠 `slate.tsx`'s STANDING-DUTIES BLURB — SECOND LOOK.** The em dashes were structural, not decorative; commas replaced them and it sags. ⚠️ **Deletion is likelier right than repunctuation — the Slate is showing standing duties while the copy explains what standing duties are.** **Scott's eyes.**
 - **🖊️ THE SCREEN COPY PASS — see the section above.** Slate ✅ Ledger ✅ Auth ✅ Campaigns ✅ Calendar ✅ Briefing ✅.
 - **Walk the kid JOINER flow with an actual kid.** ✅ **Unblocked 08-01** — the marker was the dependency. First-run fires and completes correctly on a profile switch; **the join path itself has still never been exercised.**
-- **`member_admitted` renders as `"Mom · Leo"` — NOW SCOPED.** The `activity_verb` enum has seven values; three renderers name five. **Two missing cases in three identical switches, not a mystery.**
 - **`Testing retired` stays retired** once its successor's date arrives. One look.
-- **The Slate detail panel read IN PROGRESS while the row header read "Done today."** Panel and header may render off different instances. Noticed 07-31, not chased.
 - **The wall's `logActivity` sits in `mutationFn`, not `onSuccess`** — a failed log would report a failed approval that actually committed. **Compare against `vault.tsx`. One line.**
-- **Deleting a bounty may orphan its calendar event.** Creating one writes an `EVENT CREATED` row; the deleted `Testing retired` was never checked against the calendar. **One look.**
 - **Recurrence chip consistency.** Reads `Monthly · 1st` on the Slate. **Confirm the board and create/edit agree.**
 - **Two derivations of role** — `profiles.role` vs `user_roles` in `useMyProfile()`. ⚠️ **And a third split: `useActiveMember().role` vs `has_role(auth.uid())`.**
 - **STALE chip predicate.** Likely `due_date < today`. **Probably closed by roll-forward — verify before building.**
@@ -105,7 +101,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **The Briefing's FAB overlaps the Campaigns progress bar.** Covers the middle of the São Paulo Trip bar. The board escapes it because a card gap sits there. **Layout, Scott's eye.**
 - **Prod test-object cleanup.** `Testing redemption tracking` in the Ledger; `Testing retired` in the Slate's Retired section, **and canon records no un-retire affordance.**
 - **Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. **Now critical path #1.**
-- **Grant-revoke verification probe job.** Drafted, deferred eight times.
+- **Grant-revoke verification probe job.** Drafted, deferred nine times.
 - **The floor — avatar render fallback.** **Check the wall.**
 - **Founder tier-tag verification.** Flip ON → confirm 32 lock / 16 open → flip OFF.
 - **Onboarding screenshots for screen 3.** Seed a demo hold by hand (~15–20 min), screenshot from the phone.
@@ -118,7 +114,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 ### The rename's tail — CLOSED
 
 - ✅ **`Quest`→`Bounty` IS LANDED.** The 07-31 coverage grep found `onboarding.first-quest.tsx` completely unswept (eight strings) plus two single misses, fixed all ten, and confirmed `public/`, the PWA manifest and every shipped `.json`/`.md` were already clean.
-- ✅ **THE ENUM-LEAK RESIDUE IS CLOSED TOO, WITHOUT A FIX.** 08-01 recon proved `hearth-log.tsx`'s `verbLabel()` is the **only** place in the codebase that derives display text from a raw verb. `wall.tsx`, `Briefing.tsx` and `NotificationBell.tsx` are byte-identical switches whose `default` never touches `row.verb`. **`QUEST APPROVED` is reachable on one unlinked debug page and nowhere else. Accepted.**
+- ✅ **THE ENUM-LEAK RESIDUE IS CLOSED TOO, WITHOUT A FIX.** 08-01 recon proved `hearth-log.tsx`'s `verbLabel()` is the **only** place in the codebase that derives display text from a raw verb. `wall.tsx`, `Briefing.tsx` and `NotificationBell.tsx` have a `default` that never touches `row.verb`. **`QUEST APPROVED` is reachable on one unlinked debug page and nowhere else. Accepted.** ⚠️ **CORRECTION 08-01 late: those three switches are NOT byte-identical, as the recon was read to say. `wall.tsx`'s `event_created` omits "to the calendar."** The recon checked the five verbs it was briefed on; the generalization to the whole switch was jAIne's.
 - **The Haiku vocabulary sweep has one target left:** `Feast`→`Hall`, and user-facing `points`→embers. **Check whether other `points` instances survived.**
 
 ### Onboarding, phase three
@@ -133,7 +129,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 ### Toolchain
 
 - **⚠️ `routeTree.gen.ts` DRIFT IS CONFIRMED LIVE.** The generated and committed files disagree, every build surfaces it, and every agent has to know to throw it away.
-- **`progression.test.ts` has a pre-existing `tsc --noEmit` error** — missing `vitest` types. **Surfaced on all six Code jobs across 07-31 and 08-01.** Clean it with the `progression.ts` job.
+- **`progression.test.ts` has a pre-existing `tsc --noEmit` error** — missing `vitest` types. **Surfaced on every Code job across 07-31 and 08-01, now eleven consecutive.** Clean it with the `progression.ts` job.
 - **Claude Code's "sync before reading" rule needs a forcing function.** ✅ **Worked six times.** **Keep the line in every Code brief.**
 - **`package-lock.json` and `query_quest.mjs` are sitting untracked in the working tree.** The real lockfile is `bun.lock`.
 - **`wall_request_redemption` IS CALLED FROM THE VAULT AND ITS NAME LIES.** Deliberate debt — renaming an RPC is a migration. **Rename when something else takes that function to Lovable.**
@@ -164,7 +160,7 @@ Parked whole. **Not a module, not a register, not a surface.**
 - **Vault favorites → real per-profile persistence** (currently `localStorage`).
 - **Quality — a rating with no consumer.**
 - **Re-forge reach across the 13.**
-- **Service worker + app-shell cache.** Gate B, **deserves its own careful pass.**
+- **The offline shell / app-shell cache — DEPRIORITIZED, see LATER.** The service worker itself shipped 08-01 for installability only.
 - **Backup posture.** A distribution blocker.
 - **`sandbox_exec`** — one question to Lovable.
 - **`quests.approved_by` sweep toward the `approve_redemption` pattern.**
@@ -175,7 +171,7 @@ Parked whole. **Not a module, not a register, not a surface.**
 
 ## LATER (backlog)
 
-PWA push · Smart Lists v2 · Adventure Log · earning campaigns · admin/reporting surface · the strangers-grade wall (kiosk hardware + the P4×L8 pass on its write surface) · flat/peer holds · photo avatars · kid-vs-kid impersonation · role-label retirement ("Parent/Kid") · favorites on the wall · the timezone nudge · the "how Scott & jAIne work" collaboration profile.
+**The offline shell / app-shell precache** (deliberately deferred 08-01; reopens with PWA push, same mechanism) · PWA push · Smart Lists v2 · Adventure Log · earning campaigns · admin/reporting surface · the strangers-grade wall (kiosk hardware + the P4×L8 pass on its write surface) · flat/peer holds · photo avatars · kid-vs-kid impersonation · role-label retirement ("Parent/Kid") · favorites on the wall · the timezone nudge · the "how Scott & jAIne work" collaboration profile.
 
 ### Gate C removals — the pre-production sweep
 
@@ -199,6 +195,10 @@ Injury-prescription liability posture · commercial-gym equipment model. **Both 
 
 ## KILLED / SUPERSEDED
 
+- **DELETING A BOUNTY ORPHANING ITS CALENDAR EVENT — KILLED 2026-08-01 (late), NEVER REAL.** Bounties do not create calendar events. **Nothing can be orphaned.** The item had sat on the board long enough that nobody remembered writing it, and "one look" made it cheap to defer rather than cheap to kill. **A tracking item with no named evidence and no date is a rumor.**
+- **THE SLATE PANEL/HEADER MISMATCH — KILLED 2026-08-01 (late), NEVER REAL.** There is no "Done today" header on the Slate. A completed row reads `Current · next <date>`, dimmed, collapsed under the done group; its panel reads UNCLAIMED, **which is correct, because it is unclaimed against its next occurrence.** jAIne invented the label from a 07-31 screenshot. **A label in a screenshot is not necessarily on the surface at all.**
+- **DELETING THE STANDING-DUTIES BLURB — REVERSED BEFORE IT SHIPPED, 2026-08-01 (late).** jAIne called for deletion on the "the screen already shows it" rule. **It is the section's EMPTY STATE, so the screen shows nothing and the copy is all there is.** Code stopped on the brief's stop-clause rather than executing. **Rewrite, not deletion.** ⚠️ **The delete-don't-reword default has an exception and this is it: an empty state has no content to be redundant against.**
+- **THE OFFLINE SHELL — DEPRIORITIZED 2026-08-01 (late), NOT KILLED.** Household wifi is pervasive and a chore board is not what anyone needs in a dead zone. **The cache strategy carries all of the risk for almost none of the benefit**, and a caching bug is the one defect on this board that cannot be fixed by pushing a fix. **Reopens if PWA push is ever built, because they are the same mechanism.**
 - **DELETING `/quest-log` AND `/hearth-log` "ONCE THE SLATE IS TRUSTED" — SUPERSEDED 2026-08-01.** The Slate IS trusted and the routes stay anyway. **The gate was wrong because it assumed the only reason to keep them was doubt.** The Hearth Log is a working debug surface with a live consumer — Scott — and it earned its keep twice in two days as the readable record of what the feed actually wrote. **Rescheduled to Gate C, alongside prod test-object cleanup.**
 - **FIXING THE `verbLabel` ENUM LEAK — DECLINED 2026-08-01.** Recon proved the leak reaches exactly one unlinked page that we are keeping deliberately. **A fix would cost a job to change a string nobody encounters by accident.** ⚠️ **The accepted cost: an unswept vocabulary surface will eventually say "quest" while every other screen says bounty, and someone will read it at 11pm and believe it.**
 - **"FOUR INDEPENDENT VERB→DISPLAY IMPLEMENTATIONS" AS A DIVERGENCE PROBLEM — DOWNGRADED 2026-08-01.** Source read proved three are word-for-word identical and the fourth is a legacy variant on the page being kept. **That is duplication, not divergence. It is not the `isActiveQuest` failure mode and should not carry that severity.** Still worth collapsing eventually; no longer evidence of a systemic split.
