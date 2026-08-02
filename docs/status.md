@@ -1,21 +1,25 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-07-31 (night) → 2026-08-01 (early)** — *the marker session.* **~2.8 Lovable credits, two free Code jobs, two glass verifications.** **Critical path #1 is closed: the first-run completion marker now reads and writes the same profile for every role, verified on the glass by an actual profile switch to a kid.**
+Last session: **2026-08-01 (late)** — *the free session.* **Zero Lovable credits. Five Code jobs, one publish, four glass verifications, one canon correction.** **The app is installable on Android for the first time: a minimal no-cache service worker is registered and running on the live origin.**
 
-**The headline: a kid sub-profile can complete first run and stay completed. Both roll-forward legs passed on August 1. The `verbLabel` enum leak is scoped, contained and closed without a fix. And the em-dash sweep removed 125 characters of jAIne's punctuation from the glass.**
+**The headline: `/sw.js` ships, the master-spec fold is done from a read, page titles use a middot, and three carried tracking items died on contact with the glass rather than being fixed.** Two of the three had never described anything real.
 
-**The marker fix was wider than described and narrower to fix than expected.** `markFirstRunComplete(profileId)` had always been *handed* the right id and threw it away with a literal `void profileId`. Five call sites were correct; a shim discarded the argument. **And a second reader was owner-keyed too** — `FirstRunGate` read the route-context profile fetched `WHERE id = data.user.id`, so the divergence was write-owner / read-owner / read-active, not the two-way split canon described. **Fixed with one shared `resolveFirstRunProfileId()` that both readers call**, rather than the same expression written twice in two files.
+**THE SERVICE WORKER IS REGISTERED AND ACTIVATED.** `public/sw.js`, eighteen lines, four listeners: `install` calls `skipWaiting()`, `activate` calls `clients.claim()`, `fetch` is an empty handler, plus a comment block stating that caching here is a scope change requiring a decision. **It caches nothing and contains no reference to the Cache API.** Registration lives in `__root.tsx` alongside the existing auth effect, guarded on `"serviceWorker" in navigator`, registering immediately when `document.readyState === "complete"` and on the `load` event otherwise. **DevTools confirms activated and running, scope `/`, source `sw.js`.**
 
-**AUGUST 1 PASSED, BOTH LEGS.** Five monthly rows, no duplicates, every one rolled to Aug 1 in place. The throwaway daily stayed at July 31, still awaiting approval, ten hours after submission. **Same-row roll is real and the `submitted` exclusion works.**
+⚠️ **THE ANDROID INSTALL PROMPT HAS NOT APPEARED YET.** The worker is the criterion we were missing, not necessarily the only one. **The tablet was mid-restart when the session ended and the check was never completed.** *This is a pending verify, not a shipped install.*
 
-**The `last done` line on the Slate row is doing more work than it was designed to do.** Vaccuum Downstairs read *May* on Aug 1 where the snapshot said *Cade* — alarming until `last done Jul 31` explained it: the chore got done and approved overnight, the row completed and rolled clean. **A row that moves instead of respawning has no history unless it carries one.** That field is what makes same-row roll auditable from the glass without a query.
+**THE DIAGNOSIS COST FOUR TURNS AND THE ANSWER WAS "PUBLISH IT AGAIN."** `/sw.js` returned 404 with `text/html` while `manifest.webmanifest` and `robots.txt` from the same directory served fine. jAIne proposed a Nitro static-output theory, then a host-reserves-the-sw-path theory, both plausible and both wrong. **Scott republished on instinct and it resolved.** *Reach for the simple explanation before the defect is already written in this doc and was walked past twice in one exchange.*
 
-**Credits are the lesson of the session.** Two plan-mode iterations cost a credit each. **A plan iteration is billed like a build.** The constraint that drove both of them — that the gate's null fallback must match the writer's — belonged in the original brief as an explicit line, not as prose intent.
+**THREE CARRIED ITEMS DIED WITHOUT A FIX.** The orphaned calendar event: bounties do not create calendar events, so nothing can be orphaned. The Slate panel/header mismatch: there is no "Done today" header on the Slate, so the two cannot disagree — jAIne invented the label from a screenshot on 07-31. The standing-duties blurb: it is an **empty state**, not a persistent blurb, which changes the answer entirely. **A tracking item with no named evidence and no date is a rumor.**
 
+**AND ONE REAL FINDING CAME OUT OF LOOKING AT THE SLATE FOR A DIFFERENT REASON.** The collapsed group labeled `5 more current` contains only rows that are **done** for the current occurrence. "Current" read as the opposite of what those rows are. **Now `{count} done`.** The finding surfaced while chasing a fake one.
+
+**CANON CARRIED AN OVERSTATEMENT FOR ONE SESSION AND CODE CAUGHT IT.** The 08-01 recon reported the three verb switches as word-for-word identical; jAIne folded that into `master-spec.md` this session. **They are not.** `wall.tsx`'s `event_created` omits "to the calendar." **The recon answered the question it was briefed with — the five verbs — and jAIne generalized to the whole switch.** Corrected in the spec file before commit.
+
+Last session (prior): **2026-07-31 (night) → 2026-08-01 (early)** — the marker session. ~2.8 credits.
 Last session (prior): **2026-07-31 (day)** — the redemption-path session. Four free Code jobs.
 Last session (prior): **2026-07-30 (night)** — the Slate + Ledger build. Five credits.
-Last session (prior): **2026-07-30 (late)** — the QA/design session.
 
 Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PARKED · 🔵 VALIDATED (no build needed)
 
@@ -23,13 +27,13 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## Where the platform is
 
-**Structurally complete, published, with a working activation path for every role — a working SPEND path for every role — and, as of today, a first-run marker that survives a profile switch.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, the 48-avatar roster, a household-local date model, tenant isolation verified under live attack, clean function and table grant surfaces, the Slate, the Ledger, and a rollover engine **verified on a real month boundary**.
+**Structurally complete, published, installable on iOS, with a working activation path and a working spend path for every role.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, the 48-avatar roster, a household-local date model, tenant isolation verified under live attack, clean function and table grant surfaces, the Slate, the Ledger, a rollover engine verified on a real month boundary, and **as of tonight a registered service worker.**
 
 **Emberhold is a ONE-module product with ONE module.** Registers are aesthetic only. **Fitness (Forge) is the sole module, it is not built, and it is scoped to the Draper household.**
 
-> ⚠️ **`master-spec.md` OWES A SMALL, NAMED FOLD — NOT A REGENERATION.** It sits at **773 lines** and was corrected 07-31; the stale-spec flag stays closed. **Four regions went stale overnight and jAIne named them from a grep rather than a read, deliberately:** line 8 (the `verbLabel` open question — now answered), lines 298–299 (the marker's ⚠️ read/write warning — now shipped), line 482 (`/quest-log` and `/hearth-log` as "deletion is a follow-up" — now reclassified), line 753 (the copy-discipline section — needs the em-dash rule). **A fifteen-minute surgical fold. Open the next session with it.**
+> ✅ **THE MASTER-SPEC FOLD IS DONE.** Four regions, from a read, not a grep: the `verbLabel` open question (answered), the marker read/write warning (shipped), `/quest-log` + `/hearth-log` (reclassified), the copy-discipline section (em-dash rule added). **773 lines to 782.** The regeneration flag stays closed.
 
-> ⚠️ **RESIDUAL, UNCHANGED:** roughly 400 lines of master-spec — Part II (Forge), the onboarding sections, the schema detail — were not re-read on 07-31 and were not read today. Believed current from the 07-29/07-30 folds. **A full cold read is worth doing eventually; it is not urgent.**
+> ⚠️ **RESIDUAL, UNCHANGED:** roughly 400 lines of master-spec — Part II (Forge), the onboarding sections, the schema detail — remain unread since the 07-29/07-30 folds. **A full cold read is worth doing eventually; it is not urgent.**
 
 ---
 
@@ -37,83 +41,82 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 | # | Item | Blocks |
 |---|---|---|
-| **1** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. | Gate B honesty. |
-| **2** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. Gate C. |
-| **3** | **Walk the kid joiner flow with an actual kid.** ✅ **Unblocked today** — the marker fix was the dependency. Built, published, three beats, never exercised end to end. | Gate B. |
-| **4** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
-
-**Cleared off the critical path 2026-08-01: the marker read/write pair.** See below.
+| **1** | **🟡 THE ANDROID INSTALL PROMPT.** The service worker is live; the prompt has not been seen. **Restart the tablet, load fresh, check the Chrome menu for "Install app."** If still absent, remote-debug over USB — Chrome's Manifest panel names the failing criterion in plain text. | Gate B. The wall device. |
+| **2** | **🟡 Signup glass checks #2 and #3.** Cold join-path signup; original-tab path. | Gate B honesty. |
+| **3** | **Founding Guildhall build** (Stripe + webhook + entitlement write). | Money. Gate C. |
+| **4** | **Walk the kid joiner flow with an actual kid.** Unblocked 08-01. Built, published, three beats, never exercised end to end. **Scott's hands, scripted in advance.** | Gate B. |
+| **5** | **Avatar paywall flip** (two data changes) — whenever Scott's ready. | — |
 
 **Downgraded off the critical path: auth email.** Sender identity fixed by the project rename; one of six providers still spams. **Tracked, not worked.**
 
 ---
 
-## ✅ SHIPPED — 2026-07-31 (night) → 2026-08-01
+## ✅ SHIPPED — 2026-08-01 (late)
 
-*One Lovable job (~2.8 credits, two of them spent on plan iterations), two free Code jobs.*
+*Five Code jobs, zero Lovable credits.*
 
-### Part A — the first-run marker read/write pair *(Lovable, `eb93e73`)*
+### The service worker *(`e813dca` + readyState follow-up)*
 
-- ✅ **Dropped the zero-argument `mark_first_run_complete()`.** Not defaulted — dropped, so no old signature survives as a callable overload.
-- ✅ **New `mark_first_run_complete(_profile_id uuid)`,** SECURITY DEFINER, `search_path = public`. Validates signed-in + `current_family_id()` match + `status = 'active'`, mirroring `wall_request_redemption`. **No comparison against `auth.uid()` — that comparison was the bug.** Grants applied `authenticated` first, `REVOKE FROM PUBLIC` second.
-- ✅ **`resolveFirstRunProfileId()` added to `src/lib/first-run.ts`** — `getActiveMemberIdSync() ?? auth user id`. **Both readers call the one resolver.** `redirectIfFirstRunDone()` and `FirstRunGate` cannot drift, because there is only one expression.
-- ✅ **`markFirstRunComplete(profileId)` now actually passes its argument.** It contained a literal `void profileId;` and called the RPC with no args. **Five call sites had been correct all along and a shim ate the id.**
-- ✅ **VERIFIED ON THE GLASS: dad session → switch to Mia → first run fired (three Pip screens) → board, KID tag, 0 embers, live bounty. Switched away, switched back to Mia → straight to the board.** The second entry is the test; the first always looks fine.
-- ⚠️ **`FirstRunGate` now re-resolves on member switch and reads the resolved profile's role.** Correct, and new behavior. **No misfire observed.**
+- ✅ **`public/sw.js`** — served at the origin root, default scope `/`, static file untouched by the bundler. Verified as a real 200 with a JS content type after republish.
+- ✅ **`install` → `skipWaiting()`; `activate` → `clients.claim()`.** Deliberate: default update behavior parks a new worker in "waiting" until every tab closes, which on a wall tablet that never closes is forever. **These two lines are the kill switch, and a no-cache worker without one is a worse trade than no worker.**
+- ✅ **The `fetch` handler is empty.** No `event.respondWith`, not even a pass-through — `respondWith(fetch(request))` is not a pass-through and it breaks range requests and re-wraps redirects.
+- ✅ **Zero references to the Cache API.** No `caches.open`, no precache, no cache names.
+- ⚠️ **The initial registration was a race.** The effect attached a `load` listener during hydration; if `load` had already fired, the listener never ran. **Passes on a slow load, fails on a warm one. jAIne's brief specified the load guard and owns the defect.** Fixed with a `document.readyState === "complete"` branch and a single shared `registerSW` function so there is one registration expression.
+- ✅ **No PWA plugin, no Workbox, no vite-plugin-pwa.** Two hand-written files by design — a plugin generates a precache manifest, which is the thing being deliberately not built.
+- ✅ **Repo had zero prior SW footprint.** Confirmed by read: no artifact, no `navigator.serviceWorker` reference, nothing in `vite.config.ts` or `package.json`.
 
-### Part B — the `verbLabel` recon *(Code, read-only, free)*
+### Page titles *(`fc3fad3`)*
 
-- ✅ **All three surviving surfaces are clean and were verified in source, not inferred.** `wall.tsx`'s `tickerLine`, `Briefing.tsx`'s `pulseLine`, `NotificationBell.tsx`'s `lineFor` are **word-for-word the same switch** — five named verbs plus a `default` that returns `${who} · ${obj}` and never touches `row.verb`.
-- ✅ **`hearth-log.tsx`'s `verbLabel()` is the sole place in the codebase that derives display text from the raw enum.** Deleting it would kill `QUEST APPROVED` outright.
-- ✅ **`member_admitted` IS EXPLAINED.** The `activity_verb` enum has **seven** values; every renderer names five. `member_admitted` and `member_denied` are written server-side and fall to the label-only default, producing `"Mom · Leo"`. **Not a bug — two missing cases in three identical switches. A cheaper fix than the polish list assumed.**
-- ✅ **The "four divergent implementations" item is DOWNGRADED.** Three are byte-identical; the fourth is a legacy variant on a page we are keeping deliberately. **That is duplication, not divergence. It is not the `isActiveQuest` failure mode and should not carry that severity.**
+- ✅ **`: ` → ` · ` across 38 title strings in 34 files.** `__root.tsx`'s `title`, `og:title` and `twitter:title` all three. Zero remaining `: Emberhold` matches.
+- ⚠️ **`ledger.tsx` and `slate.tsx` each carry their own `og:title`; the other 31 routes do not.** Not a defect. **But it means two routes share to social differently from the rest** — either 31 are missing it or 2 have extra. **Parked to parking-lot, not chased.**
 
-### Part C — the screen copy pass, batch two *(Code, free, `fd1d6a8`)*
+### The Slate label *(`50ba06e`)*
 
-- ✅ **Auth subhead deleted.** *"Your whole home, finally in one place."* — generic, and the WHAT IS EMBERHOLD block below said it better. Element removed, not blanked.
-- ✅ **Campaigns description deleted.** *"Group bounties under a shared goal. Watch the bar fill as prep gets done."* Both sentences. The tab is labeled, the bounties are grouped on screen, and the bar is right there filling.
-- ✅ **Calendar day empty state → "The day is clear."** Date-agnostic by design; the date header directly above it already names the day.
-- ✅ **Briefing horizon empty state → "Clear skies ahead."** Extends the ON THE HORIZON eyebrow instead of decorating it. The dropped half explained the first half.
-- ✅ **THE EM-DASH SWEEP: 125 characters removed across 43 files.** Page titles, `Skip —` labels, PIN ranges, and ~40 individual rewrites. **Verified: 125 removed, 0 introduced.**
-- ✅ **Seven lines flagged rather than guessed** and left untouched — time/date ranges (en dash is correct typographic convention, not the AI tell) and bare `—` placeholder glyphs for "nothing set." **Correct restraint; do not touch them.**
-- ⚠️ **`wall.tsx` held its own independent copy of the Briefing's empty state.** Code found it, fixed it, and disclosed it as beyond the four named edits. **This is the divergence pattern showing up in COPY, and it is the first instance that is not code.**
+- ✅ **`{calm.length} more current` → `{calm.length} done`.** The collapsed group holds only rows completed for the current occurrence; **"current" said the opposite of what they are.** Count stays live. No pluralization branch — "1 done" and "5 done" both read.
+- ✅ **No other surface holds this string.** Checked by read, because the copy-divergence pattern is now a known class.
 
-### Verifications closed — free, glass
+### `member_admitted` and `member_denied` *(`b2efd8f`)*
 
-- ✅ **🔴 AUGUST 1 — THE MONTHLY BOARD. PASSED.** Five rows under Monthly, all `MONTHLY · 1ST`, all "Due now," **zero duplicates.** No archive-and-spawn. The branch fired.
-- ✅ **🔴 `submitted` DOES NOT ROLL. PASSED.** "Do Not Approve Testing Roll-Over," daily, created and claimed 10h prior, **still awaiting approval, never moved off its anchor.** The exclusion works on a row past its date, which is the only case that exercises it.
-- ✅ **The claim discriminator was consumed by real life and the board explained itself anyway.** Cade's two claims changed because the chores were actually done and approved overnight. **`last done Jul 31` is what made that legible.**
+- ✅ **Both cases added to all three switches** — `wall.tsx` `tickerLine`, `Briefing.tsx` `pulseLine`, `NotificationBell.tsx` `lineFor`. `${who} admitted ${obj}` and `${who} denied ${obj}`, matching the existing past-tense shape.
+- ✅ **`hearth-log.tsx` deliberately excluded.** Debug surface, live consumer, Gate C.
+- ⚠️ **`member_denied` has never rendered in production.** Nobody has been denied. **Its first real render will be its first test.**
+- ⚠️ **THE THREE SWITCHES WERE NEVER BYTE-IDENTICAL.** `wall.tsx`'s `event_created` reads `${actor} added ${obj}`; the other two read `${actor} added ${obj} to the calendar`. **Still duplication rather than a correctness defect. But three copies that have already drifted once is a different claim from three that have not, and the shorter string is on the wall.**
+
+### Items closed by looking, not by building
+
+- ✅ **DELETING A BOUNTY CANNOT ORPHAN A CALENDAR EVENT.** Bounties do not create calendar events. **The item had sat open long enough that nobody remembered writing it, and "one look" made it cheap to defer rather than cheap to kill.**
+- ✅ **THE SLATE PANEL/HEADER MISMATCH DOES NOT EXIST.** There is no "Done today" header on the Slate. A completed row reads `Current · next Aug 3`, dimmed, collapsed. **The panel reading UNCLAIMED is correct — it is unclaimed against its next occurrence.** jAIne invented the label from a 07-31 screenshot.
+- ✅ **THE STANDING-DUTIES BLURB IS AN EMPTY STATE, NOT A BLURB.** `SlateEmpty()`, with a mascot and a CTA. **Code stopped on the brief's stop-clause rather than deleting it, which is exactly what the clause was for.** Deletion would have left a stranger with a blank section.
 
 ---
 
 ## ⬜ OPEN — the next work, in order
 
-- ⬜ **🟠 PAGE TITLES USE A COLON AND SHOULD NOT.** The sweep turned `Board — Emberhold` into `Board: Emberhold` across **32 route files plus `__root.tsx`'s title/og:title/twitter:title.** A colon implies the left side contains the right. **The convention is a pipe or a middot: `Board · Emberhold`.** Real surface — browser tabs, share cards, link previews. **Free Code, mechanical, do it before it is in anyone's previews.**
-- ⬜ **🟠 DELETE THE THROWAWAY TEST BOUNTY.** "Do Not Approve Testing Roll-Over" has served its purpose. Never approved, so Delete is available. **One tap.**
-- ⬜ **🟠 `slate.tsx`'s STANDING-DUTIES BLURB READS MUSHY POST-SWEEP.** The em dashes were doing real grammatical work as a parenthetical; commas replaced them and the sentence sags. ⚠️ **Deletion is the likelier right answer than repunctuation — the Slate is showing the standing duties while the copy explains what standing duties are.** Scott's eyes, not a brief.
-- ⬜ **🖊️ THE SCREEN COPY PASS — RUNNING.** See parking-lot. **Slate ✅ · Ledger ✅ · Auth ✅ · Campaigns ✅ · Calendar ✅ · Briefing ✅ · everything else unreviewed.**
-- ⬜ **`member_admitted` renders as `"Mom · Leo"` — NOW SCOPED.** Two missing enum cases in three identical switches. **Cheap, and no longer a mystery.**
+- ⬜ **🟠 THE `SlateEmpty()` REWRITE — BRIEFED, NOT YET RUN.** Current string: *"Nothing repeats yet. When a bounty comes back, like the trash, the dishes, or Monday laundry,it lives here as one line, forever. Post one and it'll show up."* **Three sentences doing three jobs; one earns its place.** "Nothing repeats yet" restates the empty condition the absent rows already show. "As one line, forever" is roll-forward mechanics explained to a nine-year-old. "Post one and it'll show up" duplicates the CTA directly below it. **Replacement: "Repeating bounties live here. The trash, the dishes, Monday laundry."** Mascot and CTA untouched. ⚠️ **Note the missing space in `laundry,it` — introduced by the em-dash sweep and shipped.**
+- ⬜ **🖊️ THE SCREEN COPY PASS — RUNNING.** **Slate ✅ · Ledger ✅ · Auth ✅ · Campaigns ✅ · Calendar ✅ · Briefing ✅ · everything else unreviewed.**
+- ⬜ **`progression.test.ts` carries a pre-existing `tsc --noEmit` error** — missing `vitest` types. **Has now polluted the output of five consecutive Code jobs.** Pure noise removal, but it means the next real typecheck failure is visible instead of buried.
 - ⬜ **`logActivity` IS A CLIENT-SIDE BOLT-ON.** Every call site can forget, and one did. **The mechanism fix is the definer RPC writing its own log row.** Migration, so it waits for credits.
 - ⬜ **`parent_self_redeem` INSERTS `status='approved'` OUTRIGHT.** An adult redeeming their own embers skips the approval gate. **By design per the code, never written down.**
 - ⬜ **The recurrence chip reads `Monthly · 1st` on the Slate.** Confirm the board and create/edit agree.
 - ⬜ **STALE chip predicate.** Likely `due_date < today`. **Probably closed by roll-forward — verify before building.**
 - ⬜ **The Briefing makes the same claim twice** — an OPEN BOUNTIES strip and a Slate card. Cosmetic.
-- ⬜ **The Briefing's FAB overlaps the Campaigns progress bar.** Sits on top of the São Paulo Trip bar and covers its middle. The board is fine because a card gap sits there. **Layout, Scott's eye.**
+- ⬜ **The Briefing's FAB overlaps the Campaigns progress bar.** **Layout, Scott's eye.**
 - ⬜ **`Testing redemption tracking` and `Testing retired` are both user-visible.** Prod test-object cleanup. ⚠️ **`Testing retired` sits in the Retired section and canon records no un-retire affordance.**
+- ⬜ **DELETE THE THROWAWAY TEST BOUNTY.** "Do Not Approve Testing Roll-Over." Never approved, so Delete is available. **One tap. Still not done.**
 
 ---
 
 ## 🟡 PENDING VERIFY
 
-- 🟡 **🔴 THE MONTHLY ROLL BRANCH — Aug 1 was an INCIDENTAL exercise, not the verification.** Three past-anchor rows moved correctly and no row duplicated, which is real evidence. ⚠️ **Successor arithmetic and roll-forward are different tests. The clean natural test is 2026-09-01.**
-- 🟡 **The kid joiner flow has never been walked end to end by a kid.** ✅ **Unblocked** — the marker dependency cleared today. **First-run fired and completed for Mia on a switch; the JOIN path is still unexercised.**
+- 🟡 **🔴 THE ANDROID INSTALL PROMPT.** Worker is registered and running. **Prompt not yet seen.** Tablet restart was in progress at session end. ⚠️ **Fully Kiosk Browser uses its own webview and will never show an install prompt — the check must run in Chrome proper.**
+- 🟡 **🔴 THE MONTHLY ROLL BRANCH.** Aug 1 was an incidental exercise, not the verification. **The clean natural test is 2026-09-01.**
+- 🟡 **The kid joiner flow has never been walked end to end by a kid.** Unblocked. **First-run fired and completed for Mia on a switch; the JOIN path is still unexercised.**
 - 🟡 **`Testing retired` stays retired** once its successor's date arrives. Free, one look.
-- 🟡 **The Slate detail panel read IN PROGRESS while the row header read "Done today."** Panel and header may render off different instances. Noticed 07-31, not chased.
 - 🟡 **The wall's `logActivity` sits in `mutationFn`, not `onSuccess`.** A failed log would report a failed approval that actually committed. **Compare against `vault.tsx`. One line.**
-- 🟡 **`/create?recurring=true`** — the Slate's empty-state CTA is verified; the direct-URL half was not separately exercised.
+- 🟡 **`/create?recurring=true`** — the Slate's empty-state CTA is verified; the direct-URL half was not.
 - 🟡 **The timezone heal — DRAFT until proven from a non-Pacific device.**
 - ⚠️ **Wall adult-verified turn-in.** The approve half is exercised; **the wrong-PIN half is not.**
-- 🟡 **Grant-revoke verification probe job — DRAFTED, DEFERRED EIGHT TIMES.** `SQLSTATE 42501` = FAIL; any application-level error = PASS.
+- 🟡 **Grant-revoke verification probe job — DRAFTED, DEFERRED NINE TIMES.** `SQLSTATE 42501` = FAIL; any application-level error = PASS.
 - 🅿️ **`/setup/intent` — PARKED WITH A TRIGGER.** Finalized when Forge is built.
 - 🟡 **The ember progress trail** · **Avatar render fallback — check the wall** · **Founder tier-tag verification (32 lock / 16 open)** · **Phaeaz cold-account retest** · **Min password length 6→8** · **Wall full end-to-end membrane loop.**
 
@@ -122,7 +125,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 ## ⬜ OPEN — Forge, from 2026-07-28
 
 - ⬜ **🔴 THE CATALOG IS THE FIRST BUILD, AND IT IS A MAKE JOB.** Movement pattern · muscle attribution · equipment requirement · substitution map. **Generated offline, reviewed by Scott, shipped as data.**
-- ⬜ **🔴 `progression.ts` has no progression axis except load.** **Pure TypeScript, ten tests, zero Supabase imports, zero credits.** *(`progression.test.ts` carries a pre-existing `tsc --noEmit` error — missing `vitest` types. Surfaced on every Code job on 07-31 and again on 08-01. Clean it with this one.)*
+- ⬜ **🔴 `progression.ts` has no progression axis except load.** **Pure TypeScript, ten tests, zero Supabase imports, zero credits.**
 - ⬜ **The engine cannot accept a pre-session constraint.** Scope with the rep-compensation job.
 - ⬜ **Equipment records need `exclusive` vs `shareable`.**
 - ⬜ **Rep-compensation needs a validity floor.**
@@ -133,16 +136,15 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 ## ⬜ OPEN — carried
 
 - ⬜ **🟠 `quests.approved_by` is validated more weakly than `redemptions.decided_by`.** Neither trigger checks the written value names an adult. **Tolerable under the walk-up boundary, not correct.**
-- ⬜ **Two derivations of role.** `FirstRunGate` now reads the resolved profile's role; `useMyProfile()` derives from `user_roles`. ⚠️ **Still not interchangeable.** ⚠️ **And the third split stands: `useActiveMember().role` (client, switched profile) vs `has_role(auth.uid())` (server, always the owner). They disagree BY CONSTRUCTION whenever a kid is active.**
+- ⬜ **Two derivations of role.** ⚠️ **And the third split stands: `useActiveMember().role` (client, switched profile) vs `has_role(auth.uid())` (server, always the owner). They disagree BY CONSTRUCTION whenever a kid is active.**
 - ⬜ **What does `actor_label` mean?** **Design call, needs Scott.**
 - ⬜ **`campaign.$id.tsx` gates quest creation on `isParent`; the FAB and QuickAddTray do not.**
-- ⬜ **⚠️ `routeTree.gen.ts` drift is CONFIRMED LIVE.** Every build surfaces it; every agent has to know to throw it away.
+- ⬜ **⚠️ `routeTree.gen.ts` drift is CONFIRMED LIVE.** Every build surfaces it; every agent has to know to throw it away. **Held across five Code jobs tonight without incident, because every brief named it.**
 - ⬜ **The early-approval seam.** Approving a weekly before its due date produces a same-week successor.
 - ⬜ **Bounty creation is ungated and DELIBERATELY STAYS THAT WAY.**
 - ⬜ **`sandbox_exec`** — pre-existing platform role holding EXECUTE on every function in `public`. **Ask Lovable. One question.**
-- ⬜ **`quests.due_date` still carries `DEFAULT CURRENT_DATE` — deliberately.**
+- ⬜ **`quests.due_date` still carries `DEFAULT CURRENT_DATE` — deliberately.** ⚠️ **It is server-side only. Users do not set due dates and cannot see them. Recurrence anchors are a different thing and ARE visible as chips.**
 - ⬜ **Ghost successor cleanup.**
-- ⬜ **Deleting a bounty may orphan its calendar event.** **One look.**
 - ⬜ **`wall_request_redemption` is called from the Vault and its name lies.** Deliberate debt. **Rename when something else takes that function to Lovable.**
 
 ---
@@ -155,7 +157,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - ✅ **"Forgot PIN" takeover (CRITICAL) — FALSE POSITIVE.**
 - ✅ **Join-code → Parent admin (CRITICAL) — FALSE POSITIVE.**
 - 🔵 **Adult PIN lock not tied to real permission checks — KNOWN-ACCEPTED, CONDITIONALLY.**
-- 🔵 **Redemption submitted on behalf of another member — BY DESIGN, CONDITIONALLY.** ⚠️ **`wall_request_redemption` checks only that `_profile_id` belongs to the household and is active; it never compares against `auth.uid()`. The Vault now inherits that posture, and so does `mark_first_run_complete`.** Sound under the walk-up boundary; **it is the thing the per-member-auth fork would change.**
+- 🔵 **Redemption submitted on behalf of another member — BY DESIGN, CONDITIONALLY.** ⚠️ **`wall_request_redemption` checks only that `_profile_id` belongs to the household and is active; it never compares against `auth.uid()`. The Vault inherits that posture, and so does `mark_first_run_complete`.**
 - ✅ **Signed-in users can execute SECURITY DEFINER (lint 0029) — PERMANENTLY IGNORED.**
 
 **Fixed:**
@@ -164,6 +166,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - ✅ Public/anon SECURITY DEFINER execute (lint 0028) · `founder_gate_enabled()` + `my_household_is_founder()` · `anon` CRUD on `families` · `anon` CRUD on the other fourteen tables · Adult PIN plaintext in `localStorage`.
 
 **Real, open:**
+- ⬜ **🔴 THE SERVICE WORKER IS NOW A SECURITY SURFACE THAT DID NOT EXIST YESTERDAY.** It caches nothing today, which is what makes it safe. ⚠️ **Any future caching work must NEVER cache a response carrying an Authorization header — that is tenant isolation reintroduced at the cache layer, on a boundary that was verified under live attack.** **And a caching bug is the one defect on this board that cannot be fixed by pushing a fix.**
 - ⬜ **`quests.approved_by` accepts any in-family profile id, including a kid's.**
 - ⬜ **`actor_label` display forgery — DOWNGRADED, RE-SCOPED AS DESIGN.**
 - ⬜ **Kids read `adults_only` reward names/costs** and ⬜ **kids read `parents_only` quest details** — **same class; fix together**, *with* the own-session-vs-per-member-auth decision. **Top open security items.**
@@ -171,7 +174,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - ⬜ **Forge display mode is a semi-public surface.**
 - ⬜ **`flock.js` analytics tracker in the app `<head>`.** **Must be named in the Gate C privacy policy.**
 
-**Dependency scan:** `npm audit` = 0 against `package-lock.json`; the real lockfile is `bun.lock`. Run `bun audit`. ⚠️ *`package-lock.json` and `query_quest.mjs` are sitting untracked in the working tree — confirmed again 08-01.*
+**Dependency scan:** `npm audit` = 0 against `package-lock.json`; the real lockfile is `bun.lock`. Run `bun audit`. ⚠️ *`package-lock.json` and `query_quest.mjs` are still sitting untracked in the working tree — confirmed again 08-01 late.*
 
 ---
 
@@ -181,7 +184,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - ⬜ **Rewards + quests audience reads** — fix *with* the own-session-vs-per-member-auth decision.
 - ⬜ **Grant-revoke verification probe job.**
 - ⬜ **Ask Lovable what `sandbox_exec` is.**
-- ⬜ **Service worker + app-shell cache.** Gate B. **Deserves its own careful pass.**
+- ✅ **Service worker — SHIPPED for installability only. The offline shell is DEPRIORITIZED, deliberately.** See parking-lot.
 - ⬜ **Backup posture.** Data has no backup; Lovable's to grant. A distribution blocker.
 - ⬜ **Prod test-object cleanup.**
 
@@ -193,13 +196,13 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## ⬜ OUTSTANDING — polish
 
-⬜ **Page titles → `·` not `:`** · **The screen copy pass (running)** · **The stacked-Pip-voice line on the first setup screen** · **`member_admitted` feed line** · **The early-approval seam** · **Onboarding screenshots for screen 3** · **Quick Add default EXPANDED on empty board** · **Lists "5 OPEN · 348 DONE"** fossil counter · **The Briefing FAB overlapping the Campaigns bar** · **Pip help discoverability** · **Reward scarcity limits** · **Yearly/monthly event recurrence** · **Multi-day calendar events** · **Calendar alerts** · **Wall ticker speed** · **Wall calendar event-pill member color** · **"Forgot PIN" confirm() copy** · **`decisions.md` header "Status tiers" line missing SUPERSEDED**.
+⬜ **The `SlateEmpty()` rewrite (briefed)** · **The screen copy pass (running)** · **`og:title` on 2 routes but not 31** · **The stacked-Pip-voice line on the first setup screen** · **The early-approval seam** · **Onboarding screenshots for screen 3** · **Quick Add default EXPANDED on empty board** · **Lists "5 OPEN · 348 DONE"** fossil counter · **The Briefing FAB overlapping the Campaigns bar** · **Pip help discoverability** · **Reward scarcity limits** · **Yearly/monthly event recurrence** · **Multi-day calendar events** · **Calendar alerts** · **Wall ticker speed** · **Wall calendar event-pill member color** · **"Forgot PIN" confirm() copy** · **`decisions.md` header "Status tiers" line missing SUPERSEDED**.
 
 ---
 
 ## 🅿️ PARKED
 
-See `parking-lot.md`. **Forge's Option-B game** · **Endure as a native product** · **Living-hold theme packs — monetization SKU #2** · **QA #5 super-admin / tier-2 support role** · **Own-session vs per-member-auth** · **empty-roster-seat** · Favorites on the wall · role-label retirement ("Parent/Kid") · #8b admin-reporting · kid-vs-kid impersonation · kid-auth (declined) · photo avatars · cosmetic drop #2 · Capacitor (DECLINED) · flat/peer holds · scripted screenshot capture (DECLINED) · the "how Scott & jAIne work" collaboration profile · the timezone nudge · injury-prescription liability posture at stranger scale · commercial-gym equipment model · **the service worker (offline shell, Gate B)**.
+See `parking-lot.md`. **The offline shell** · **Forge's Option-B game** · **Endure as a native product** · **Living-hold theme packs — monetization SKU #2** · **QA #5 super-admin / tier-2 support role** · **Own-session vs per-member-auth** · **empty-roster-seat** · Favorites on the wall · role-label retirement ("Parent/Kid") · #8b admin-reporting · kid-vs-kid impersonation · kid-auth (declined) · photo avatars · cosmetic drop #2 · Capacitor (DECLINED) · flat/peer holds · scripted screenshot capture (DECLINED) · the "how Scott & jAIne work" collaboration profile · the timezone nudge · injury-prescription liability posture at stranger scale · commercial-gym equipment model.
 
 ---
 
@@ -207,72 +210,67 @@ See `parking-lot.md`. **Forge's Option-B game** · **Endure as a native product*
 
 Switching into a PIN-less adult profile hard-gates correctly. The "active member" switch is cosmetic, not a security boundary — physical possession of an unlocked parent session = parent authority. In the shared-session model a device-kid holds the owner's ambient parent JWT. **This is intra-household, not cross-tenant** — `current_family_id()` derives server-side from `auth.uid()`. Accepted for household use. **Three findings are ignored or downgraded *because of* this boundary.** Deciding the own-session-vs-per-member-auth fork revives all three. The fork is parked.
 
-⚠️ **`useActiveMember()` reads the switched-to profile's own `role` column client-side; every RPC and RLS policy evaluates `auth.uid()`, which is always the owner. The client thinks a kid is acting; the database always thinks the owner is.** Every "active member" feature is built on that disagreement. **Three RPCs now take a validated actor/profile id precisely to bridge it** — `approve_redemption`, `wall_request_redemption`, `mark_first_run_complete`. It works, and it is the seam the per-member-auth fork would close.
+⚠️ **`useActiveMember()` reads the switched-to profile's own `role` column client-side; every RPC and RLS policy evaluates `auth.uid()`, which is always the owner. The client thinks a kid is acting; the database always thinks the owner is.** **Three RPCs now take a validated actor/profile id precisely to bridge it** — `approve_redemption`, `wall_request_redemption`, `mark_first_run_complete`.
 
 ---
 
 ## 🔵 THE BUILD MODEL — holding
 
-- **A PLAN ITERATION COSTS A CREDIT. (NEW — 2026-08-01.)** Plan mode was the right call on a migration — a code revert is not a database revert — but each round trip billed. **Two credits went to one sentence about a null fallback. Review a plan in ONE pass: every objection goes in a single message, or it goes in the next session.**
-- **AN INVARIANT MUST BE AN EXPLICIT LINE IN THE BRIEF, NOT INFERRED FROM PROSE. (NEW — 2026-08-01.)** "The read and the write must resolve identically" was written as intent and left the null fallback implicit. **Loose briefs are right for execution latitude and wrong for invariants. State the thing that must be true as its own line.**
-- **JAINE'S PUNCTUATION REACHES THE GLASS THE SAME WAY HER RATIONALE DOES. (NEW — 2026-08-01.)** 125 em dashes shipped to users because jAIne writes them into briefs and Lovable renders the phrasing. **Same disease as the escaped subtitles, different tell.**
-- **A CANONICAL SNAPSHOT CAN BE CONSUMED BY REAL LIFE. (NEW — 2026-08-01.)** The Aug 1 discriminator was Cade's claims, and Cade did the chores overnight, so the claims moved. **The test survived because the row carried `last done`. Design a control that a working product cannot erase — or make the row carry its own history.**
-- **READ THE WHOLE MESSAGE BEFORE ANSWERING IT. (NEW — 2026-08-01.)** jAIne asked whether two chores had been completed overnight in a reply to a message that said they had been. **Second instance of asking a question already answered in the same turn.**
-- **TWO CANON DOCS CAN CONTRADICT EACH OTHER AND YOU WILL READ BOTH.** When two canon docs disagree, **the one describing SHIPPED BEHAVIOR wins over the one describing PRINCIPLE** — and the contradiction is itself a finding that gets logged.
+- **A REPUBLISH IS CHEAPER THAN A THEORY. (NEW — 2026-08-01 late.)** `/sw.js` 404'd while its directory-mates served. jAIne proposed a Nitro static-output theory, then a host-reserves-the-path theory. **Scott republished and it resolved.** **When a file is in the repo, in the deploy, and absent from the origin, publish again BEFORE building a model of why.**
+- **A TRACKING ITEM WITH NO EVIDENCE AND NO DATE IS A RUMOR. (NEW — 2026-08-01 late.)** Three carried items died on contact tonight; two had never described anything real. **"One look" made them cheap to defer rather than cheap to kill. An item that survives on cheapness should be dated so its age is visible.**
+- **A RECON ANSWERS THE QUESTION IT WAS BRIEFED WITH. (NEW — 2026-08-01 late.)** The 08-01 recon checked five verbs and reported them identical. jAIne generalized to the whole switch and folded "word-for-word identical" into canon. **`event_created` had already drifted. Do not generalize a finding to the container the question lived in.**
+- **A STOP-CLAUSE IN A BRIEF IS WORTH MORE THAN A CORRECT INSTRUCTION. (NEW — 2026-08-01 late.)** The blurb brief said delete, and added *if this turns out to be an empty state, stop and report.* **It was an empty state. The clause caught jAIne's wrong call before it shipped.** Cheap to write, and it converts a wrong brief into a finding.
+- **THE FIRST VERSION OF A GUARD CAN CONTAIN THE RACE IT WAS MEANT TO PREVENT. (NEW — 2026-08-01 late.)** jAIne specified a `window.load` guard for SW registration. **If `load` has already fired at hydration, the listener never runs.** Passes on a cold load, fails on a warm one. **jAIne's brief, jAIne's defect.**
+- **A PLAN ITERATION COSTS A CREDIT.** **Review a plan in ONE pass.**
+- **AN INVARIANT MUST BE AN EXPLICIT LINE IN THE BRIEF, NOT INFERRED FROM PROSE.** ✅ **Worked tonight: the service worker brief listed six numbered pass/fail invariants and all six held.**
+- **JAINE'S PUNCTUATION REACHES THE GLASS THE SAME WAY HER RATIONALE DOES.** ⚠️ **And the sweep that removes it can introduce a new defect: `laundry,it` lost its space to the em-dash pass and shipped.**
+- **A CANONICAL SNAPSHOT CAN BE CONSUMED BY REAL LIFE.**
+- **READ THE WHOLE MESSAGE BEFORE ANSWERING IT.**
+- **ANSWER THE QUESTION ACTUALLY ASKED, AT THE REGISTER IT WAS ASKED.** ⚠️ **New instance: asked for the answer, jAIne gave the answer and then appended two more instructions before executing.**
+- **TWO CANON DOCS CAN CONTRADICT EACH OTHER AND YOU WILL READ BOTH.** **The one describing SHIPPED BEHAVIOR wins.**
 - **ASK ONE QUESTION BEFORE WRITING A FINDING.**
-- **LENGTH IS A DEFECT WHEN IT OUTRUNS THE READER.** A live debugging exchange wants one paragraph and one question.
-- **NEVER-WORKED AND BROKE LOOK IDENTICAL FROM THE GLASS.** ⚠️ **Third instance today: `void profileId` had discarded the id since the marker was written.**
+- **LENGTH IS A DEFECT WHEN IT OUTRUNS THE READER.**
+- **NEVER-WORKED AND BROKE LOOK IDENTICAL FROM THE GLASS.**
 - **A RECON'S FORENSICS AND ITS RECOMMENDATION ARE SEPARATE ARTIFACTS.**
-- **GREP CANNOT FIND A BUG THAT ISN'T A STRING.** ✅ **And the recon that answered it proved the inverse is cheap: four files, quoted lines, one afternoon, zero credits.**
-- **BRIEF THE RECON TO DISPROVE.** ✅ **Worked today — the brief forbade inferring from a prior report and the answer came back quoted from source.**
-- **A SUBTITLE EXPLAINING SOMETHING VISIBLE IS BRIEF TEXT THAT ESCAPED ONTO THE GLASS.** **Default is deletion, not rewording.**
-- **A FLAGGED LINE IS A BETTER OUTCOME THAN A GUESSED ONE.** *(New corollary, 08-01: instructing an agent to flag-not-guess produced seven correct abstentions including the en-dash time ranges, which are typographically right and were never the target.)*
-- **WHEN A TOOL FAILS SAFE, WIDTH STOPS PREDICTING SPEND.**
-- **REACH FOR THE SIMPLE EXPLANATION BEFORE THE DEFECT.** ✅ **Worked on Aug 1 — "somebody did the chores" beat "claims are dropped on roll."**
+- **GREP CANNOT FIND A BUG THAT ISN'T A STRING.**
+- **BRIEF THE RECON TO DISPROVE.**
+- **A SUBTITLE EXPLAINING SOMETHING VISIBLE IS BRIEF TEXT THAT ESCAPED ONTO THE GLASS.** **Default is deletion, not rewording.** ⚠️ **Unless the surface is empty — then the copy is the only thing there and deletion is wrong.**
+- **A FLAGGED LINE IS A BETTER OUTCOME THAN A GUESSED ONE.**
+- **REACH FOR THE SIMPLE EXPLANATION BEFORE THE DEFECT.** ⚠️ **Walked past twice in one exchange tonight.**
 - **A FILE-BY-FILE SWEEP CAN STILL UNDER-READ A FILE IT VISITED.**
-- **CODE IS ZERO LOVABLE CREDITS — MEASURED, NOT ASSUMED.**
+- **CODE IS ZERO LOVABLE CREDITS — MEASURED, NOT ASSUMED.** ✅ **Five jobs, one session, zero credits.**
 - **A RULE THAT PERMITS TWO WORDS FOR ONE OBJECT IS NOT A DECISION.**
-- **ANSWER THE QUESTION THAT WAS ASKED.**
-- **A CORRELATION IN A SCREENSHOT IS A HYPOTHESIS.**
+- **A CORRELATION IN A SCREENSHOT IS A HYPOTHESIS.** ⚠️ **And a LABEL in a screenshot is not necessarily on the surface at all — the "Done today" header never existed.**
 - **FIX THE CONTAINER, NOT THE CONTENT.**
 - **USER-AUTHORED CONTENT IS OUT OF SCOPE FOR VOCABULARY AUDITS.**
 - **REVERTIBILITY IS A LANE CRITERION, NOT JUST CREDITS.**
 - **A 🔴 WITH NO CONSUMER IS NOT A 🔴.**
-- **THE FIX WAS RIGHT AND THE REASON WAS WRONG.**
-- **AN ADULT PROFILE ID IS NOT ALWAYS A USER ID.** ⚠️ **Three shipped instances now. This is the defining bug class of the codebase.**
-- **A DEFAULTED PARAMETER DOES NOT REPLACE A FUNCTION.** ✅ **Enforced explicitly in the marker brief; the old signature was DROPPED.**
+- **AN ADULT PROFILE ID IS NOT ALWAYS A USER ID.** ⚠️ **Three shipped instances. The defining bug class of the codebase.**
+- **A DEFAULTED PARAMETER DOES NOT REPLACE A FUNCTION.**
 - **WHEN THERE IS NO GLASS, VERIFY THE DATA.**
 - **TWO BUGS THAT CANCEL ARE WORSE THAN ONE THAT SHOWS.**
-- **A GUARD WRITTEN FOR ONE AUDIENCE WILL MEET ANOTHER.**
-- **DON'T FENCE THE FILE THAT HOLDS THE FIX.**
-- **SWEEP THE CLASS ONLY WHEN IT IS ONE.** ⚠️ **Corollary 08-01: and check whether it IS one before assigning severity. "Four divergent implementations" was three identical copies plus a legacy variant.**
-- **"SYNCS TO `origin/main` BEFORE READING" IS NOT SELF-ENFORCING.** *(Worked six times across two days.)*
-- **RIGHT-SIZE THE GUIDANCE TO THE GESTURE.** · **UNBUNDLE WELDED ASSUMPTIONS.**
-- **NAME EVERY CONSUMER OF A ROUTE BEFORE REMOVING IT.** ⚠️ **And ask whether YOU are one. `/hearth-log` had a live consumer: Scott.**
-- **PRESERVE WHAT ISN'T ENUMERATED.**
+- **SWEEP THE CLASS ONLY WHEN IT IS ONE.**
+- **"SYNCS TO `origin/main` BEFORE READING" IS NOT SELF-ENFORCING.**
+- **NAME EVERY CONSUMER OF A ROUTE BEFORE REMOVING IT.** ⚠️ **And ask whether YOU are one.**
 - **A CLAIM ABOUT CODE IS NOT VERIFIED BY THE AGENT'S SUMMARY OF IT.**
-- **RECON CAN KILL YOUR RECOMMENDATION, AND THAT IS THE POINT.**
-- **PLAIN-SPEAK THE PROBLEM BEFORE BUILDING THE FIX.** · **SEVERITY IN A DOC OUTLIVES THE EVIDENCE FOR IT.**
 - **RLS AND GRANTS ARE TWO GATES, NOT ONE.**
 - **FIX THE MECHANISM, NOT THE INSTANCE.** · **BUILD THE FRAME BEFORE THE CONTENT.** · **DECOMPOSE BEFORE YOU PROMOTE.**
-- **Fetch the canon before producing anything.** ⚠️ **And verify the file, not the tracking item that describes it. One curl.**
-- **A code revert is not a database revert.** Undo schema forward, always. **This is what plan mode is for.**
-- **The docs are not the live codebase — and can diverge silently.**
+- **Fetch the canon before producing anything.** ⚠️ **And verify the file, not the tracking item that describes it.**
+- **A code revert is not a database revert.**
 - **A Code job isn't done until the artifact is observable from outside the agent.**
-- **HTTP 200 is not "renders."** **A preview is not prod.**
+- **HTTP 200 is not "renders."** ⚠️ **And a file rendering in the address bar is not the same request the browser makes for it — the SW fetch carries different headers and got a different answer.**
 - **Model routing:** Haiku (mechanical) · Sonnet (build, diagnosis, synthesis recon) · **Opus (tenant-isolation audit, and the jAIne seat).**
-- **One writer at a time.** Data-layer / live-DB → Lovable; frontend → Code.
-- **Lovable does not always honor prompt ordering.**
-- **SESSION LANE, DECLARED AT OPEN.**
+- **One writer at a time.** · **SESSION LANE, DECLARED AT OPEN.**
 
 ---
 
 ## ✅ EARLIER — SHIPPED (compressed; git owns the detail)
 
-- **2026-08-01** — the marker session. First-run marker read/write fixed as one change via a shared resolver; `verbLabel` scoped and closed without a fix; copy pass batch two plus a 125-character em-dash sweep. **August 1 roll-forward passed both legs.** ~2.8 credits, two free Code jobs. `eb93e73` → `fd1d6a8`.
-- **2026-07-31** — the redemption-path session. Vault kid-redemption fixed by routing to the existing wall RPC; wall approvals now log; the Bounty coverage grep found a fully unswept onboarding screen; the Slate copy pass. Four Code jobs, zero credits. `e186ff0` → `1ec7af2`.
-- **2026-07-30 (night)** — the Slate + the Ledger. Roll-forward for all three cadences, same-row. `retired_at`. The Bounty display-string sweep. Five credits.
-- **2026-07-30 (late)** — QA/design session. Zero code. Bounty supersedes Quest; the Slate and the Ledger; the roll-forward rule.
+- **2026-08-01 (late)** — the free session. Service worker shipped for installability; master-spec fold done from a read; page titles to middot; Slate collapsed-group label; `member_admitted`/`member_denied` rendered. Three carried items closed by looking. Zero credits, five Code jobs. `e813dca` → `b2efd8f`.
+- **2026-08-01 (early)** — the marker session. First-run marker read/write fixed via a shared resolver; `verbLabel` scoped and closed without a fix; copy pass batch two plus a 125-character em-dash sweep. **August 1 roll-forward passed both legs.** ~2.8 credits. `eb93e73` → `fd1d6a8`.
+- **2026-07-31** — the redemption-path session. Vault kid-redemption fixed by routing to the existing wall RPC; wall approvals now log; the Slate copy pass. Four Code jobs, zero credits. `e186ff0` → `1ec7af2`.
+- **2026-07-30 (night)** — the Slate + the Ledger. Roll-forward for all three cadences, same-row. `retired_at`. Five credits.
+- **2026-07-30 (late)** — QA/design session. Bounty supersedes Quest; the Slate and the Ledger; the roll-forward rule.
 - **2026-07-30 (early)** — the redemption `decided_by` fix, verified on live data.
 - **2026-07-29 (late)** — the master-spec fold + the first-run completion marker + `943a633`.
 - **2026-07-29 (early)** — the install tutorial.
