@@ -13,6 +13,53 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
 
+
+---
+DECISION: The service worker ships for installability only and caches nothing. The offline shell is deprioritized indefinitely.
+DATE: 2026-08-01
+WHY: Android Chrome will not offer an install prompt without a registered service worker carrying a fetch handler; iOS does not require one, which is why the iPad installed and the tablet never did. The worker that satisfies this is eighteen lines with zero references to the Cache API and an empty fetch handler. Caching is a separate decision and was rejected on its own merits: household wifi is pervasive, a chore board is not what anyone needs in a dead zone, and the cache strategy carries essentially all of the risk for almost none of the benefit. A caching bug is the one defect on this board that cannot be fixed by pushing a fix, because the stale worker serves the fix's own replacement. REJECTED: vite-plugin-pwa and Workbox, because a plugin generates a precache manifest, which is exactly the artifact being deliberately not built. REJECTED: a pass-through fetch handler calling respondWith(fetch(request)), which is not a pass-through, breaks range requests and re-wraps redirects. skipWaiting and clients.claim are included deliberately as a kill switch: default update behavior parks a new worker in "waiting" until every tab closes, which on a wall tablet that never closes is functionally never. A no-cache worker without a kill switch is a worse trade than no worker. STANDING CONSTRAINT: any future caching work must never cache a response carrying an Authorization header, which would reintroduce tenant isolation at the cache layer on a boundary verified under live attack. The offline shell reopens if PWA push is ever built, because they are the same mechanism.
+REPLACES: The Gate B framing of the service worker as offline-shell polish, in status.md and parking-lot.md.
+STATUS: DRAFT — contingent on the Android install prompt actually appearing. The worker is registered and running; the prompt has not been seen. If Chrome still withholds it, the criterion was not the only one missing and this entry gets amended rather than promoted.
+
+---
+
+DECISION: /quest-log and /hearth-log stay until Gate C, and the QUEST APPROVED enum leak on /hearth-log is accepted rather than open.
+DATE: 2026-08-01
+WHY: Ratifying in canon what was reclassified in conversation on 08-01 and folded into master-spec tonight. These are a deliberate debug surface with a live consumer, Scott, and they earned their keep twice in two days as the readable record of what the feed actually wrote. The old gate, "delete once the Slate is trusted," was wrong because it assumed doubt was the only reason to keep them. Their copy stays deliberately unswept so it remains obvious which surface is which. REJECTED: fixing verbLabel(), which would cost a job to change a string reachable only on one unlinked page. ACCEPTED COST: an unswept vocabulary surface will eventually say "quest" while every other screen says bounty, and someone will read it at 11pm and believe it. They are removed at Gate C alongside prod test-object cleanup, scheduled rather than deletion-pending.
+REPLACES: "Route deletion is a follow-up, after the Slate is trusted."
+STATUS: LOCKED
+
+---
+
+DECISION: Page titles use a middot. The Slate's collapsed group is labeled "{n} done."
+DATE: 2026-08-01
+WHY: Two copy calls landed together. Page titles: the 08-01 em-dash sweep turned "Board — Emberhold" into "Board: Emberhold" across 32 route files plus __root.tsx's title, og:title and twitter:title. A colon implies the left side contains the right, and it was a form nobody specified; the sweep chose it by default. Now "Board · Emberhold" across 38 strings in 34 files. The Slate label: the collapsed group reads "{n} more current" and contains only rows completed for the current occurrence, so "current" said the opposite of what those rows are. REJECTED: "{n} done, back Aug 3", because the rows carry their own return dates and a group label repeating one is copy explaining something the screen already shows, and because a mixed-cadence view has no single date to name. No pluralization branch; "1 done" and "5 done" both read.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: member_admitted and member_denied render as named verbs on all three feed surfaces.
+DATE: 2026-08-01
+WHY: The activity_verb enum has seven values and every renderer named five, so a server-written admission rendered as a bare "Mom · Leo" with no verb at all. Now "${who} admitted ${obj}" and "${who} denied ${obj}" in wall.tsx, Briefing.tsx and NotificationBell.tsx, matching the existing past-tense shape. CONSIDERED AND REJECTED: leaving member_denied unrendered, on the argument that a permanent feed entry for a rejection is a household conversation rather than a system message, which is the reasoning behind the existing DECLINED on telling a joiner what role they were confirmed as. Scott called it fine as written. hearth-log.tsx was deliberately excluded as the kept debug surface. NOTE: member_denied has never rendered in production because nobody has been denied; its first real render will be its first test.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: A brief that prescribes an action should carry a stop-clause naming the condition under which the action is wrong.
+DATE: 2026-08-01
+WHY: The blurb brief said delete this string, and added: if this turns out to be an empty state rather than a persistent blurb, stop and report instead. It was an empty state. Deleting it would have left a stranger with a blank section and no guidance, which is the opposite of the rule that motivated the deletion. The clause cost one sentence to write and converted a wrong brief into a finding. This generalizes: jAIne briefs from descriptions in status.md rather than from source, and a description is a claim about a file, not the file. The stop-clause is the cheap hedge that does not cost execution latitude, because it only fires on a named condition rather than inviting the agent to second-guess generally. COROLLARY: the delete-don't-reword copy default has an exception, and it is empty states. An empty state has no content to be redundant against.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The three verb-to-display switches are not byte-identical, and canon carried the overstatement for one session.
+DATE: 2026-08-01
+WHY: The 08-01 recon was briefed to check whether the verbLabel raw-enum fallback existed in wall.tsx, Briefing.tsx and NotificationBell.tsx. It answered that question correctly: the five named verbs behave identically and the default never touches row.verb. jAIne then reported them as "word-for-word the same switch" and folded that into master-spec. Code found the drift while adding the two new cases: wall.tsx's event_created reads "${actor} added ${obj}" while the other two read "${actor} added ${obj} to the calendar". This remains duplication rather than divergence and is still not the isActiveQuest failure mode, since nothing here is a correctness bug. But three copies that have already drifted once is a materially different claim from three that have not, and the shorter string is on the wall, which is the semi-public surface. THE TRANSFERABLE LESSON: a recon answers the question it was briefed with. Do not generalize its finding to the container the question lived in.
+REPLACES: The "word-for-word identical" characterization in the 08-01 recon summary and in the master-spec fold delivered earlier this session.
+STATUS: NOTED
 ---
 DECISION: The offline shell drops to LATER; installability is promoted to a Gate B blocker
 DATE: 2026-08-01
