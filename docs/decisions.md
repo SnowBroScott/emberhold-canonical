@@ -15,6 +15,68 @@ STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 
 
 ---
+DECISION: Stripe, the Founding Guildhall, and all money-and-paperwork work is PHASE 2, explicitly after a complete and ready Emberhold. "Ready" means Gate B's exit criterion and nothing more.
+DATE: 2026-08-02
+WHY: The critical path carried "Founding Guildhall build (Stripe + webhook + entitlement)" as a single row. It is not a row. It is Stripe account setup, a checkout surface, a webhook endpoint with no existing infrastructure, an entitlement write with an RLS story, refund posture, tax posture, COPPA, and a privacy policy that must name flock.js. Gate D is a landing page, an install tutorial and PostHog, none of which exist. Both were sitting on the board as nouns rather than as work, which made the board look thin on a no-credit day and hid how much is actually left. Splitting them out does two things: it gives Phase 1 a finish line that is achievable and testable, and it forces Phase 2 to be decomposed before it is estimated. REJECTED: leaving them inline on one ladder, because a row that is fifteen tasks corrupts every estimate downstream of it. REJECTED: decomposing Phase 2 tonight, because it is its own session and doing it badly at the end of a long one is worse than not doing it. NOTE: the finish lines are different. The feature loop is done and Emberhold is close to the end of BUILDING. It is a long way from done. Those were being treated as one thing.
+REPLACES: The single-ladder framing where Gate C sat inline between B and D.
+STATUS: LOCKED
+
+---
+
+DECISION: bun is this project's package manager. npm and yarn must never be run in this repo, and the prohibition is a named line in every Code brief.
+DATE: 2026-08-02
+WHY: bun had never been installed on Scott's machine at all. Every Code job this project has ever run silently fell back to npm, resolving against a package-lock.json that is not this project's lockfile. Consequences, all discovered tonight: a stale package-lock.json was sitting untracked in the working tree for weeks; one job resolved @tanstack/react-router to 1.170.17 against bun.lock's pinned 1.170.16; and every npm audit result ever recorded in canon was a statement about the wrong dependency tree, which means "0 vulnerabilities" was never a claim about what ships. bun 1.3.14 is now installed, package-lock.json is deleted, and the tree is restored via bun install. REJECTED: treating this as a one-time cleanup, because the failure was silent and repeated nine times without anyone noticing, which is exactly the profile of a thing that needs a standing brief line rather than a memory. The general lesson: verify the tool is present, not just that the convention names it.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The 47 TanStack Router typecheck errors are real and pre-existing, and they will not be fixed before Phase 1 closes.
+DATE: 2026-08-02
+WHY: The hypothesis that they were an artifact of the stray npm install was tested and DISPROVED: identical error count under npm's 1.170.17 and bun's 1.170.16. All 47 are one class, a missing `search` property on navigate, redirect and Link calls, with 36 matching that string literally. They are type-layer only with zero runtime impact, and every affected path is exercised on the glass daily. Fixing them means touching 36 call sites across effectively every route in the application for zero user-visible change, which is a large diff with real regression surface in exchange for a clean typecheck. That is not pre-stranger work. REJECTED: fixing them now for the sake of a clean build output, because the same clean-output goal was achieved by the one-line vitest fix, which is what was actually burying signal. Reopen only if a router upgrade forces the issue. NOTE FOR FUTURE JAINE: eleven consecutive Code jobs reported the single vitest error and none of them mentioned the other 47. That is a fact about how agents summarize typecheck output, not about the codebase, and it is worth distrusting the next "one pre-existing error" report accordingly.
+REPLACES: Nothing. New decision.
+STATUS: DECLINED
+
+---
+
+DECISION: quests.approved_by is validated by extending the enforce_quest_family_refs trigger, not by building an approve_quest RPC and rewriting five call sites.
+DATE: 2026-08-02
+WHY: The brief said to copy approve_redemption's shape. The stop-clause fired, correctly: there is no quest-approval RPC to add an optional actor parameter to. Five client surfaces write approved_by with a direct UPDATE (quest.$id.tsx twice, wall.tsx, slate.tsx, quest-log.tsx, Briefing.tsx). The pattern worth copying is the PRINCIPLE, "the database validates the actor rather than trusting what the client sends," not the IMPLEMENTATION, "an RPC takes an optional validated id." approve_redemption needed an RPC because it already had one and the client was discarding a resolved identity on the way in. Here all five sites send the id correctly and nothing checks it on arrival, so a trigger checks it on arrival and covers all five at once with zero client changes. REJECTED: option B, a new approve_quest RPC with five rewritten call sites. It is the faithful pattern match and the wrong trade: same security outcome, but it puts the Briefing's claimed_by credit-reassignment and the wall's PIN-verified approve flow inside the blast radius of a security fix, on 3.1 remaining credits. It reopens only if there is an independent reason to centralize approval, which there currently is not. INVARIANT HELD: no auth.uid() comparison anywhere in the change. A switched-to adult profile is a valid approver and remains one, because requiring actor = auth.uid() would break approval from a switched profile, which is normal daily use. NOTE: all 88 pre-existing approvals already named active adults. The hole was open for the feature's entire life and nobody fell in it.
+REPLACES: The framing in status.md that called this "the fourth site of the validated-actor-id RPC pattern."
+STATUS: LOCKED
+
+---
+
+DECISION: public.system_flags is accepted as readable by any authenticated user, on the condition that the read policy is narrowed before any non-public or non-boolean flag is added to it.
+DATE: 2026-08-02
+WHY: Lovable's scanner flagged "System flags readable by any authenticated user." Recon identified the surface: one table, columns key/value/updated_at, RLS enabled, policy FOR SELECT TO authenticated USING (true), holding a single global row ('founder_gate_enabled', false). anon has no grant and no policy and cannot read it at all. There is no family_id column and no per-tenant data, so every authenticated user reads the same global false. That is not a leak and it is not a tenant-isolation issue. THE CONDITION IS THE POINT: the table is a bare key/value store with nothing constraining what goes into it. A Stripe live-mode switch, a rollout percentage, or a kill switch inserted here would become world-readable to every account, silently, with no code change and no review. This is written down so that a future agent building Phase 2 does not cheerfully insert one. REJECTED: narrowing the policy now, because there is nothing to protect yet and a migration spent on a hypothetical is a migration not spent on a real item. REJECTED: leaving the finding un-triaged on the Lovable panel, because an unexplained warning trains the reader to skim the panel.
+REPLACES: Nothing. New decision.
+STATUS: NOTED
+
+---
+
+DECISION: sandbox_exec's EXECUTE grants stay. Do not revoke them.
+DATE: 2026-08-02
+WHY: Lovable confirmed it is a platform-managed role: the internal execution role for the agent sandbox, the migration runner, and schema introspection, created when the Lovable Cloud backend is provisioned. Critically, the postgres role is a member of sandbox_exec WITH ADMIN OPTION and inherits its privileges. Revoking would break Lovable Cloud migrations, agent introspection, and the postgres to sandbox_exec privilege chain. REJECTED: manual revocation, which was the open question on the board for weeks and would have been an outage. If the grants are ever to be narrowed, that is a Lovable support conversation, never a hand-rolled revoke. This closes a security-triage item that has sat unexplained since the grant surface work on 07-21.
+REPLACES: The open "ask Lovable what sandbox_exec is, one question" item.
+STATUS: LOCKED
+
+---
+
+DECISION: No setup value is stashed client-side before there is a verified session. Email and password only, until email confirmation produces a real session to write with.
+DATE: 2026-08-02
+WHY: This rule already governs the code. It was written as a prose comment at auth.tsx lines 22 to 24 during the 07-26 signup rebuild and never made it into canon. It is being captured now because the PIN recon proved it is load-bearing: the entire application writes exactly two localStorage keys, emberhold:active-member and emberhold:lastSection:{listId}, and the adult PIN lives in React state during form entry and goes only to set_profile_pin over HTTPS. Lovable's scanner still reports the pre-rebuild behavior, which means the rule is the thing that made the finding false. A design rule living only in a source comment does not survive the next rewrite of that file, and the next agent to touch signup would have no reason to know it was deliberate rather than incidental. STATE LIVES IN THE REPO OR IT DOES NOT EXIST, applied to a rule rather than to a plan.
+REPLACES: Nothing. New decision, retroactively capturing a 07-26 behavior.
+STATUS: LOCKED
+
+---
+
+DECISION: The kid joiner walk is downgraded from a pending verify to a will-surface-itself item. Stop asking Scott to run it.
+DATE: 2026-08-02
+WHY: Scott's call, and the reasoning holds. The joiner flow is adult-supervised at the exact moment it runs, and an adult standing over a kid's shoulder is a live debugger with a phone. The failure mode the verify was protecting against is silent failure with nobody watching, and this path is never walked unwatched. Additionally, Mia cannot read and Cade is a seasoned user, so neither is the naive stranger the walk was meant to simulate. REJECTED: continuing to carry it as a Gate B blocker, because it had been raised in four consecutive sessions and repeated asking was costing attention without changing the risk. NOTE, AND THIS IS THE GENERAL LESSON: the board cannot distinguish "never done" from "done so often nobody narrates it." Three items were carried as pending verifies tonight that turned out to be routine daily life, including kid redemption, which had been listed as unproven since 07-31 while Scott's kid was using it regularly. This is the rumor problem inverted and it is more expensive: a rumor wastes one session, a stale verify wastes attention every single time the board is read. THE FIX IS FREE: jAIne asks before carrying an item forward, and Scott answers normal, never happened, or don't care.
+REPLACES: The kid joiner walk's standing as critical path #4.
+STATUS: NOTED
+---
 DECISION: The service worker ships for installability only and caches nothing. The offline shell is deprioritized indefinitely.
 DATE: 2026-08-01
 WHY: Android Chrome will not offer an install prompt without a registered service worker carrying a fetch handler; iOS does not require one, which is why the iPad installed and the tablet never did. The worker that satisfies this is eighteen lines with zero references to the Cache API and an empty fetch handler. Caching is a separate decision and was rejected on its own merits: household wifi is pervasive, a chore board is not what anyone needs in a dead zone, and the cache strategy carries essentially all of the risk for almost none of the benefit. A caching bug is the one defect on this board that cannot be fixed by pushing a fix, because the stale worker serves the fix's own replacement. REJECTED: vite-plugin-pwa and Workbox, because a plugin generates a precache manifest, which is exactly the artifact being deliberately not built. REJECTED: a pass-through fetch handler calling respondWith(fetch(request)), which is not a pass-through, breaks range requests and re-wraps redirects. skipWaiting and clients.claim are included deliberately as a kill switch: default update behavior parks a new worker in "waiting" until every tab closes, which on a wall tablet that never closes is functionally never. A no-cache worker without a kill switch is a worse trade than no worker. STANDING CONSTRAINT: any future caching work must never cache a response carrying an Authorization header, which would reintroduce tenant isolation at the cache layer on a boundary verified under live attack. The offline shell reopens if PWA push is ever built, because they are the same mechanism.
