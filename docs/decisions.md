@@ -12,6 +12,101 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
+---
+
+DECISION: The Forge (fitness module), Option A, is declined. Emberhold ships with zero modules.
+DATE: 2026-09-11
+WHY: Scott's call, on comparative advantage. A full Fitbod replacement means an exercise catalog with movement patterns and muscle attribution, a substitution map, equipment modeling, and a real progression engine — roughly a year of work to displace a $15.99/month subscription that already works. jAIne pitched it at session open on the $192/yr cost-avoidance number and never priced the build; that framing was wrong and Scott corrected it. His edge is the thing Emberhold already is, and it is not exercise databases. CONSEQUENCES, all real: `families.enabled_modules` now has no consumer and no candidate; Forge display mode dies as a security surface; `/setup/intent`'s parking trigger ("finalized when Forge is built") can never fire and needs a new disposition; master-spec Part II becomes history rather than design truth; Option B dies with A; and every dollar of the $636 target now rides on stranger households, with no hedge. "Forge" survives as a register name only. REJECTED: building a thin Forge MVP anyway — north-star already required A to be a full Fitbod replacement, and a half-replacement that does not get used is the worst of both.
+REPLACES: north-star's framing of Option A as "the best ROI on the board," and the Option A vs Option B open decision, which dissolves — B only ever followed A.
+STATUS: DECLINED
+
+---
+
+DECISION: Gate E (closed beta) runs ahead of Gate C (money and paperwork).
+DATE: 2026-09-11
+WHY: The old ladder built Stripe, refunds, tax and COPPA, then the funnel, and only then asked whether a family with no Scott opens the app on day 8. That spends fifteen-plus items before asking the only question that matters, and every one of them is wasted if retention is zero. A free closed beta needs none of it: under own-session the Kin have no accounts, so COPPA exposure is thin, and nobody is paying. What the beta does need is small — a short privacy policy that is true, an auth email that reaches the inbox, and PostHog so day 8 is visible. Gate D (landing page, PostHog) moves up with it, because the landing page doubles as the beta recruitment page. CONSEQUENCE: auth email deliverability stops being "deferred until the end" and becomes load-bearing now; it was deferred pending DNS spend and that bill moves forward too. Sharpened by the Forge decision the same night: with no non-stranger revenue path left, finding out whether strangers stay comes before building the machine that charges them.
+REPLACES: the A → B → C → D → E gate ordering in north-star.md.
+STATUS: LOCKED
+
+---
+
+DECISION: Beta households get the Founding Guildhall comped for life. The promise is made now; the entitlement backfills at Gate C.
+DATE: 2026-09-11
+WHY: Gate E runs before Stripe exists, so there is nothing to charge with and nothing to build. A promise is a sentence, not a payment rail. Record hold IDs as they join and backfill the entitlement when Gate C lands. "Founding household, free forever" is also the strongest recruiting line available, and ten comped households are a retention test and a first referral source rather than lost revenue. They do not count toward the 27 stranger households in the success definition, because they did not pay and were not acquired cold.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Beta recruitment runs through second-degree strangers and gamer-parent communities. Nothing goes through WCSD or any school-adjacent channel.
+DATE: 2026-09-11
+WHY: In order: (1) ask each of the thirteen to forward to one family they know and Scott does not — those count as strangers by north-star's own definition, they will actually install it, and they have no reason to be polite; (2) gamer-parent communities, where quest, loot and XP are already native vocabulary and the fantasy frame is a selling point rather than a hurdle; (3) large parenting groups, posted as a dad looking for ten families to break something, never as a launch, and only after reading each group's self-promotion rules. THE HARD EXCLUSION: nothing through WCSD. No district parent networks, no school-adjacent local groups. The district's IT Strategy Leader recruiting district families for his own app is a conflict-of-interest story waiting for a slow news week. Recruiting outside Reno entirely also keeps them genuine strangers. REJECTED: beta-tester communities — they poke an app for ten minutes and leave, which says nothing about day 8. DEFERRED: Product Hunt, Show HN, big-subreddit launches, newsletter features — one shot each, and spending it on a beta whose auth email lands in spam is the real waste. Those stay sealed until Gate D.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Wall campaigns rotate automatically on a rolodex flip every 10 seconds. No swipe, no tap target.
+DATE: 2026-09-11
+WHY: One card at a time, full width, hinged at the top edge so the card turns on a spindle with the edge visible mid-turn, dot indicators below whose active dot fills as a countdown, ordered closest-to-completion first. A single campaign renders as before with no dots and no rotation. prefers-reduced-motion falls back to a fade but never stops rotating, because with no tap target a stopped carousel makes campaigns unreachable. WHY NOT SWIPE: the wall is a walk-past kiosk and nobody swipes it. It clipped a campaign title mid-word to advertise a gesture that will never be made, on the same surface where marquee text was already declined for exactly this reason. WHY NOT CROSSFADE: a crossfade is an ad rotator; a card physically turning reads as a mechanical object, which is the right register for something bolted to a kitchen wall. ACCEPTED COST: walk past at the wrong moment and your campaign is not on screen. Fine at two or three campaigns; revisit the cap if a hold ever runs eight. Tap-to-open was added to the phone's campaign cards in the same job, since the card looked tappable and did nothing while campaign detail already existed.
+REPLACES: the swipe-carousel decision made earlier the same session, which shipped and was wrong — the pattern was right and the surface was wrong, and that was jAIne's error, not Lovable's.
+STATUS: LOCKED
+
+---
+
+DECISION: Recurring bounties carry a `series_id` lineage that survives roll-forward.
+DATE: 2026-09-11
+WHY: Found by a stop-clause. Asked to display a last-completed date, Lovable reported that roll-forward archives the old row and creates a brand new one with only title, points and cadence copied, with nothing pointing back. Title-matching was the only available link and it breaks on rename or a duplicate name. That was never a missing date field — it was a missing identity. Every approval was minting a stranger that happened to share a title: no streaks possible ever, no per-duty history, silent orphaning on rename, and the orphan pile growing daily. SHAPE: a uuid minted when a standing duty is first created, copied forward on every roll, so live and archived instances share one lineage. All roll-forward code paths must propagate it; a path that forgets mints a fresh lineage on every approval, which looks completely normal on the glass and is silently broken. BACKFILL: one-time, grouping rows by exact title plus cadence within each hold, linking only unambiguous groups and leaving the rest null. REJECTED: no backfill at all — monthlies are the entire point of the feature and would have delivered nothing until mid-October. The backfill fails toward blank, never toward a fabricated date: a duty renamed in the past does not match, stays null, and reads "Not done yet." KNOWN COST: a null lineage and a genuinely-never-done duty are indistinguishable on the glass. That is the only untruth this feature can tell.
+REPLACES: Nothing — new decision. It closes a gap created by the 2026-07-30 same-row roll-forward decision, which remains correct.
+STATUS: LOCKED
+
+---
+
+DECISION: Last-completed date and actor show on the Slate's Standing rows, on recurring bounty detail, and on Board cards.
+DATE: 2026-09-11
+WHY: Format is a quiet secondary line: "Last done Aug 28 · Mia", or "Not done yet". Impact scales with cadence — marginal for dailies, useful for weeklies, decisive for monthlies. The reason it matters: same-row roll-forward killed the guilt pile in July and silently erased the evidence of a miss along with it. A monthly skipped in August rolls to September and looks identical to one done on time. "Last done Jul 30" on a September duty is the only way to know August never happened, and it returns the miss as one quiet date instead of a wall of red. Proven immediately on live data. jAIne kept it off Board cards citing vertical height on a scrolling board; Scott shipped it there anyway and the line costs about twelve pixels in rows that had room. ACCEPTED: a long title with a large ember value wraps the date onto its own line, breaking the pattern on roughly one row in five — fine on the Slate, which is a when-needed surface, and rare on Board cards.
+REPLACES: jAIne's call to exclude Board cards, reversed by Scott the same session.
+STATUS: LOCKED
+
+---
+
+DECISION: Pasting multi-line text into a list's add bar splits it into items and sections. This is the entire import story; there is no importer.
+DATE: 2026-09-11
+WHY: Each non-empty line becomes an item. A line ending in a colon or starting with # opens a section, reusing an existing one by that name. Leading bullets, dashes, numbering and checkbox marks are stripped; blank lines skipped. A confirmation states the count before anything writes, and the insert happens in one batch. REJECTED: a real importer — CSV parsers, Google Keep and Reminders integrations, field mapping. Scope creep in a costume. Paste-to-split makes the clipboard the API, so any AI, notes app or email becomes a list source for free, with no schema and no new system. It is also the switching cost for a beta household bringing a grocery list over from Keep, which is why it earns its place before the beta. EXPLICITLY NOT in bounty creation: bulk-minting bounties is what cluttered the board in the first place. VERIFIED on the glass with an 86-item, 10-section real-world paste; the ends-with-a-colon rule held and a mid-line colon did not false-trigger a section.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Checklist and to-do content belongs in Lists, not on the Board as bounties.
+DATE: 2026-09-11
+WHY: Tested by accident. Scott built a PAX interest-and-to-do list as bounties and it cluttered the board. That is not a campaigns defect — it is the membrane working exactly as designed: the game lives in bounties, and a checklist is a list. Lists already had user-defined sections and open/done counts and would have done the job on the first attempt; he had not tried it. THE REAL FINDING IS THE ROUTING-AROUND, NOT A MISSING FEATURE: a daily user reached for the wrong surface, which is a discoverability problem rather than a design one. Nothing was built. Worth remembering before the next "the board needs X" request gets treated as a board request.
+REPLACES: Nothing — new decision.
+STATUS: NOTED
+
+---
+
+DECISION: Lists are hold-wide and carry no audience flag. Known exception, left in place.
+DATE: 2026-09-11
+WHY: Every other content object in the platform carries an audience pattern; Lists do not, and that is a real exception to a load-bearing pattern. Live consequence, seen the night it was written down: a trip list containing gift items is readable by every member of the hold including a Kin who is not on the trip. LEFT AS IS, for now: the audience pattern already exists on quests and rewards and would be reused rather than invented, but a list nobody can see is a list nobody maintains, and the membrane says Lists stay clean shared utilities. Recorded so it is not rediscovered as a bug in six months. Whether Lists should gain the flag is in parking-lot OPEN DECISIONS.
+REPLACES: Nothing — new decision.
+STATUS: NOTED
+
+---
+
+DECISION: The Keeper/Kin rename sweep searched "Parent" and "Kid" and never searched "adult." Four user-facing strings survived it.
+DATE: 2026-09-11
+WHY: The 07-31 coverage grep passed clean and the rename was declared LANDED. The sweep was not wrong, it was incomplete: it searched for the retired words rather than for the concept. The survivors: onboarding add-family's PipSpark ("only this adult can approve bounties"), Onboarding Recap's two steps ("Adults turn dishes...", "Adults approve."), PipHelp's Kin-facing topic ("rewards the adults set up"), and the Vault's Kin empty state ("Ask an adult to stock the vault"). The last one shipped past a fix in the same component the same night — the Keeper empty state was corrected while the Kin string it preserved was itself unmigrated. COMPOUNDING FACTOR: four near-identical "only a Keeper can approve" explainers exist and three say "you," so Lovable read a sibling and reported the family already clean. It took handing it the literal string. THE RULE THIS SETS: a vocabulary sweep must search synonyms, not just the retired word.
+REPLACES: Nothing — new decision. It qualifies the 2026-07-31 claim that the rename landed clean.
+STATUS: NOTED
+
+---
+
+DECISION: Truncated list rows wrap to two lines before truncating, with tap-to-expand for the remainder. Tap-and-hold is declined.
+DATE: 2026-09-11
+WHY: Scott asked for tap or tap-and-hold to reveal full text on clipped rows. The clipping is real — rows truncate mid-line, and the add bar's section chip truncates to "NO SEC…" — but the cause is that the row refuses to wrap inside a container carrying enormous vertical padding around one line, with room for three. A reveal gesture would be an invisible affordance solving a problem caused by wasted space. Wrap first; tap-to-expand handles the rare genuine overflow. Tap-and-hold specifically is rejected as undiscoverable with no visual affordance. NOT YET BUILT. This also grows the long-open row-primitive job a second surface; the wall half of that job stays open and unchanged, since the wall is a fixed-height ambient rail where wrapping may push rows out of view.
+REPLACES: Nothing — new decision.
+STATUS: LOCKED
 
 ---
 DECISION: Own-session stays. Per-member auth is declined.
