@@ -12,6 +12,54 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
+
+---
+
+DECISION: The service worker ships for installability only and caches nothing. Promoted from DRAFT to LOCKED.
+DATE: 2026-09-25
+WHY: The 2026-08-01 entry was DRAFT pending one verification: that Android Chrome would actually offer the install once a registered worker with a fetch handler existed. Verified 09-25 on a stock Pixel running Chrome in Portuguese, by a non-Scott user. Chrome offered both Install and Create shortcut, which is its signal that installability passes (a failing site offers only the shortcut), and the installed app launched standalone with no address bar. The worker was the missing criterion and the only one. Everything in the 08-01 reasoning stands unchanged: no Cache API, empty fetch handler, skipUaiting and clients.claim as the kill switch, and the standing constraint that no future caching work may ever cache a response carrying an Authorization header.
+REPLACES: The DRAFT status of the 2026-08-01 service-worker entry. The entry's content is unchanged; only its status moves.
+STATUS: LOCKED
+
+---
+
+DECISION: Lists sections collapse, carry open/done counts, and rows are left-aligned with two-line wrap and tap-to-expand.
+DATE: 2026-09-25
+WHY: Built and glass-verified in the tail of the 09-11 session, logged late. Collapse: tapping a section header folds it, the chevron shows state, state persists per list on that device, defaults to expanded, and nothing ever auto-collapses when a section completes, because nothing should move under the user on its own. Counts: each section header reads "12 OPEN · 2 DONE", reusing the list header's own vocabulary so it is learned once rather than twice. Left-align: center-aligned text wasted both margins and made an 86-item list harder to scan, and left-aligning is what made two lines sufficient. Wrap: the 09-11 LOCKED call for two lines stands and is now built. REJECTED: three lines, Scott's call, because it reads crowded. REJECTED: one line plus tap-to-expand, cleanest to look at and most annoying to use while packing. LEFT ALONE: reclaiming the rows' vertical padding to fit line two at net-zero height, offered and not taken.
+REPLACES: Nothing. It confirms the 2026-09-11 two-line wrap entry as built and adds collapse, counts and alignment.
+STATUS: LOCKED
+
+---
+
+DECISION: The landing page at /welcome is a recruitment page for founding households, not a conversion page, and its hero runs the app's own components against an invented demo hold.
+DATE: 2026-09-25
+WHY: Decided in the 09-11 session's tail, logged late. The page has one job: recruit five to ten founding households for the free closed beta. There is no price and no checkout, so the only action is signing up. The audience is gamer parents, for whom quest, bounty and loot are a selling point rather than a hurdle, and the hook is the chore chart every parent made and abandoned after about eleven days. The pitch is that organization stays current as a side effect of the game being fun, never "get organized" and never positioned against calendar apps. The hero uses live components rather than screenshots or video, so the page cannot drift out of sync with the product. Order: live hero, the 48-avatar roster, the loop in four beats, a plain answer to "is this safe for my kids", and the ask in daylight. NOT SHIPPED: the form's destination and storage are unconfirmed, and nobody gets the link until they are.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The Vault closes the landing page's loop inside the fourth beat. It does not get its own section.
+DATE: 2026-09-25
+WHY: Scott's call over jAIne's lean, decided in the 09-11 tail. The loop's fourth beat promised embers buy "something real" and never showed it, and "real" is the word the whole pitch rests on. jAIne proposed a separate Vault section after the loop. Scott's read was stronger: the Vault is not a fifth thing, it is what the fourth beat has been promising, and splitting it out would break the loop open to explain its last step. The demo Vault holds rewards a parent already says yes to (the Friday movie pick, an hour of Minecraft, ice cream after dinner, skipping one chore), priced in embers, and carries one line at most: Keepers stock it and set the prices, nothing is bought with money, and no outside party decides what a kid can want. EXECUTION: briefed, needs another pass. The decision stands; the build does not yet.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Public-page copy rules. Demo data never uses a real family member's name, forms never model supplying a child's age, build rationale never reaches the glass, and the em-dash rule never covered hyphens.
+DATE: 2026-09-25
+WHY: All four surfaced on the first landing-page build in the 09-11 tail. A real child's name appeared in the public hero's demo data, on the internet. The "who lives there" placeholder named children and their ages directly under a safety card promising nothing is collected from a child; a parent volunteering it is not a contradiction, but it reads adjacent to one on the same scroll, and it models handing over minors' ages before a privacy policy exists. The line "That is the real app running, not a screenshot" was jAIne's brief rationale rendered as UI copy, the same disease the copy pass exists to treat, and it made the reader evaluate a claim instead of watching the thing move. And the no-em-dash rule stripped hyphens from "Forty-eight heroes, all ember-lit", which is correct English the rule was never about. GENERAL FORM: anything written to explain a choice to Lovable can be rendered by Lovable, so rationale in a brief must be marked as rationale or left out.
+REPLACES: Nothing. It clarifies the standing no-em-dash rule's scope.
+STATUS: LOCKED
+
+---
+
+DECISION: The wall's hearth panel assumed a four-member household, and five broke it. Every surface that renders the whole household must work from one member to at least eight.
+DATE: 2026-09-25
+WHY: Found 09-25 when Scott added his father-in-law to the hold. "Who's at the hearth" is a fixed two-column grid in a fixed-height panel. Four members fit as a 2x2; a fifth forced a third row, clipped the avatars, pushed names and ember counts below the tile edge, and stranded the fifth member alone. It went unnoticed because the only household ever tested was four people. Five or six is a normal household and grandparents are exactly who ends up in a hold, so this is stranger-proofing, not polish. The fix is briefed to adapt columns and avatar size to headcount, with everything visible and no scrolling on a walk-past surface, and to report whether any phone surface carries the same assumption. OPEN: what the wall does at twelve is undecided and parked.
+REPLACES: Nothing. New finding.
+STATUS: NOTED
 ---
 
 DECISION: The Forge (fitness module), Option A, is declined. Emberhold ships with zero modules.
