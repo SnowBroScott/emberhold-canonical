@@ -1,7 +1,15 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-09-11** — *the momentum session.* **Four Lovable prompts, five features shipped and glass-verified, one stop-clause fire, one schema migration, one strategy reversal.**
+Last session: **2026-09-25** — *the catch-up session.* **The 09-11 chat kept going for another week after its close-out and the tail was never committed. This logs it, plus two things that happened tonight: Android install is verified on a real Pixel, and a fifth member broke the wall.**
+
+**Tonight's headline: Emberhold installs on Android.** Scott's father-in-law, on a stock Pixel in Portuguese, got Chrome's Install option and a standalone launch with no address bar. **The eighteen-line service worker was the missing criterion all along.** Gate B loses a blocker.
+
+**Tonight's bug: a fifth member breaks the wall.** Adding him to the hold pushed "Who's at the hearth" past its fixed two-column grid. Avatars clip, names and ember counts fall off the tile. **Normal households have five people. This is stranger-proofing, not polish.** Prompt written, not yet run.
+
+**From the tail, on the glass:** the Lists polish (collapsible sections, open/done counts per section, left-aligned rows, two-line wrap with tap-to-expand). **Built but not shipped:** the landing page at `/welcome`.
+
+Last session (prior): **2026-09-11** — *the momentum session.* **Four Lovable prompts, five features shipped and glass-verified, one stop-clause fire, one schema migration, one strategy reversal.**
 
 **The headline: the ladder reordered and the app got three features it didn't have this morning.** Forge Option A is DECLINED — Scott's call, and the right one. That removes the only path to break-even that didn't require strangers, which is exactly why **Gate E now runs ahead of Gate C**: a free closed beta needs no Stripe, no refunds, no tax posture. Build the cash register after you know someone wants to shop.
 
@@ -31,7 +39,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ## Where the platform is
 
-**Structurally complete, published, installable on iOS, with a working activation path, a working spend path for every role, and the full 48-avatar roster live.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, avatars, a household-local date model, verified tenant isolation, clean grant surfaces, the Slate, the Ledger, a rollover engine proven on a real month boundary, a registered service worker, a server-validated quest approver, a role vocabulary that does not assume a nuclear family — and as of tonight, **recurring duties that remember their own history.**
+**Structurally complete, published, installable on iOS and Android, with a working activation path, a working spend path for every role, and the full 48-avatar roster live.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, avatars, a household-local date model, verified tenant isolation, clean grant surfaces, the Slate, the Ledger, a rollover engine proven on a real month boundary, a registered service worker, a server-validated quest approver, a role vocabulary that does not assume a nuclear family — and as of tonight, **recurring duties that remember their own history.**
 
 **Emberhold is a ONE-module product with ZERO modules.** Registers remain aesthetic only. Forge is declined; `enabled_modules` now has no consumer and no candidate.
 
@@ -45,10 +53,41 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 |---|---|---|
 | **1** | **⬜ BACKUP POSTURE.** Self-service export at **Cloud → Advanced settings → Export data**. **Thirteen live accounts, no confirmed recoverable backup.** Raised at session open 09-11 and not confirmed done. **Zero backups to one backup is still the largest single risk reduction on this board and it still costs a click.** | Gate B. The beta. |
 | **2** | **⬜ AUTH EMAIL DELIVERABILITY.** One of six providers still spams. **Was deferred pending DNS spend; the Gate E reorder makes it load-bearing now.** Every beta household's first impression runs through it. | Gate B. Every stranger signup. |
-| **3** | **🟡 THE ANDROID INSTALL PROMPT.** Scott's, on his own schedule. **Chrome proper, not Fully Kiosk.** | Gate B. The wall device. |
-| **4** | **⬜ THE LANDING PAGE.** Doubles as beta recruitment: *founding households wanted.* Pure visual, Scott's lane, Lovable's strength. **The first time Emberhold gets presented rather than debugged.** | Recruitment. |
+| **3** | **🔴 THE WALL BREAKS AT FIVE MEMBERS.** "Who's at the hearth" is a fixed two-column grid in a fixed-height panel. Prompt written 09-25, not yet run. **The prompt also asks for a report on whether any phone surface carries the same four-person assumption.** | Gate B. Every household bigger than four. |
+| **4** | **🟡 THE LANDING PAGE.** Built at `/welcome`. **Not shipped.** Three things stand between it and a stranger: (a) **where the beta form submits and what it stores is unknown** — the report was requested and Scott doesn't recall whether that prompt ran; (b) whether the copy-fix prompt ran at all; (c) the Vault in the loop's fourth beat needs another pass. **Do not point anyone at this page until (a) is answered.** | Recruitment. |
 | **5** | **⬜ A SHORT PRIVACY POLICY THAT IS TRUE.** Must name `flock.js`. **Beta-grade, not Gate C grade.** | The beta. |
 | **6** | **⬜ POSTHOG.** Day 8 is unmeasurable without it, and day 8 is the entire question. | Gate E's exit criterion. |
+
+---
+
+## ✅ SHIPPED — 2026-09-25 AND THE 09-11 TAIL
+
+### Android install *(glass-verified on a real Pixel)*
+
+**Chrome offered both Install and Create shortcut, which is how it says the site passes installability.** Scott's father-in-law tapped Install and it launched standalone with no address bar. **The service-worker decision (installability only, caches nothing) is promoted from DRAFT to LOCKED.** A stranger on the non-Apple half of the market can now install the app.
+
+- **The wall tablet should now install from Chrome proper too.** Same criterion was blocking it. One-minute check.
+
+### Lists: sections you can fold, rows you can read *(glass-verified)*
+
+- **Sections collapse.** Tap the header; the chevron shows state. **State persists per list on that device, defaults to expanded, and nothing ever collapses on its own.**
+- **Section headers carry open and done counts** in the same vocabulary as the list header: "12 OPEN · 2 DONE".
+- **Rows are left-aligned.** Center-aligned text wasted both margins.
+- **Rows wrap to two lines, then truncate, with tap-to-expand for the rare leftover.** Three lines was considered and rejected by Scott as crowded. **Padding untouched.**
+
+### `member_admitted` rendered in production *(glass-verified)*
+
+"SnowDad admitted Julio Wainer" on the wall ticker. **The first live render of a case that shipped 08-01.** `member_denied` still has never rendered, because nobody has been denied.
+
+---
+
+## 🟡 BUILT, NOT SHIPPED — THE LANDING PAGE
+
+**A recruitment page, not a conversion page.** One action: sign up as a founding household. Audience is gamer parents; the hook is the chore chart every parent made and abandoned. The hero runs the app's own components against an invented demo hold.
+
+- **Copy fixes briefed:** delete the leaked build-rationale line under the hero, restore hyphens the em-dash rule wrongly ate, replace Mia in the demo data with an invented name, drop child ages from the form placeholder. **Unknown whether the prompt ran.** One look at the page settles it.
+- **The Vault closes the loop.** Scott's call: it lives inside the fourth beat, not as its own section. **Briefed; needs another pass.**
+- **🔴 THE FORM.** Where it submits and what it stores is still unanswered. It collects household composition from parents, before a privacy policy exists. **This is the gate on sending anyone the link.**
 
 ---
 
@@ -137,7 +176,8 @@ Consequence, live tonight: a trip list containing gift items is readable by ever
 - 🟡 **THE `series_id` BACKFILL COUNT.** Linked groups versus null. Requested, not reported.
 - 🟡 **THE "adult" GREP REPORT.** Four known strings plus whatever else the sweep found.
 - 🟡 **🔴 THE THREE RENAME COMMITS (08-03).** The Vault as Keeper and as Kin, the Board, quest detail, and **the wall**. Still unverified.
-- 🟡 **🔴 THE ANDROID INSTALL PROMPT.** Scott's.
+- 🟡 **THE LANDING PAGE COPY FIXES.** Did the prompt run? One look at `/welcome`.
+- 🟡 **THE WALL TABLET INSTALL.** Should work now that the Pixel did. Chrome proper.
 - 🟡 **THE MONTHLY ROLL BRANCH.** August 1 passed both legs. **September 1 has now passed unobserved; the Slate's last-done dates are the first passive evidence it is working.**
 - 🟡 **THE TIMEZONE HEAL — DRAFT until proven from a non-Pacific device.** Scott's São Paulo trip was the candidate and has slipped to roughly October 1.
 - 🟡 **The wall's `logActivity` sits in `mutationFn`, not `onSuccess`.** One line.
@@ -148,8 +188,8 @@ Consequence, live tonight: a trip list containing gift items is readable by ever
 
 ## ⬜ OPEN — the next work, in order
 
-- ⬜ **THE LANDING PAGE.** Critical path #4. **Write the pitch first — what it is, who it's for, what you're asking of them.** Words are jAIne's lane, Scott holds the veto, Lovable builds from a loose brief.
-- ⬜ **LIST ROW TRUNCATION.** Rows truncate mid-line inside a container with room for three. **Wrap to two lines, truncate past that, tap-to-expand for the rare leftover.** The same disease truncates the section chip in the add bar to "NO SEC…". **Tap-and-hold was declined: an invisible gesture solving a problem caused by wasted space.**
+- ⬜ **THE WALL'S HEARTH PANEL.** Critical path #3. Run the prompt, then verify with five members and a throwaway sixth or seventh.
+- ⬜ **THE LANDING PAGE.** Critical path #4. **Form recon first.** Then the copy-fix check, then the Vault pass.
 - ⬜ **BACKUP EXPORT.** Still one click.
 - ⬜ **The "adult" strings and the grep report.**
 - ⬜ **🖊️ THE SCREEN COPY PASS.** Slate ✅ · Ledger ✅ · Auth ✅ · Campaigns ✅ · Calendar ✅ · Briefing ✅ · everything else unreviewed. **Touched is not reviewed.**
@@ -204,6 +244,8 @@ Consequence, live tonight: a trip list containing gift items is readable by ever
 
 ## 🔵 THE BUILD MODEL
 
+- **A LAYOUT THAT ASSUMES A HEADCOUNT IS A STRANGER BUG. (NEW — 09-25.)** Scott's household was four people, so every whole-household surface was tested at four. The first extended-family member broke the wall. **Test every whole-household surface at one member and at eight.**
+- **THE CLOSE-OUT IS NOT THE END OF THE CHAT. (NEW — 09-25.)** The 09-11 close-out committed; the chat then ran another week and none of it was logged. **Any work after a close-out needs its own close-out.**
 - **TESTED ON THE GLASS BEATS REASONED FROM A DOC. (Reinforced 09-11.)** jAIne kept last-done off Board cards citing vertical height, from the spec. Scott shipped it and it costs twelve pixels. **Same failure shape as avatar transport on 08-03: canon beat the person who opens the app daily.**
 - **A STOP-CLAUSE IS WORTH MORE THAN A CORRECT INSTRUCTION. (Fourth fire, fourth time right, 09-11.)** "If the only link is a title match, stop and report" turned a cosmetic date field into a schema fix. **Four fires, four correct, across three sessions.**
 - **NAME THE SURFACE, NOT THE FEATURE. (NEW — 09-11.)** "Campaigns on the Board" produced a carousel on the wall, because the Board and the wall both render campaigns and only one of them has thumbs. **A brief that names the interaction without naming the device is half a brief.**
@@ -233,6 +275,7 @@ Consequence, live tonight: a trip list containing gift items is readable by ever
 
 ## ✅ EARLIER — SHIPPED (compressed; git owns the detail)
 
+- **2026-09-25** — the catch-up session. Android install verified on a real Pixel; the service-worker decision LOCKED. The 09-11 tail logged: Lists collapse, section counts, left-align and two-line wrap shipped; the landing page built at `/welcome` but not shipped. A fifth member broke the wall's hearth panel.
 - **2026-09-11** — the momentum session. Forge Option A declined; Gate E promoted ahead of Gate C; beta recruitment channels and the WCSD exclusion set. The wall's campaign rotation rebuilt as a rolodex flip after a swipe carousel landed on the wrong surface. `series_id` lineage shipped with a one-time backfill, unlocking last-done on the Slate, bounty detail and Board cards. Lists gained paste-to-split and passed an 86-item real-world test. Vault Keeper empty state and the Briefing FAB overlap fixed.
 - **2026-08-03** — the decision session. The own-session fork LOCKED, closing four items by reclassification. Keeper and Kin shipped across three commits. The activity label resolved to a two-column split. Zero credits. `9c83fc4` → `e8223f4` → `f9f731e`.
 - **2026-08-02** — the assessment session. `quests.approved_by` validated server-side and verified on the glass; bun installed; the security panel triaged to zero mysteries; Stripe reframed as Phase 2. ~1.9 credits.
