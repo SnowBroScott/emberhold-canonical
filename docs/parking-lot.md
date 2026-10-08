@@ -21,6 +21,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **An application-level export routine.** Offered by Lovable during the 08-02 backup conversation. **Real idea, wrong time.** Revisit only if Lovable comes back without a confirmed retention window.
 - **Should the reward audience enum get its own label map?** The Vault's `household` / `adults_only` is a separate enum from the quest audience and now has two hardcoded "Keepers only" strings. **Two sites is not yet drift.**
 - **Streaks on standing duties.** `series_id` made them possible without a second migration. **Not scoped, not designed, and it must pass the daily-habit test before it earns a line of vertical height.** ⚠️ **A streak is also a guilt mechanic wearing a reward costume — the exact thing same-row roll-forward was built to kill. Design it carefully or not at all.**
+- **Does the hearth panel want an upper bound?** The 09-25 fix targets up to eight members. **A hold of twelve is not impossible, and nobody has decided what the wall does then.**
 - **Does the wall want last-done?** It landed on the Slate, bounty detail and Board cards. **The wall is a different density problem and nobody has looked.**
 
 ---
@@ -55,7 +56,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 | **The Vault** | ⬜ unreviewed | ⚠️ **Seven strings touched by the rename. Keeper empty state added 09-11; the Kin empty state still says "adult." See NOW.** |
 | **The Board** | ⬜ unreviewed | *Last-done line added 09-11.* |
 | **Quest detail** | ⬜ unreviewed | |
-| **Lists** | ⬜ unreviewed | ⚠️ **Rows truncate mid-line; the add bar's section chip truncates to "NO SEC…". See NOW.** |
+| **Lists** | ⬜ unreviewed | Row truncation fixed in the 09-11 tail: two-line wrap, tap-to-expand, left-aligned. **Copy itself still unreviewed.** |
 | **Onboarding — add family** | ⬜ unreviewed | ⚠️ **PipSpark still says "this adult" one line below a Keeper PIN label. See NOW.** |
 | **Onboarding — recap** | ⬜ unreviewed | ⚠️ **"Adults turn dishes..." and "Adults approve." See NOW.** |
 | **Onboarding — first bounty** | ⬜ unreviewed | ⚠️ **High-stakes screen; read it whole.** |
@@ -88,13 +89,13 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 ## NOW (this is the next work)
 
-- **🔴 THE LANDING PAGE.** Critical path. **Doubles as beta recruitment: founding households wanted.** Pure visual, Scott's lane, Lovable's strength. **Write the pitch first — what it is, who it's for, what you are asking of them.**
+- **🔴 THE WALL'S HEARTH PANEL BREAKS AT FIVE MEMBERS.** Prompt written 09-25. **Verify at five, then at seven or eight with throwaway members.** The prompt asks for a report on whether any phone surface assumes four; anything it finds lands here.
+- **🔴 THE LANDING PAGE — BUILT, NOT SHIPPED.** At `/welcome`. **First: find out where the beta form submits and what it stores.** Then check whether the copy fixes landed. Then the Vault pass in the loop's fourth beat. **Nobody gets the link until the form question is answered.**
 - **🔴 BACKUP: TRIGGER THE EXPORT.** **Cloud → Advanced settings → Export data.** Free, self-service, no credits. Raised at 09-11 open and still not confirmed. **Thirteen live accounts, no confirmed recoverable backup.**
 - **🔴 AUTH EMAIL DELIVERABILITY.** ⚠️ **Promoted 09-11.** It was deferred pending DNS spend; the Gate E reorder makes it load-bearing. **Every beta household's first impression runs through it.** *Inspect any NS-record request before pasting.*
-- **🔴 THE ANDROID INSTALL PROMPT.** Scott's, on his own schedule. **Chrome proper, never Fully Kiosk.** If Chrome withholds it, remote-debug over USB: the Manifest panel names the failing criterion in plain text.
+- **THE WALL TABLET INSTALL.** Android is verified on a Pixel, so the tablet should install from Chrome proper now. **Never Fully Kiosk.** One minute.
 - **A SHORT PRIVACY POLICY THAT IS TRUE.** Must name `flock.js`. **Beta-grade, not Gate C grade. This is a writing job, not a legal build.**
 - **POSTHOG.** **Day 8 is Gate E's entire exit criterion and it is unmeasurable without instrumentation.**
-- **LIST ROW TRUNCATION.** Rows truncate mid-line inside a container with room for three, and the add bar's section chip truncates to "NO SEC…". **Wrap to two lines, truncate past that, tap-to-expand for the rare leftover.** **Tap-and-hold was declined — see KILLED.**
 - **THE FOUR "adult" STRINGS.** `onboarding.add-family.tsx` PipSpark · Onboarding Recap ×2 · PipHelp's Kin-facing topic · the Vault's Kin empty state. ⚠️ **Plus the whole-tree grep report, which was requested in the rolodex bundle and never came back.**
 - **VERIFY THE PHONE BOARD'S CAMPAIGNS.** The original complaint was the Board; the fix landed on the wall. **The Briefing lists all campaigns, so the Board may already be fine.** One look, no credits.
 - **VERIFY THE `series_id` BACKFILL COUNT.** Linked groups versus null. **If null is more than a couple, spot-check by hand.**
@@ -203,6 +204,8 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **THE FORGE'S OPTION A vs OPTION B DECISION — DISSOLVED 2026-09-11.** It was only ever about whether B happens. **A is declined, so there is nothing for B to follow.**
 - **SWIPE CAROUSEL FOR WALL CAMPAIGNS — SUPERSEDED 2026-09-11, SAME SESSION IT SHIPPED.** ⚠️ **jAIne said two turns earlier that auto-rotate belongs on the wall, then wrote a prompt putting swipe there anyway.** **The pattern was right and the surface was wrong.** It clipped a campaign title mid-word to advertise a gesture nobody walking through a kitchen will make, on a screen where canon had already declined marquee text for exactly that reason. **Replaced by the timed rolodex rotation.**
 - **CROSSFADE AS THE WALL'S CAMPAIGN TRANSITION — DECLINED 2026-09-11.** **A crossfade is an ad rotator.** A card turning on a hinge reads as a mechanical object, which is the right register for something bolted to a kitchen wall. **It also produces a mid-turn card edge, which is a place for light to catch.**
+- **THREE-LINE WRAP ON LIST ROWS — DECLINED (09-11 tail).** Scott's call: it reads crowded. Two lines plus tap-to-expand instead. **Reclaiming row padding to fit line two was also offered and left alone.**
+- **THE VAULT AS ITS OWN LANDING-PAGE SECTION — DECLINED (09-11 tail).** jAIne's lean. Scott's call was that the Vault is what the loop's fourth beat has been promising, so it closes the loop rather than following it.
 - **TAP-AND-HOLD TO REVEAL TRUNCATED LIST TEXT — DECLINED 2026-09-11.** **An invisible gesture solving a problem caused by wasted space.** The rows carry enormous vertical padding around one clipped line in a container with room for three. **Wrap to two lines first; tap-to-expand handles the rare leftover.**
 - **A REAL LIST IMPORTER — DECLINED 2026-09-11.** CSV parsers, Google Keep and Reminders integrations, field mapping. **Scope creep in a costume.** **Paste-to-split makes the clipboard the API, so any AI, notes app or email is a list source for free, with no schema and no new system.**
 - **PASTE-TO-SPLIT IN BOUNTY CREATION — DECLINED 2026-09-11.** Bulk-minting bounties is exactly what cluttered the board. **Lists only.**
@@ -241,6 +244,6 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 The Slate wraps titles correctly with no primitive at all, and the board always did. **The job shrank to deleting a declared `truncate` at three sites.**
 
-⚠️ **IT GREW A LIST HALF ON 2026-09-11.** List rows truncate mid-line inside a container with room for three, and the add bar's section chip truncates to "NO SEC…". **Same disease, different surface.**
+✅ **THE LIST HALF IS CLOSED.** It appeared 09-11 and shipped in the same session's tail: two-line wrap, tap-to-expand, left-aligned.
 
 ⚠️ **The wall remains the open half:** it is a fixed-height ambient rail, and wrapping there may push rows out of view where wrapping on a scrollable phone surface costs nothing. **Cap-at-two-lines may earn its keep on the wall and only on the wall. Visual success criterion — Scott's eyeball, not a brief.**
