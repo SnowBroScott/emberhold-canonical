@@ -12,7 +12,117 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
+---
 
+DECISION: "While you were away" is one household reel with two entry points: a tile on the wall and a chip on the phone Board. Every reel shows every member's beats. "New" is tracked per profile on the phone and per device on the wall. It is celebration only: no denials, misses or rankings. The finale lists members in arrival order, never sorted by amount, and credits each Keeper's approvals of other members' bounties ("kept the hearth lit"); self-approvals never count. Reels cap at 48 hours and 12 beats. Pacing has hard minimums (fire settles 1.5s, count runs 1.5s, beat holds 2s).
+DATE: 2026-10-08
+WHY: The best beat in the loop happened unseen: a kid finishes at 4, a Keeper approves at 9, embers land in silence. The reel was chosen over everything on the fence because it aims straight at Gate E's question, a reason to open the app on day 8 that is not a chore. Scott moved it onto the wall so the payoff becomes a family moment, included Keepers because parents are the unsung heroes who never get a payoff, and made every reel show everyone's beats because visible celebration creates FOMO. jAIne's first version had per-profile reels showing only your own beats; Scott overruled it. "New" stays per profile, not per device, because Kin share devices under own-session. Arrival order rather than amount keeps the reel from becoming a leaderboard. Self-approval was excluded after a real reel credited SnowDad for approving his own bounty. Pacing minimums were set in seconds after "too fast" came back twice on loose language. The caps stop a cleared wall marker from dumping weeks of history.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: One shared definition decides who earned a bounty: the claimer, with the assignee as fallback. Ember totals, Ranks, the reel and every future surface read that single definition.
+DATE: 2026-10-08
+WHY: A stop-clause fired on the reel build: the database had no single "credited member" field. A bounty records a claimer and an assignee, and one of 167 approved bounties ("Weekly laundry," July 24, Cade claimed, May assigned) had both, so totals counted its 10 embers twice. Claiming is the work and assignment is the plan, so the claimer gets credit. The rule lives in one place because two copies of the same logic drift. May's total moved from 1,070 to 1,060; no spendable balance changed. The fallback never fires today, because every approve path records a claimer; it exists only for a future screen or a hand edit.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Do not add a database constraint refusing approval of a bounty with no claimer.
+DATE: 2026-10-08
+WHY: jAIne proposed "the claimer, full stop," enforced by the database, so a blank claimer becomes impossible rather than handled. Scott approved the fallback version instead, and it is harmless: no approve path produces a blank claimer today, and if one ever does the assignee gets credit. Written down so the guard is not re-proposed as a fresh idea.
+REPLACES: Nothing. New decision.
+STATUS: DECLINED
+
+---
+
+DECISION: The reel's visual grammar has two channels. The hearth fire represents embers and only embers: its intensity follows the ember tier, from coals with no flame up to a roaring blaze. The sconces on either side of the fireplace represent achievements that are not embers: a small idle flame on ember beats, igniting on a campaign completion while the fire holds steady.
+DATE: 2026-10-08
+WHY: Scott's fireplace idea turned brightness equals heat into the animation itself; the arched hall before it was a backdrop with a number on it. jAIne's first campaign brief had the fire roar for a campaign, which would have made the fire stop meaning embers. Scott's sconce idea kept it honest. A kid learns the grammar once and reads every future beat without words: fire rose, someone earned; sconces lit, the hold won together. Any future non-ember event uses the sconces, never the fire.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The reel's stage is a painterly castle fireplace. The member's avatar and ember count stand in the fire, backlit by it, with a dark scrim keeping text legible at the hottest tiers. The firebox is structured so a looping video per tier can replace the painted fire later without rework.
+DATE: 2026-10-08
+WHY: Four art passes: a dim modal, an arched hall, the fireplace, then legibility. jAIne read the avatar covering the firebox as a defect and briefed moving it out; Scott overruled, because the member standing in their own achievement hits harder than one riding over it. Legibility was solved with backlighting, not relocation. jAIne had also steered toward an "atmospheric" code-drawn castle expecting clip art beside the painted avatars; Lovable went painterly and it matched. Lovable stated plainly that convincing moving flames need looping video. Motion is therefore an asset task in Scott's lane, not something to keep prompting for.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: A campaign completion gets its own beat: the campaign name is the hero, contributors appear together beneath it, no ember count is shown, and campaign beats play after all ember beats, immediately before the finale.
+DATE: 2026-10-08
+WHY: A campaign is a household win and deserves a moment, and it was the first test of whether the beat framework was generic; it slotted in without reworking ember beats. Lovable's first build showed "+100 embers," which turned out to be the sum of the campaign's bounties. Those embers were already celebrated in their own beats, so the sum double-counted them, and campaigns do not mint embers. Chronological order buried the biggest beat mid-reel, so campaigns go last, as the climax.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The wall's reel tile never disappears while there is anything to replay. It glows hot when there is something new since that wall device last played the reel, then settles into a dim resting ember that is still tappable to replay.
+DATE: 2026-10-08
+WHY: jAIne's original brief had the tile disappear once watched and gave only the phone a replay. Scott found the wall had no way to replay. Brightness equals heat already distinguishes new from seen, so a cooling tile solves it without adding a second control to an ambient surface.
+REPLACES: The 2026-10-08 brief's "tile disappears once played" behavior on the wall.
+STATUS: LOCKED
+
+---
+
+DECISION: Ranks is weekly by default, with an "All time" toggle. The week runs Monday 00:00 to Sunday 23:59 in the household's timezone and is defined once in the database (household_week_bounds), never computed by screens. On a Monday, until anyone in the hold earns, Ranks shows last week's final standings labeled "Last week."
+DATE: 2026-10-08
+WHY: May's call, and Scott agreed: weekly lands better than lifetime. A weekly reset is also the softening the open "Ranks as a household dial" decision was reaching for: a kid who lost this week starts fresh Monday instead of falling further behind forever. Monday is the family's week start. Defining the week once in the database means Ranks, the recap and the tiles cannot disagree about where a week ends, and the household timezone is the same source the server already uses for "today." The Monday fallback avoids a dead board of zeros and lets the champion keep the crown until someone earns. The function runs with the caller's permissions and takes no household argument; an early draft took a household id under definer rights with a comment promising a check the code did not contain, and was corrected before it applied.
+REPLACES: Lifetime totals as the default Ranks view.
+STATUS: LOCKED
+
+---
+
+DECISION: A weekly recap reel, built on the same framework, covers last week: one beat per member who earned, in roster order, showing their week's total, bounty count and biggest bounty; campaign beats with the sconces; and a final screen with every earner's total, where tapping a member opens their bounty list. Member beats and the household finale use separate fire scales calibrated to real weekly totals.
+DATE: 2026-10-08
+WHY: May's idea. The 48-hour reel is the daily payoff; the weekly recap is a ritual, the whole family in front of the wall at the moment Ranks resets, which makes a reset feel like a new round instead of a loss. It is almost entirely reuse. jAIne pushed back on listing every member's bounties on one screen, because 20-plus approvals a week are unreadable on a phone or across a kitchen; tap-to-expand keeps everything available. Roster order, not amount, because Ranks already ranks and the recap celebrates. Thresholds came from a four-week data report after jAIne's guess that Keepers would roar every week turned out backwards: single-member weeks run 20 to 160, so one scale would have left everyone at coals. Whether a zero-earning member appears is left open until the family watches the first real recap.
+REPLACES: Nothing. New decision.
+STATUS: DRAFT — verification is the first real recap on Monday 2026-10-12, watched on the wall, including the fire spread across member beats and the finale.
+
+---
+
+DECISION: The trophy card is a saveable image of a member's weekly recap beat: phone only, one per member per week, styled hotter as the haul grows, and free. Fancier frames may later become a household-level catalog item.
+DATE: 2026-10-08
+WHY: Scott's idea, an animation that ends in something a kid can keep. One card per reel or per approval would make stickers meaningless, which is brightness equals heat applied to keepsakes. The weekly member beat is the natural trophy: Mia's week, framed. Phone only because the wall is a shared kiosk. Free because free is a full tool; frames as a catalog item respect the household-level monetization seam. It was deliberately not bundled into the reel's first prompt, because image export is its own failure surface.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Lists search gets one addition only: when a search returns no items, a one-tap "Add [search text]" button. No separate "restore from done" path.
+DATE: 2026-10-08
+WHY: Scott wanted a fast add from a failed search. jAIne designed a second branch to restore checked-off items instead of duplicating them. Scott's screenshot showed search already includes done items and unchecking one is a single tap, so "no items match" genuinely means never on the list. The restore branch was redundant, an overbuild aimed at a problem jAIne had not checked existed.
+REPLACES: Nothing. New decision.
+STATUS: DECLINED
+
+---
+
+DECISION: The beta signup notification and auth email deliverability are built in one session on one verified sending domain: a provider, theemberhold.com verified with SPF, DKIM and DMARC, auth email pointed at the new provider, and a ping to Scott on each new beta_signups row.
+DATE: 2026-10-08
+WHY: Scott asked what it takes to get emailed on new signups. The answer was the same three pieces critical path #2 has waited on since it was deferred over the DNS step. Doing the domain once pays twice, and the signup ping is the easy test of the pipe. Repointing auth email is a separate setting and the step most often forgotten, so it is named explicitly. Not done until a test email reaches the inbox at each of the six providers, including the one that spams today; a new domain has no reputation, so some warm-up is expected. Cold strangers wait for this; friends-of-friends can get the /welcome link now that the form is tightened.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Auto-accept in Lovable runs on by default in Scott's workflow, so build safety lives in the brief: stop-clauses, "show the plan before applying," a first line naming any database change, and "no dependency changes without asking."
+DATE: 2026-10-08
+WHY: Canon repeatedly said auto-accept off for security and database work, and Scott said plainly that he rarely turns it off. A rule nobody follows is a wish. This session showed the brief is the real gate: Lovable stopped on a stop-clause with auto-accept on, and an unrequested package update slipped through because no brief forbade it. Briefs now carry the brakes.
+REPLACES: The working assumption that auto-accept is off for security and database work.
+STATUS: NOTED
+
+---
+
+DECISION: Data findings from the 2026-10-08 reports: Keepers earn embers exactly as Kin do and received 137 of 167 approved bounties; across the last four reported weeks Mia earned zero; the whole hold recorded zero approvals for two consecutive weeks during the Brazil trip.
+DATE: 2026-10-08
+WHY: These constrain future design without being rules. The reel and recap will be dominated by parents' beats, which is the FOMO Scott wanted. Celebration-only means a child with no earnings watches everyone else's beats, so the youngest member needs bounties she can actually finish, and the zero-earner question in the recap stays open until a real one is watched. A family on vacation stops using a chore app, so a week-two dip in a beta household may be a trip, not churn; ask before reading it as a loss.
+REPLACES: Nothing. New decision.
+STATUS: NOTED****
 ---
 
 DECISION: The service worker ships for installability only and caches nothing. Promoted from DRAFT to LOCKED.
