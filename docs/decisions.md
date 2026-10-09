@@ -12,6 +12,70 @@ REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
 
+
+---
+
+DECISION: Hero celebration clips are generated video, stored in a shared library keyed by avatar, not by person: table avatar_clips (avatar_id, kind, variant, status) and the hero-clips bucket. Signed-in users may read. Insert, update and delete are service_role only. The reel plays only clips with status approved, choosing at random among approved variants.
+DATE: 2026-10-08
+WHY: Scott's dream for the app was the family's heroes coming alive when they earn, and four hand-made clips proved it on the glass for about $2. Keying by avatar means any household that picks the golem gets the golem's clip, so the library scales by roster, not by family. Variant and status were added before the first migration rather than after, because three variants per recurring bounty and a Keeper review step were already designed. Lovable's first plan let any Keeper write; because the library is shared across every hold, a Keeper in one hold could have replaced a clip every other hold sees, which is a tenant-isolation hole wearing a role check. Writes therefore go through the backend only; no client needs an upload button for shared content.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The fireplace opening is the clip's screen. A member beat opens on the circle portrait; when the clip is ready it fades in over the portrait inside the firebox, starts about 0.3 seconds in, plays once and holds its final frame. Edges are feathered into the dark firebox. The portrait's border and flare ring are switched off for the whole beat whenever a clip exists. No clip, a failed load or reduced motion leaves the portrait exactly as before.
+DATE: 2026-10-08
+WHY: Scott's call to place clips in the fireplace rather than in a circle kept everyone in one world and let the scene hide clip edges. The brief asked for the fire to sit in front of the clip; that is impossible while each fire tier is a single flat painted image, so feathering is the stand-in until living fire loops exist. Starting at 0.3 seconds skips the first frame, which carries the source image's baked-in ring. The flare ring fix was done twice: the first version depended on the browser reporting that the clip was playing and failed on Scott's phone; the second makes the portrait track the clip directly.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Clips are generated through fal.ai as an aggregator, on Kling v3 standard, using recipe v1: the roster avatar file as-is, no end frame, 4 seconds, audio off, and a prompt that opens with the avatar's ring burning away as a portal, then the hero description, one celebration action, style rules and guardrails.
+DATE: 2026-10-08
+WHY: The image-to-video market changes monthly, so an aggregator means the model is a setting rather than an integration. Kling was chosen for character consistency; standard tier at about $0.112 a second (~45 cents per clip) produced clips Scott judged great, cheaper than turbo pro. jAIne argued the baked-in ring had to be cleaned from the source by hand; Scott tested a prompt instead, and making the ring a burning portal worked better and became a built-in entrance. A matching end frame was dropped because the planned fire transitions handle clip seams. The kid-facing guardrails, "triumphant and cool, not scary, no gore, no weapons," are part of the recipe, not optional.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Bounties carry a category: Kitchen, Cleaning, Laundry and beds, Chaos (pets), or Generic, with Generic split into three tiers by ember value (under 15, 15 to 49, 50 and up). The category is a field on the bounty, carried forward on roll-forward, with AI pre-selection at creation. It is never inferred from titles.
+DATE: 2026-10-08
+WHY: Scott wanted clips around groups of bounties rather than per bounty. A 90-day report of 140 approvals sorted cleanly into four groups plus generic, with Kitchen alone about 61. Trash and outdoor jobs fold into Cleaning rather than a fifth group worth about twelve approvals. Chaos is small but the group the kids will chase. Title matching was rejected for the same reason series_id exists: a title is not an identity, and a rename breaks it. AI pre-selection keeps the field from becoming a question nobody answers, which would leave everything generic.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Each category gets three signature moves: one action, aimed at the camera, ending on a frozen impact moment. Prompts are assembled from a fixed template (portal burn, hero, move, settle, style and guardrails); only the move changes. Mia's versions are softened.
+DATE: 2026-10-08
+WHY: Scott's hockey analogy: a slap shot with the puck flying at the camera reads instantly. Motion along the lens axis reads at thumbnail size and video models handle it well; a single action fits four seconds where two get mushy. Three moves per category, rather than one, so no two family members open on the same move and so a member's three variants of a recurring bounty walk through different moves. The template is the "bones" of Scott's north star.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: The north star for clips: on approval, a fresh clip is generated for a 20-plus one-off bounty, for a 20-plus recurring bounty until that member has three variants of it (never the same clip twice in a row), for a member's first-ever completion of any series, and for campaign completions. Everything else plays from the library. Every new clip is pending until a Keeper approves it. Automation runs under a monthly spend cap and a kill switch. Build order: library (done), categories, recipe as data, a manual generate button, then automatic triggers.
+DATE: 2026-10-08
+WHY: Scott described the perfect world: Cade finishes a chore and a clip of his avatar doing it is generated and played. Ember value as the trigger reuses the Keeper's own judgment of what is special, and 20-plus is about one or two approvals a week. Recurring 20s capped at three variants stop a weekly chore from producing a weekly "special" clip. First-ever completion exists because Mia has never done a 20-ember bounty and would otherwise be the only member never to get a personal clip. The Keeper gate is the safety layer for generated video shown to children. The kill switch is the first real non-boolean use of system_flags, whose read policy must be narrowed first. This is a direction, sequenced after the email domain, the privacy policy and PostHog.
+REPLACES: Nothing. New decision.
+STATUS: LOCKED
+
+---
+
+DECISION: Do not purge generated clips after each weekly recap.
+DATE: 2026-10-08
+WHY: Scott's first sketch purged each week's clips and kept only the construct. That pays full price forever and never improves. Instead, clips a Keeper approves join the library keyed by avatar and category, so most approvals eventually pull a proven clip and generation shifts to variety and big moments. The "bones" survive as the recipe tables plus the clips that earned their keep. Rejected clips are still discarded.
+REPLACES: Nothing. New decision.
+STATUS: DECLINED
+
+---
+
+DECISION: The sliced roster avatars carry their ring frame and slivers of neighboring avatars baked into every file, because they were cut from generated sheets frame and all.
+DATE: 2026-10-08
+WHY: Invisible in the app, where a circle crop sits inside the ring, but any tool that sees the whole image sees it: video generation, trophy cards, anything that crops differently. jAIne assumed the files were clean squares and was wrong. Recipe v1 works with the ring by burning it away as a portal; any future use of the roster files should assume the ring and slivers are present.
+REPLACES: Nothing. New decision.
+STATUS: NOTED
 ---
 
 DECISION: "While you were away" is one household reel with two entry points: a tile on the wall and a chip on the phone Board. Every reel shows every member's beats. "New" is tracked per profile on the phone and per device on the wall. It is celebration only: no denials, misses or rankings. The finale lists members in arrival order, never sorted by amount, and credits each Keeper's approvals of other members' bounties ("kept the hearth lit"); self-approvals never count. Reels cap at 48 hours and 12 beats. Pacing has hard minimums (fire settles 1.5s, count runs 1.5s, beat holds 2s).
