@@ -7,6 +7,8 @@ Last session: **2026-10-08** — *the hearth session.* **Scott came back from Br
 
 **Built, verification pending:** weekly Ranks and a weekly recap reel (unverifiable until Monday 10-12, because last week was empty). The `/welcome` beta form is tightened and safe to share with friends-of-friends.
 
+**THE EVENING TAIL: the heroes came alive.** After the first close-out committed, the session kept going and shipped the thing the app was dreamed around. **Each family member's avatar now steps out of the fireplace as a generated video clip when they earn.** Four clips, about $2, made by hand on fal.ai with Kling v3 standard, stored in a shared clip library, and playing inside the firebox. **Glass-verified on the phone. The wall tablet is the last check.** Along the way: bounty categories drawn from 90 days of real data, three signature moves per category, and a five-step path from hand-made clips to clips generated automatically on approval.
+
 **Also logged here: the tail of the 09-30 chat**, which ran past its own close-out again. The hearth panel fix ran and worked, backups exist, and the beta form audit found a real exposure.
 
 Last session (prior): **2026-09-25** — the catch-up session. Android install verified on a real Pixel; service worker LOCKED.
@@ -64,6 +66,17 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 **What it took:** one framework prompt, then four art passes (dim modal → arched hall → fireplace → legibility), the sconce channel, and a campaign fix pass. **The art passes stopped when the remaining gap became an asset rather than a prompt.** Lovable said moving flames need looping video; painted fire is static. See the parking lot.
 
+### Hero celebration clips *(migration + storage + glass-verified on the phone)*
+
+**The family's avatars are alive.** SnowDad's golem cracks with lava, May smirks through a rush of heat, Cade's reaper raises his lantern, Mia's sprite bounces and twirls. Each is a 4-to-5-second generated clip.
+
+- **How they're made (recipe v1):** fal.ai playground, Kling v3 **standard** (~$0.112/s, ~45 cents a clip), 4 seconds, the roster file as-is, **no end frame**, and a prompt that turns the avatar's baked-in ring into a **portal that burns away in the first second.** Hero description plus one celebration action plus style plus guardrails. ⚠️ **jAIne said the ring had to be cleaned out of the source first; Scott tested the prompt instead and it worked better.**
+- **The library:** table `avatar_clips` keyed by **avatar id, kind and variant**, with a **status** (`approved` / `pending` / `rejected`), and a `hero-clips` bucket. **Clips belong to avatars, not people,** so any household that picks the golem gets the golem's clip.
+- 🔒 **Writes are backend only.** The library is shared across every hold, so Lovable's first plan, "Keepers can upload," would have let a Keeper in any hold replace a clip every other hold sees. **Signed-in users read; insert, update and delete belong to `service_role` alone.** Policy report confirmed.
+- **The fireplace is the screen.** The beat opens on the circle portrait; when the clip is ready it fades in over it inside the firebox opening, plays once from 0.3s and holds its last frame. Edges are feathered into the dark so no rectangle shows. Next member's clip preloads. No clip, a failed load, or reduced motion leaves the portrait exactly as before.
+- **Not behind the fire, yet.** Each fire tier is one flat painted image, so nothing can sit behind its flames. **Living fire loops are what unlock that.**
+- **The flare ring:** a gold pulse ring tied to the ember count-up flashed over the clips for a quarter second. The first fix relied on the browser noticing the clip was playing and failed on Scott's phone. **The second makes the portrait track the clip directly and switches its ring off for the whole beat.** Verified gone on the phone.
+
 ### The credit rule *(migration + verified)*
 
 **The stop-clause fired: the database had no single "credited member" field.** A bounty records who claimed it and who it was assigned to. One bounty of 167 ("Weekly laundry," July 24) had both, Cade claimed and May assigned, and **ember totals counted those 10 embers for both of them.**
@@ -119,7 +132,10 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 
 ## 🟡 PENDING VERIFY
 
-- 🟡 **THE THREE-FIX WALL/LISTS PROMPT (10-08): WAS IT RUN?** (1) the wall's "Embers landed" tile cools to a dim, replayable resting state instead of disappearing; (2) **the hearth panel avatars render as squashed ovals again**, cropping heads, with Lovable asked to report what re-broke it; (3) Lists "No items match" becomes "Add [search text]". **No result came back this session.**
+- 🟡 **HERO CLIPS ON THE WALL TABLET.** Publish, then replay. Portrait fades into clip, plays once, holds; no stutter between members; no ring. **The first time a generated clip plays on kitchen hardware.**
+- 🟡 **MIA'S CLIP SHOWS ITS EDGES.** Her backdrop is cold starry navy against a warm firebox, so a dark square reads behind her where the others melt in. **Judge it on the wall first.** Fixes: deeper feathering for every clip, or her next clip prompted with a warm, dark, firelit background.
+- 🟡 **A CONVERTED TEST COPY OF SNOWDAD'S CLIP.** Lovable made one to preview in its test browser. **Confirm it was not left in the production bucket.**
+- 🟡 **THE THREE-FIX WALL/LISTS PROMPT (10-08).** ✅ **Hearth panel avatars are true circles again, seen on the glass.** Still unconfirmed: the wall tile cooling to a replayable resting ember, and Lists "Add [search text]". **Lovable's report on what re-broke the avatars never came back.**
 - 🟡 **THE THRESHOLDS + CHIPS PROMPT (10-08): WAS IT RUN?** The two fire scales above, and **chips on every profile's Board.** Lovable claimed the "Embers landed" chip only appears on the Kin board, which contradicts a Keeper Board screenshot from the same morning. **Keepers getting their moment was the reason parents were included.**
 - 🟡 **THE WEEKLY RECAP — MONDAY 10-12.** Watch it on the wall with the family. Check member beats, the fire spread, the finale, and the tap-a-member list.
 - 🟡 **THE REEL ON THE WALL.** The tile played and disappeared, which is how the replay gap was found. **Fire transitions on the tablet have not been judged.**
@@ -140,6 +156,7 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 - ⬜ **THE PRIVACY POLICY.** Critical path #2.
 - ⬜ **POSTHOG.** Critical path #3.
 - ⬜ **THE TROPHY CARD.** LOCKED in principle. **Its home is the weekly recap's member beat:** one saveable card per member per week, phone only, free. Next fun build after the recap verifies.
+- ⬜ **BOUNTY CATEGORIES.** A category field on the bounty, carried on roll-forward, with AI pre-selection at creation. **The step the clip library and every future automation depend on.** See the parking lot.
 - ⬜ **The profile dashboard.** Direction decided, design open. See the parking lot.
 - ⬜ **The "adult" strings and the grep report.**
 - ⬜ **🖊️ THE SCREEN COPY PASS.** The reel's copy is new and unreviewed too.
@@ -157,6 +174,7 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 *Verdict-level only. Mechanism lives in the Code session, never here.*
 
 **Fixed and verified today:**
+- ✅ **The shared clip library cannot be written by any hold.** `avatar_clips` and the `hero-clips` bucket are read-only to signed-in users; writes are `service_role` only. **A shared, cross-hold table with a role-only write check is a tenant-isolation hole by another name.**
 - ✅ **`beta_signups` grants.** Signed-in users could read, update and delete the signup list. Now insert-only for visitors and signed-in users. Tested as a visitor.
 - ✅ **The week function** runs with the caller's own permissions and takes no household argument. A draft that took a household id under definer rights, with a comment promising a check the code did not contain, was corrected before applying.
 - ✅ **Both "mark watched" functions** check that the profile belongs to the caller's household, not that the profile equals the signed-in user. Kin have no accounts.
@@ -170,6 +188,7 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 
 **Real, open:**
 - ⬜ **🔴 THE SERVICE WORKER IS A SECURITY SURFACE.** It caches nothing. **Future caching must never cache a response carrying an Authorization header.**
+- ⬜ **fal.ai is a new third party.** Today it only receives illustrated avatar images and prompts, by hand. **When generation is automated, the API key lives server-side only, the callback is verified, and fal is named in the privacy policy beside `flock.js`.** No names, no photos of anyone, ever.
 - ⬜ **`beta_signups` has no rate limit.** The honeypot stops form bots, not direct posts. Fine at this scale.
 - ⬜ **`supabase_admin` default-privilege residual** — platform-scoped.
 - ⬜ **`flock.js`** — must be named in the beta privacy policy.
@@ -189,6 +208,9 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 
 ## 🔵 THE BUILD MODEL
 
+- **RUN THE CHEAP EXPERIMENT BEFORE WINNING THE ARGUMENT. (NEW — 10-08.)** jAIne said a video model could not remove the baked-in ring and the source had to be cleaned by hand. Scott spent 45 cents testing a prompt instead, and the portal burn became the recipe. **When a test costs less than the debate, run the test.**
+- **A SHARED TABLE NEEDS A HOUSEHOLD-AWARE WRITE RULE, OR NO CLIENT WRITES AT ALL. (NEW — 10-08.)** "Keepers can write" sounds scoped and is not: a role is not a hold. **For cross-hold data, writes go through the backend only.**
+- **A FIX THAT DEPENDS ON THE BROWSER NOTICING IS A GUESS. (NEW — 10-08.)** The first ring fix waited on a playback signal Scott's phone never sent. The second made the component track the clip directly. **Fix the mechanism, not the instance, again.**
 - **AUTO-ACCEPT RUNS ON BY DEFAULT, SO SAFETY LIVES IN THE BRIEF. (NEW — 10-08.)** Scott rarely turns it off, and canon kept writing a rule nobody follows. **Every stop-clause and "show the plan before applying" line does the work the toggle was supposed to do. Every prompt that touches the database says so in its first line.**
 - **A STOP-CLAUSE IS WORTH MORE THAN A CORRECT INSTRUCTION. (Fifth fire, fifth time right, 10-08.)** "Stop if the credited member cannot be determined" found two people recorded on one bounty and turned a reel into a shared earnings definition.
 - **BRIEF THE FRAMEWORK, NOT THE ANIMATION. (NEW — 10-08.)** v1 shipped a plain reel on purpose, and every art pass slotted in without touching the queue. The campaign beat proved the framework was generic.
@@ -216,7 +238,7 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 
 ## ✅ EARLIER — SHIPPED (compressed; git owns the detail)
 
-- **2026-10-08** — the hearth session. The "While you were away" reel on a fireplace stage, fire as the ember heat dial and sconces as the non-ember channel; campaign beat; the hearth line. One shared earned-by definition after a stop-clause found a double-counted bounty. Weekly Ranks and the weekly recap built on a database-defined Monday week. `/welcome` form tightened, closing signed-in read access to signups. Logged the 09-30 tail: hearth panel fixed, backups exist.
+- **2026-10-08** — the hearth session. The "While you were away" reel on a fireplace stage, fire as the ember heat dial and sconces as the non-ember channel; campaign beat; the hearth line. One shared earned-by definition after a stop-clause found a double-counted bounty. Weekly Ranks and the weekly recap built on a database-defined Monday week. `/welcome` form tightened, closing signed-in read access to signups. **Evening: the four family heroes became generated video clips on fal.ai (Kling v3 standard) playing inside the fireplace, from a shared clip library writable only by the backend.** Bounty categories set from 90 days of data. Logged the 09-30 tail: hearth panel fixed, backups exist.
 - **2026-09-25** — the catch-up session. Android install verified on a real Pixel; service worker LOCKED. Lists collapse, section counts, left-align and two-line wrap. `/welcome` built.
 - **2026-09-11** — the momentum session. Forge declined; Gate E ahead of Gate C. Wall campaign rolodex. `series_id` lineage and last-done. Lists paste-to-split.
 - **2026-08-03** — the decision session. Own-session fork LOCKED. Keeper and Kin shipped.
