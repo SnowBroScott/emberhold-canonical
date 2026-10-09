@@ -25,6 +25,8 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **Does the wall want last-done?** The wall is a different density problem and nobody has looked.
 - **Does the wall have room for two reel tiles?** "Embers landed" and "Last week" now sit together. **Density on the ambient rail is Scott's eye.**
 - **`beta_signups` rate limiting.** The honeypot stops form-filling bots, not a bot posting straight to the backend. **Only if spam actually shows up.**
+- **Split-twin bounties.** Four bounties were re-created instead of edited and now exist twice with different values: Empty Dishwasher (5 and 10), Vacuum and Mop Garage (15 and 25), Mop downstairs / Mop Downstairs, Vacuum downstairs / "Vaccuum Downstairs." **Their history and last-done dates are split.** Retire one of each pair.
+- **Test bounties pollute real history.** `testing approve`, `Testing retired`, `testing the dailies`, `really REALLY testing weekly`, `Give Mia embers for testing` all appear in the 90-day report and will appear in recaps and category counts. Joins the pre-production sweep, sooner.
 
 ---
 
@@ -75,6 +77,7 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **🟠 SHOULD LISTS GET AN AUDIENCE FLAG?** jAIne's lean: leave it.
 - **🟠 DOES A NULL `series_id` DESERVE ITS OWN EMPTY STATE?** Depends on the unreported backfill count.
 - **🟠 DOES A MEMBER WHO EARNED NOTHING APPEAR IN THE WEEKLY RECAP?** Today they get no beat and are absent from the finale. **Celebration-only says omit. "Whole house" says show them, without a zero.** Mia has been at zero for four reported weeks. **Watch Monday's recap with the family before deciding.**
+- **🟠 WHEN CLIPS ARE EVERYWHERE, DOES THE FIRE STOP BEING THE HEAT DIAL?** Scott, 10-08: with real celebration clips he is not worried about the fire tracking embers. **The fire would become stage and transition.** Two things hold either way: **a 150 must still feel bigger than a 10** (the number, the burst, or which clip plays), and **the fire never carries a non-ember meaning.** Decide once the first category clips play.
 - **EMPTY ROSTER SEAT — auto-default an avatar, or a tappable "pick your hero" seat?** jAIne's lean: tappable seat; the wall is the exception. **Raised 07-29, still unratified.**
 - **Should `campaign.$id`'s create gate be removed, or should the FAB gain one?**
 - **Store shape — one-time founding unlock, a cosmetic catalog, or both? ON A CLOCK.** Founding Guildhall is LOCKED at $25. **Hard deadline: decided by July 2027 if Emberhold is still running.** *10-08 adds a candidate catalog item: trophy frames (see LATER).*
@@ -109,6 +112,60 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 ---
 
 ## NEXT (soon — off the critical path)
+
+### ⭐ GENERATED HERO CLIPS — THE NORTH STAR
+
+**Scott's picture, 10-08:** Cade mops the garage. At approval, a call goes out to generate a fantasy clip of his reaper doing something cleaning-flavored. It plays in the reel. The construct is reused next time. **Built by hand tonight for four celebrate clips; the rest is the path.**
+
+**The five steps, each useful on its own:**
+1. ✅ **The library.** `avatar_clips` (avatar × kind × variant, with status) and the `hero-clips` bucket, backend-only writes. Shipped 10-08.
+2. ⬜ **Categories on bounties.** One field, carried on roll-forward, AI pre-selected at creation. **Never inferred from titles: `series_id` exists because a title is not an identity.**
+3. ⬜ **The recipe as data.** Two small tables: a one-line **hero description per avatar**, and **moves per category × variant.** The prompt is assembled: portal burn + hero + move + style + guardrails.
+4. ⬜ **The pipe, triggered by a button.** A backend function holds the fal key, sends the assembled prompt and avatar image, receives fal's callback, stores the clip as **pending**. A Keeper gives a thumbs. **Prove the plumbing by hand before trusting it to fire.** Claude Code reviews this one: a secret and an inbound callback.
+5. ⬜ **Automatic triggers** by the rules below, with a **monthly spend cap** (around $10) and a **kill switch.** ⚠️ **The kill switch is exactly the flag `system_flags` was waiting for: narrow its read policy first.**
+
+**When a fresh clip is generated, otherwise the library plays:**
+- a one-off bounty worth **20+ embers**
+- a recurring 20+ bounty, **until that member has three variants for it**, rotated so the same clip never plays twice in a row
+- a member's **first-ever** completion of any series (this is how Mia gets one; she has never touched a 20)
+- campaign completions and top-tier moments
+- **Every new clip plays once and joins the library only after a Keeper says yes.** Kid-facing generated video needs an adult gate.
+- ⚠️ **Watch ember inflation:** a 20-ember line that unlocks a video pressures Keepers to price at 20. Check values a month after triggers ship.
+
+**Cost, measured not guessed:** ~45 cents a 4-second clip. A lean library (family celebrates, hearth pieces, category scenes) is about $22 one time at ~2.5 runs per keeper; a full avatar × category library about $44. Ongoing bespoke clips around $47 a year. **Comfortably inside the $636.**
+
+**Sequencing:** steps 2 and the category clips are cheap and useful now. Steps 3 to 5 come **after** the email domain, the privacy policy and PostHog, and PostHog is how we would know whether clips move day 8.
+
+### The categories (from 90 days, 140 approvals)
+
+| Group | What's in it | Share |
+|---|---|---|
+| **Kitchen** | dishwasher load/empty, counters, fridge, stove, pots, table | ~61 |
+| **Cleaning** | toilets, vacuum/mop, toys, trash, driveway, porch, branches | ~31 |
+| **Laundry & beds** | laundry, sheets | ~14 |
+| **Chaos** (pets) | poop pickup, brushing, bath, food, walks | ~8 |
+| **Generic** | three tiers by embers: under 15 · 15 to 49 · 50+ (Bread winner alone up top) | ~16 |
+
+**Who does what decides what to make first:** Kitchen is May and SnowDad; Cleaning is Cade, Mia (toys), May, SnowDad; Laundry is Cade and May; Chaos is Cade, May, SnowDad. **Make only the combinations that happen.** Kitchen first, because it plays constantly; Cleaning for the kids next, because their motivation is the point.
+
+### Signature moves (three per category, one action, aimed at the camera)
+
+*Template: portal burn → hero → move → settles back → style and guardrails. One action per clip; every move ends on a frozen impact moment, which is a free trophy-card frame. Mia gets softened versions.*
+
+- **Kitchen:** shield-throw a plate at the lens · slam a tower of clean plates · flip a goblet and thrust it at the camera like a trophy
+- **Cleaning:** broom slap-shot, dust wave rushes the lens · mop whirlwind, a ring of clean blasts outward · punt a giant dust bunny that bursts into glitter (⚠️ creatures are hard; test early)
+- **Laundry:** sheet snaps at the camera like a flag and folds mid-air · kick a basket, clothes land folded · a clean sheet unfurls like a war banner
+- **Chaos:** the hound leaps at the lens · fetch, the hound streaks past the camera (⚠️ two fast characters; fallback is the hound sitting proudly with a medal) · hero and hound howl together
+- **Generic:** flick a glowing coin at the lens · fist slam, shockwave of embers · kick open a treasure chest, gold and fire erupt
+
+### Hero clips, next round
+
+- **CHAOS NEEDS AN AVATAR.** Without one the model invents a new dog every clip. **One image of Chaos in the roster style, then use Kling's reference feature ("@" in the prompt box) to hold him across clips.** Composites of Chaos with each family member are not needed unless standard lacks references; check its form first. After Kitchen and Cleaning.
+- **RE-ENCODE CLIPS FOR THE LIBRARY.** Today's are 6 to 7.5 MB with an audio track, played muted. **720p, no audio, roughly 1 to 2 MB each** before the library grows.
+- **SOUND.** A crackle as coals settle, a whoosh as fire rises, a chime when sconces light. Tiny files, cheap code. **On for the wall, off by default on phones.** Likely more "fun" per dollar than another visual pass.
+- **THE FIRE WIPE.** When clips are everywhere, fire rises up the opening between beats, covers the screen, and drops to reveal the next hero. **It hides seams, covers each clip's first frame and buys load time.** Needs living fire first.
+- **PIP NARRATES THE WEEKLY RECAP.** One line per member written from the week's real numbers. One model call per hold per week. **Send anonymized counts, swap names in on the device.** Proposed, not decided.
+- **SAVE RECIPE V1 AS A PLAYBOOK.** `playbooks/hero-clips.md` beside `avatar-generation.md`: the model, the length, "roster file as-is, no end frame," the portal-burn opener, and the four prompts that worked. **The bones of the north star should not live in a chat log.**
 
 ### The reel, round two
 
