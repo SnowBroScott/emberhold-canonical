@@ -56,6 +56,7 @@ curl -sL "<RAW_URL>?cb=$(date +%s)"
 |---|---|---|
 | **hiatus-wrap-2026-07-09** | ARCHIVE | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/archive/hiatus-wrap-2026-07-09.md` |
 | **operational-readiness-2026-07-02** | ARCHIVE — *superseded by north-star's gate ladder; kept for the full detail behind it* | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/archive/operational-readiness-2026-07-02.md` |
+| **copy-inventory** | ARCHIVE — *a snapshot of every user-facing string as of app commit `a119f14` (Aug 2026). Evidence for copy passes, not current truth; re-run the recon before trusting it against today's app* | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/archive/copy-inventory.md` |
 
 ### Assets
 
