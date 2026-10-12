@@ -11,6 +11,12 @@ WHY: [the reasoning, including rejected alternatives]
 REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
+DECISION: Promote the 2026-10-12 jAIne-as-unit-of-separation decision from DRAFT to LOCKED. The verification it named has passed.
+DATE: 2026-10-12
+WHY: The DRAFT entry named one verification: an Emberhold session runs clean with the generic jAIne instructions installed and no Emberhold rules left in the project instructions. Tested the same day under v0.3, in three fresh chats. (1) An Emberhold opener declared the session, fetched manifest, session-protocol, north-star and status, checked status against the commit history, caught a stale status item using an upload it correctly treated as evidence rather than canon, and on "close it out" led with the five-part reconciliation line, including no-change entries, and delivered status as a file. (2) An ambiguous opener fetched nothing and asked. (3) A mention-tier request (a paste-to-split chore list) fired no protocol and made no fetches. The protocol now runs from the repo alone. Also confirmed in passing: the project instructions carry no Emberhold rules.
+REPLACES: The DRAFT status of the 2026-10-12 entry "jAIne becomes the unit of separation, not the project."
+STATUS: LOCKED
+---
 
 DECISION: jAIne becomes the unit of separation, not the project. The Emberhold project converts into a single jAIne project covering every domain, and Emberhold's rules move out of project instructions into this repo, with session-protocol.md as the Emberhold charter.
 DATE: 2026-10-12
