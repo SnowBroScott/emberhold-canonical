@@ -2,6 +2,8 @@
 
 *Single source of truth for all Emberhold documents.*
 
+**This manifest is Emberhold's charter entry point.** The rules for how jAIne works in this domain live in `session-protocol.md`, not in any project instructions. Fetch it for any Emberhold work, not just build sessions.
+
 Repo (docs + assets): `https://github.com/SnowBroScott/emberhold-canonical`
 Repo (the app): `https://github.com/SnowBroScott/theemberhold` — private, Lovable-synced (two-way)
 Branch: `main`
@@ -43,7 +45,7 @@ curl -sL "<RAW_URL>?cb=$(date +%s)"
 
 | Playbook | Covers | Status | Raw URL |
 |---|---|---|---|
-| **session-protocol** | How a build session runs. Read before working. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/session-protocol.md` |
+| **session-protocol** | **The Emberhold charter.** Role, lanes, values, the loop, and the session open and close. Read before any Emberhold work. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/session-protocol.md` |
 | **avatar-generation** | How to generate on-band avatars. Hard-won; do not improvise. **Rewritten 2026-07-11 — the previous version was wrong.** | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/avatar-generation.md` |
 | **qa-harness** | How QA runs, regardless of which model shows up. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/qa-harness.md` |
 | **phase-b-brief** | How to execute the stranger-proofing gate. | LOCKED | `https://raw.githubusercontent.com/SnowBroScott/emberhold-canonical/main/docs/playbooks/phase-b-brief.md` |
@@ -74,8 +76,8 @@ curl -sL "<RAW_URL>?cb=$(date +%s)"
 
 | Session | Fetch |
 |---|---|
-| **Any session, cold open** | manifest → north-star → status |
-| **Build session (Lovable)** | + master-spec, session-protocol |
+| **Any session, cold open** | manifest → session-protocol → north-star → status |
+| **Build session (Lovable)** | + master-spec |
 | **Security / Claude Code** | + status, phase-b-brief, qa-harness |
 | **Avatar work** | + avatar-generation, master-spec |
 | **Design / decision work** | + master-spec, decisions, parking-lot |
