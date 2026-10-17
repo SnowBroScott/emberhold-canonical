@@ -11,6 +11,22 @@ WHY: [the reasoning, including rejected alternatives]
 REPLACES: [what this supersedes, or: Nothing — new decision]
 STATUS: [LOCKED / DRAFT / NOTED / SUPERSEDED / DECLINED]
 ```
+
+---
+DECISION: Lists get one input, not two. The add bar becomes the search: typing filters the list live, enter or "+" adds the item, zero matches says so in a line, and the destination section stays visible while typing. The separate search bar goes away. The bar is made clearly the main control on the page without becoming a banner.
+DATE: 2026-10-14
+WHY: The 10-14 glass check of "Add [search text]" surfaced three findings: no indicator of what the search did, unclear section logic (the item landed in a section picker hidden during search), and no search on small lists. jAIne's first fixes were a two-line copy patch (a zero-match line, the destination on the button) and keeping the small-list threshold because "on 21 items your eyes are the search." Scott rejected the threshold: a gesture that works on one list and vanishes on the next is a re-learning moment that feels bad. One input removes all three findings at once: the bar already exists on every list, the list visibly narrowing is the indicator, and the section picker sits beside it. Scott then judged the bottom bar not prominent enough. jAIne's read of the screenshot: the section picker takes about 40% of the bar and truncates, squeezing the input, so the fix is rebalancing (input full-width, destination as a slim tappable line above it, placeholder "Find or add…", the paste-a-list hint moved to the zero-match line), not enlarging. REJECTED: search only on large lists (inconsistent gesture); the two-line copy fix (patched a symptom the merge removes); a bigger version of the current bar (scales up the cramped input). Top versus bottom position is not decided and sits in parking-lot OPEN DECISIONS; jAIne leans bottom for thumb reach.
+REPLACES: Nothing — new decision
+STATUS: DRAFT — pending Scott's top-vs-bottom call and his judgment of prominence on the glass
+---
+
+DECISION: The 48-hour "While you were away" reel and the weekly recap both stay. They live side by side in the wall's rolodex flip, along with calendar entries and campaigns, and on the phone as the "embers landed" chip and the "Last week's recap" chip.
+DATE: 2026-10-14
+WHY: After the weekly recap verified, Scott asked whether the 48-hour recap was being retired. Nothing in canon retires it, and the two do different jobs: the reel is "you were gone, here's what landed," the recap is the weekly ceremony. Scott confirmed both live in the rolodex. The open concern is legibility, not existence: the rolodex now mixes four item types, so it is a watch item for a week, and if a replay can't be told from an event at a glance the fix is a small type marker on each flip, not a second rolodex. REJECTED: folding the 48-hour reel into the recap (loses the immediate payoff that was the point of the 10-08 build).
+REPLACES: Nothing — new decision
+STATUS: LOCKED
+
+---
 DECISION: Promote the 2026-10-12 jAIne-as-unit-of-separation decision from DRAFT to LOCKED. The verification it named has passed.
 DATE: 2026-10-12
 WHY: The DRAFT entry named one verification: an Emberhold session runs clean with the generic jAIne instructions installed and no Emberhold rules left in the project instructions. Tested the same day under v0.3, in three fresh chats. (1) An Emberhold opener declared the session, fetched manifest, session-protocol, north-star and status, checked status against the commit history, caught a stale status item using an upload it correctly treated as evidence rather than canon, and on "close it out" led with the five-part reconciliation line, including no-change entries, and delivered status as a file. (2) An ambiguous opener fetched nothing and asked. (3) A mention-tier request (a paste-to-split chore list) fired no protocol and made no fetches. The protocol now runs from the repo alone. Also confirmed in passing: the project instructions carry no Emberhold rules.
