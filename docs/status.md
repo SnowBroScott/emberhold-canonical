@@ -1,13 +1,22 @@
 # Status
 **Where the build is and what's left.** The single status board.
 
-Last session: **2026-10-08** — *the hearth session.* **Scott came back from Brazil itchy to build, and the app got its first payoff moment.** Embers used to land in silence: a kid finishes dishes at 4, a Keeper approves at 9, and nobody ever sees the reward arrive. **Now they land in a castle fireplace that burns hotter as the embers climb**, on the phone and on the wall, for Keepers and Kin alike.
+Last session: **2026-10-17** — *the catch-up close.* **Two sessions never reached canon, and this one folds them in.** The 10-12 status close-out was written and never committed (the decisions and the copy inventory were). The 10-13/14 screen-validation pass never closed at all. **Nothing was lost; the board was simply wrong in Scott's favor: more is verified than it claimed.**
+
+**What the 10-13/14 pass closed on the glass:** the weekly recap (watched on the wall, **May approved**), chips on every profile's Board (Keepers included), the fire thresholds, hero clips on the wall tablet (Mia's edges pass), the wall tile's resting replay, and Lists "Add [search text]". **Both unreported 10-08 prompts ran.** **What it opened:** test data counting in live totals, a duplicate Quick Add on Mia's bar, and a Lists redesign (one input, not two).
+
+**The critical path has not moved since 10-08. Nine days.** The email domain session is still #1.
+
+Prior session: **2026-10-14** — *the screen-validation pass* (opened 10-13). See above.
+Prior session: **2026-10-12** — *the open-only session.* Charter move to `session-protocol.md` (decision LOCKED same day). Status verified against the repo. The "adult" grep report turned out to have come back as a full copy inventory, now in `docs/archive/copy-inventory.md`.
+
+Prior session: **2026-10-08** — *the hearth session.* **Scott came back from Brazil itchy to build, and the app got its first payoff moment.** Embers used to land in silence: a kid finishes dishes at 4, a Keeper approves at 9, and nobody ever sees the reward arrive. **Now they land in a castle fireplace that burns hotter as the embers climb**, on the phone and on the wall, for Keepers and Kin alike.
 
 **On the glass today:** the "While you were away" reel, built as a beat framework with a fireplace stage where the fire is the ember heat dial and the sconces are the channel for non-ember achievements. A campaign completion beat. A finale that credits the Keeper who kept the hearth lit. **One stop-clause fire caught a credit ambiguity in the data model before it shipped, and the fix made earnings a single shared definition.**
 
-**Built, verification pending:** weekly Ranks and a weekly recap reel (unverifiable until Monday 10-12, because last week was empty). The `/welcome` beta form is tightened and safe to share with friends-of-friends.
+**Built that day, verified 10-13:** weekly Ranks and a weekly recap reel. The `/welcome` beta form is tightened and safe to share with friends-of-friends.
 
-**THE EVENING TAIL: the heroes came alive.** After the first close-out committed, the session kept going and shipped the thing the app was dreamed around. **Each family member's avatar now steps out of the fireplace as a generated video clip when they earn.** Four clips, about $2, made by hand on fal.ai with Kling v3 standard, stored in a shared clip library, and playing inside the firebox. **Glass-verified on the phone. The wall tablet is the last check.** Along the way: bounty categories drawn from 90 days of real data, three signature moves per category, and a five-step path from hand-made clips to clips generated automatically on approval.
+**THE EVENING TAIL: the heroes came alive.** After the first close-out committed, the session kept going and shipped the thing the app was dreamed around. **Each family member's avatar now steps out of the fireplace as a generated video clip when they earn.** Four clips, about $2, made by hand on fal.ai with Kling v3 standard, stored in a shared clip library, and playing inside the firebox. **Glass-verified on the phone, and on the wall tablet 10-14.** Along the way: bounty categories drawn from 90 days of real data, three signature moves per category, and a five-step path from hand-made clips to clips generated automatically on approval.
 
 **Also logged here: the tail of the 09-30 chat**, which ran past its own close-out again. The hearth panel fix ran and worked, backups exist, and the beta form audit found a real exposure.
 
@@ -22,17 +31,19 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 **A free closed beta needs a short true privacy policy, an auth email that reaches the inbox, and PostHog so day 8 is visible.** Stripe, refunds, tax and the entitlement write come after the beta reports.
 
-**Today was off the critical path on purpose.** Scott was itchy to build after five weeks away, and the reel was chosen because it aims directly at Gate E's question: *does a family open the app on day 8?* It gives a kid a reason to open the app that is not "a chore is waiting." **It is a retention feature built before strangers arrive, which the fence would normally forbid. The justification is that it is the only fence-adjacent idea that serves the beta instead of competing with it.** The critical path did not move today, and it is next.
+**10-08 was off the critical path on purpose, and 10-12 through 10-17 moved nothing on it.** Validation and doc catch-up are honest work, but they are not the beta. **The next Emberhold session is the email domain session, by default, unless Scott names something else.**
+
+*From 10-08:* Scott was itchy to build after five weeks away, and the reel was chosen because it aims directly at Gate E's question: *does a family open the app on day 8?* It gives a kid a reason to open the app that is not "a chore is waiting." **It is a retention feature built before strangers arrive, which the fence would normally forbid. The justification is that it is the only fence-adjacent idea that serves the beta instead of competing with it.** The critical path did not move today, and it is next.
 
 ---
 
 ## Where the platform is
 
-**Structurally complete, published, installable on iOS and Android, with a working activation path, a working spend path for every role, the full 48-avatar roster live, and as of today a payoff moment.** Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, avatars, a household-local date model, verified tenant isolation, clean grant surfaces, the Slate, the Ledger, a proven rollover engine, a registered service worker, a server-validated approver, `series_id` lineage, **a single shared definition of who earned a bounty, a database-defined household week, and the reel.**
+**Structurally complete, published, installable on iOS and Android, with a working activation path, a working spend path for every role, the full 48-avatar roster live, and a payoff moment the household has now watched together.** *"For now we have a working and honestly cool product."* (Scott, 10-13.) Engine, economy, Vault, Campaigns, Calendar, Briefing/Hub, activity-feed spine, Lists, invite/join, notifications, PIN recovery, admit-on-approval, wall/display mode, avatars, a household-local date model, verified tenant isolation, clean grant surfaces, the Slate, the Ledger, a proven rollover engine, a registered service worker, a server-validated approver, `series_id` lineage, **a single shared definition of who earned a bounty, a database-defined household week, and the reel.**
 
 **Emberhold is a one-module product with zero modules.** Registers remain aesthetic only.
 
-> **RESIDUAL:** master-spec has not absorbed today's design truth: the reel, the fire and sconce grammar, the credit rule, the week definition, weekly Ranks and the recap. **A dedicated spec fold session is needed.** Part II (Forge) remains documentation of a declined module.
+> **RESIDUAL:** master-spec has not absorbed the 10-08 design truth: the reel, the fire and sconce grammar, the credit rule, the week definition, weekly Ranks and the recap. **Add 10-14: the 48-hour reel and the weekly recap coexist in the wall rolodex, and the Lists one-input design (DRAFT).** **A dedicated spec fold session is needed.** Part II (Forge) remains documentation of a declined module.
 
 ---
 
@@ -46,6 +57,27 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 | **4** | **🟡 THE LANDING PAGE.** Plumbing safe as of today, copy live. **Shareable with friends-of-friends now. Not with cold strangers until #1 lands.** | Recruitment. |
 
 **Off the critical path since 09-25:** ✅ backups (two exports exist) · ✅ the hearth panel five-member bug (fixed 09-30) · ✅ Android install.
+
+---
+
+## ✅ VERIFIED ON THE GLASS — 2026-10-13/14
+
+**The pending-verify pile, mostly cleared.** Every item below was judged by Scott on the glass.
+
+- ✅ **THE WEEKLY RECAP.** Watched on the wall. **May saw it and approved**, which is the verdict that counts. The math is clean (150 + 30 + 3 + 71 = 254; Cade's list sums to his tile). The fire spread works: 150 roared, 30 sat low, the 254 finale cleared the top household tier by four. Both Keepers got their "kept the hearth lit" line. Tap-a-member opens the list. **Scott: "there is work and improvement to be made, but all-in-all it works."** The improvements are parked as one item: *the weekly recap as its own ceremony.*
+- ✅ **CHIPS ON EVERY PROFILE'S BOARD.** Keeper Board showed "56 embers landed," Mia's Kin Board showed 41. **Lovable's "Kin-only" claim was wrong**, as the 10-08 screenshot suggested. Keepers get their moment.
+- ✅ **THE THRESHOLDS + CHIPS PROMPT RAN.** Both halves; the fire scales showed in the recap.
+- ✅ **HERO CLIPS ON THE WALL TABLET.** The first generated clip on kitchen hardware held up. **Mia's edges pass;** no feathering fix needed.
+- ✅ **THE WALL TILE** rests and replays. **The three-fix prompt from 10-08 is fully closed** (avatars, tile, Lists add).
+- ✅ **LISTS "Add [search text]"** works. Three real findings came with it (see the Lists redesign below).
+- ✅ **THE 48-HOUR REEL STAYS.** It lives in the wall's rolodex flip beside the weekly recap, calendar entries and campaigns. **Two replays, two jobs: "you were gone, here's what landed" and the weekly ceremony.**
+- ✅ **A KIN PROFILE'S CHIP** shows for Mia. 🅿️ **The parents-only leak check cannot fail yet:** Scott believes no parents-only bounty exists. Parked until one does.
+
+### The Lists redesign — DRAFT, parked behind the email work
+
+**Scott's finding beat jAIne's:** search only on large lists means a gesture that works on one list and vanishes on the next. That is a re-learning moment that feels bad. **Decided: one input, not two.** The add bar becomes the search: typing filters the list live; enter or "+" adds; zero matches says so in a line; the destination section stays visible; the top search bar goes away. **DRAFT until Scott judges prominence on the glass.**
+
+jAIne's read of the 10-14 screenshot: the bottom bar feels weak because the section picker eats about 40% of its width and truncates ("POCKET CHECK AT…"), not because the bar is small. Lean: input full-width, destination as a slim tappable line above it ("Adding to: Pocket check at the door"), placeholder "Find or add…", paste-to-split hinted in the zero-match line. **Top vs. bottom is still Scott's call** (see parking-lot OPEN DECISIONS).
 
 ---
 
@@ -99,7 +131,7 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 
 ---
 
-## 🟡 BUILT, VERIFICATION PENDING — WEEKLY RANKS AND THE WEEKLY RECAP
+## ✅ WEEKLY RANKS AND THE WEEKLY RECAP *(built 10-08, verified 10-13)*
 
 **The week runs Monday 00:00 to Sunday 23:59 in the household's timezone**, defined once in the database (`household_week_bounds`), never computed by screens. It runs with the caller's own permissions and returns only the caller's own household's week. **Ranks, the recap and the tiles all ask it.**
 
@@ -108,13 +140,25 @@ Key: ✅ DONE (verified) · 🟡 PENDING VERIFY · ⬜ OUTSTANDING · 🅿️ PA
 - **Two fire scales:** member beats (under 20 coals, 20 to 59 low, 60 to 119 full, 120+ roaring) and the household finale (under 75, 75 to 149, 150 to 249, 250+). **Calibrated against real weekly totals**, after jAIne's guess that Keepers would roar every week turned out backwards.
 - **Entry points:** a "Last week" tile on the wall and a "Last week's recap" chip on the phone, glowing until watched, replayable all week. Per-profile tracking via `weekly_recap_watched_at`.
 
-**Why it cannot be verified yet:** the last two completed weeks were empty (Brazil), so the recap stays hidden until Monday 10-12, when this week, including today's approvals, becomes "last week."
+**Verified Monday 10-13** on the wall with the family. See the VERIFIED section above.
 
 ---
 
 ## 🟠 NOTED — Mia shows zero embers in all four reported weeks
 
-The recap celebrates only members who earned, so **Mia gets no beat and watches everyone else's.** That is the FOMO working as designed, and it is aimed at a young child. **Not a code problem: make sure she has bounties she can actually finish.**
+The recap celebrates only members who earned, so **Mia gets no beat and watches everyone else's.** That is the FOMO working as designed, and it is aimed at a young child. **Not a code problem: make sure she has bounties she can actually finish.** *10-13: Mia had +3 in the verified week, so she got a beat and the zero-earner question went untested. **Was that +3 real chores or clip testing?** Asked, not answered.*
+
+## 🟠 NOTED — test data is counting in live totals (10-13)
+
+**"test celebration +1" sits in Cade's real week** in the verified recap. Small now, a small permanent lie in all-time Ranks later. Joins the existing test-bounty cleanup (parking-lot Inbox) and should run **before** the beta, not in the pre-production sweep.
+
+## 🟠 NOTED — a duplicate on Mia's Quick Add (10-13)
+
+Mia's Quick Add shows **"Refill Pre-Workout +20"** and **"Pre-workout refill +10."** Two near-duplicates, and adult chores on a kid's quick bar. **Open question: is Quick Add household-wide by design?** If yes, the only finding is the duplicate. If it should be per-profile, it's a fix.
+
+## 🟠 NOTED — audience is invisible on the Slate (10-14)
+
+Scott could not tell whether any bounty was parents-only, because nothing on the Slate shows audience. **One grouped read answers it and also settles "is `kids-only` dead."** Whether Keeper boards should show a small badge is an open decision.
 
 ## 🟠 NOTED — the app went dark during Brazil
 
@@ -126,23 +170,31 @@ Lists are hold-wide with no audience pattern. Known, deliberate for now.
 
 ## 🟠 NOTED — the rename sweep searched the wrong word
 
-The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the add-family PipSpark, the onboarding recap (×2), PipHelp's Kin topic, and the Vault's Kin empty state. **The grep report never came back.**
+The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the add-family PipSpark, the onboarding recap (×2), PipHelp's Kin topic, and the Vault's Kin empty state. **Located 10-12:** the copy inventory confirms all four and nothing else. The reachable Vault Kin empty state is in `KidCuratedVault`; the "Ask a Keeper" version in `RewardRow` is dead code behind an `isParent` guard.
+
+## 🟠 NOTED — the copy inventory exists (10-12)
+
+**A read-only recon of every user-facing string, about 1,050 across 34 screens and 15 shared components**, at app commit `a119f14`. **It lives in this repo at `docs/archive/copy-inventory.md`** (ARCHIVE in the manifest): evidence, not current truth; re-run the recon before trusting it against today's app. **The reel and weekly recap copy is not in it.** Findings beyond the "adult" strings:
+- **Raw tier words leak past `TIER_LABEL`** on Quest detail, Quest Log and Create ("hot" where the Vault says "Hot," "legendary" where it says "Blazing").
+- **Activity-line builders exist in four copies** (Briefing, NotificationBell, Hearth Log, Wall) and `relTime()` in six. Copy drift will follow.
+- **Two debug routes are live:** `/hearth-log` (self-labeled temporary) and `/avatar-review` (a 20-name roster that matches nothing shipped).
+- "PINs don't match" exists with and without a period; the only-a-Keeper-approves explainer is written four different ways.
 
 ---
 
 ## 🟡 PENDING VERIFY
 
-- 🟡 **HERO CLIPS ON THE WALL TABLET.** Publish, then replay. Portrait fades into clip, plays once, holds; no stutter between members; no ring. **The first time a generated clip plays on kitchen hardware.**
-- 🟡 **MIA'S CLIP SHOWS ITS EDGES.** Her backdrop is cold starry navy against a warm firebox, so a dark square reads behind her where the others melt in. **Judge it on the wall first.** Fixes: deeper feathering for every clip, or her next clip prompted with a warm, dark, firelit background.
-- 🟡 **A CONVERTED TEST COPY OF SNOWDAD'S CLIP.** Lovable made one to preview in its test browser. **Confirm it was not left in the production bucket.**
-- 🟡 **THE THREE-FIX WALL/LISTS PROMPT (10-08).** ✅ **Hearth panel avatars are true circles again, seen on the glass.** Still unconfirmed: the wall tile cooling to a replayable resting ember, and Lists "Add [search text]". **Lovable's report on what re-broke the avatars never came back.**
-- 🟡 **THE THRESHOLDS + CHIPS PROMPT (10-08): WAS IT RUN?** The two fire scales above, and **chips on every profile's Board.** Lovable claimed the "Embers landed" chip only appears on the Kin board, which contradicts a Keeper Board screenshot from the same morning. **Keepers getting their moment was the reason parents were included.**
-- 🟡 **THE WEEKLY RECAP — MONDAY 10-12.** Watch it on the wall with the family. Check member beats, the fire spread, the finale, and the tap-a-member list.
-- 🟡 **THE REEL ON THE WALL.** The tile played and disappeared, which is how the replay gap was found. **Fire transitions on the tablet have not been judged.**
-- 🟡 **A KIN PROFILE.** The chip appears for Mia or Cade, and a parents-only approval never shows in their reel.
+*Cleared 10-13/14: the weekly recap, hero clips on the wall (Mia's edges included), the three-fix prompt, the thresholds + chips prompt, the Kin chip. See VERIFIED above.*
+
+- 🟡 **A CONVERTED TEST COPY OF SNOWDAD'S CLIP.** Lovable made one to preview in its test browser. **Confirm it was not left in the production bucket.** A read, not a screen.
+- 🟡 **Lovable's report on what re-broke the hearth avatars** (10-08) never came back. The avatars are fixed; the cause is unknown.
+- 🟡 **REEL FIRE TRANSITIONS ON THE TABLET.** The recap replayed on the wall with no issues raised. **Not explicitly judged; one look the next time the reel plays.**
+- 🅿️ **THE PARENTS-ONLY LEAK CHECK.** Parked until a parents-only bounty exists. The grouped audience read will say whether one does.
+- 🟡 **Test or real: Mia's +3 in the verified week?** One-word answer from Scott.
+- 🟡 **IS QUICK ADD HOUSEHOLD-WIDE BY DESIGN?** One-word answer from Scott; decides whether Mia's bar is a fix or just a duplicate.
 - 🟡 **THE UNREQUESTED PACKAGE UPDATE.** Lovable applied a "routine security update" mid-session without being asked. **Which packages, which versions, and whether it went through bun and `bun.lock` were requested and never reported.** Re-run `bun audit` against the 08-02 baseline.
-- 🟡 **THE TIMEZONE HEAL — DRAFT until proven from a non-Pacific device.** **Scott was in São Paulo for the whole trip.** Did anyone open Emberhold there, and was "today" right? If so, it is a free LOCKED.
-- 🟡 **THE PHONE BOARD'S CAMPAIGNS** · **THE `series_id` BACKFILL COUNT** · **THE "adult" GREP REPORT** · **🔴 THE THREE RENAME COMMITS (08-03)** · **THE WALL TABLET INSTALL** from Chrome proper.
+- 🟡 **THE TIMEZONE HEAL — DRAFT until proven from a non-Pacific device.** **Scott was in São Paulo for the whole trip.** Did anyone open Emberhold there, and was "today" right? If so, it is a free LOCKED. *(Asked again 10-13, still unanswered.)*
+- 🟡 **THE PHONE BOARD'S CAMPAIGNS** · **THE `series_id` BACKFILL COUNT** · **🔴 THE THREE RENAME COMMITS (08-03)** · **THE WALL TABLET INSTALL** from Chrome proper *(asked 10-13, unanswered)*.
 - 🟡 **THE MONTHLY ROLL BRANCH.** September 1 and October 1 passed unobserved; last-done dates are the passive evidence.
 - 🟡 **The wall's `logActivity` sits in `mutationFn`, not `onSuccess`.** One line.
 - 🟡 `/create?recurring=true` direct-URL half · `Testing retired` stays retired · the ember progress trail · Phaeaz cold-account retest · min password length 6→8 · signup glass checks #2 and #3.
@@ -155,11 +207,15 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 - ⬜ **THE EMAIL DOMAIN SESSION.** Critical path #1.
 - ⬜ **THE PRIVACY POLICY.** Critical path #2.
 - ⬜ **POSTHOG.** Critical path #3.
-- ⬜ **THE TROPHY CARD.** LOCKED in principle. **Its home is the weekly recap's member beat:** one saveable card per member per week, phone only, free. Next fun build after the recap verifies.
+- ⬜ **THE TROPHY CARD.** LOCKED in principle. One saveable card per member per week, phone only, free. **The recap has verified, so it is unblocked.** 10-13: its natural home may be the tapped-member dashboard in the recap redesign. **Fold the two; don't build it twice.**
+- ⬜ **LISTS: ONE INPUT.** The merged search-and-add bar (DRAFT). One bounded Lovable prompt, auto-accept ON. **Behind the email work.** Needs Scott's top-vs-bottom call first.
+- ⬜ **THE GROUPED AUDIENCE READ.** Read-only Code work. Closes "is `kids-only` dead" and tells us whether any parents-only bounty exists.
+- ⬜ **TEST DATA OUT OF LIVE TOTALS.** "test celebration +1" and the test bounties. **Before the beta.**
 - ⬜ **BOUNTY CATEGORIES.** A category field on the bounty, carried on roll-forward, with AI pre-selection at creation. **The step the clip library and every future automation depend on.** See the parking lot.
 - ⬜ **The profile dashboard.** Direction decided, design open. See the parking lot.
-- ⬜ **The "adult" strings and the grep report.**
-- ⬜ **🖊️ THE SCREEN COPY PASS.** The reel's copy is new and unreviewed too.
+- ⬜ **The "adult" strings.** Four, located. A one-prompt Lovable fix; bundle it with the `TIER_LABEL` leak.
+- ⬜ **🖊️ THE SCREEN COPY PASS.** Its input now exists: `docs/archive/copy-inventory.md`. **The reel and recap copy is not in it**, so inventory those first.
+- ⬜ **Retire or fence `/hearth-log` and `/avatar-review`.** Both are reachable by URL.
 - ⬜ **`logActivity` server-side.** Design settled 08-03.
 - ⬜ **Vault favorites → per-profile persistence.**
 - ⬜ **The grant-revoke verification probe.** Deferred twelve times now.
@@ -208,6 +264,9 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 
 ## 🔵 THE BUILD MODEL
 
+- **A CLOSE-OUT THAT IS NEVER COMMITTED IS A CLOSE-OUT THAT NEVER HAPPENED. (Third time — 10-12.)** The 10-12 status file was written and delivered and never pushed. Then 10-14 never closed at all. **Every session open already checks status against the repo; that check caught this one. Keep running it.**
+- **A VERIFY ASK IS LITERAL STEPS. (NEW — 10-13.)** Scott asked twice, "what am I checking?" "Confirm the leak check" is intent; "tap the chip, watch the reel, is any bounty one Mia couldn't see?" is a check. **Write verify asks as numbered taps with a pass line.**
+- **CONSISTENCY ACROSS SCREENS BEATS THE LOCAL OPTIMUM. (NEW — 10-14, Scott's call.)** jAIne argued small lists don't need search. Scott: a gesture that works on one list and disappears on the next is a re-learning moment. **Judge a control by the habit it trains, not by the one screen it sits on.**
 - **RUN THE CHEAP EXPERIMENT BEFORE WINNING THE ARGUMENT. (NEW — 10-08.)** jAIne said a video model could not remove the baked-in ring and the source had to be cleaned by hand. Scott spent 45 cents testing a prompt instead, and the portal burn became the recipe. **When a test costs less than the debate, run the test.**
 - **A SHARED TABLE NEEDS A HOUSEHOLD-AWARE WRITE RULE, OR NO CLIENT WRITES AT ALL. (NEW — 10-08.)** "Keepers can write" sounds scoped and is not: a role is not a hold. **For cross-hold data, writes go through the backend only.**
 - **A FIX THAT DEPENDS ON THE BROWSER NOTICING IS A GUESS. (NEW — 10-08.)** The first ring fix waited on a playback signal Scott's phone never sent. The second made the component track the clip directly. **Fix the mechanism, not the instance, again.**
@@ -238,6 +297,9 @@ The 07-31 sweep searched "Parent" and "Kid" and missed four "adult" strings: the
 
 ## ✅ EARLIER — SHIPPED (compressed; git owns the detail)
 
+- **2026-10-17** — the catch-up close. Folded the uncommitted 10-12 close and the never-closed 10-14 pass into canon.
+- **2026-10-13/14** — the screen-validation pass. Weekly recap verified with the family (May approved); chips on every Board; thresholds; hero clips on the wall; wall tile replay; Lists add. Lists one-input redesign DRAFT. Recap-as-ceremony parked.
+- **2026-10-12** — the open-only session. Charter move to `session-protocol.md`, LOCKED same day. Copy inventory found and archived.
 - **2026-10-08** — the hearth session. The "While you were away" reel on a fireplace stage, fire as the ember heat dial and sconces as the non-ember channel; campaign beat; the hearth line. One shared earned-by definition after a stop-clause found a double-counted bounty. Weekly Ranks and the weekly recap built on a database-defined Monday week. `/welcome` form tightened, closing signed-in read access to signups. **Evening: the four family heroes became generated video clips on fal.ai (Kling v3 standard) playing inside the fireplace, from a shared clip library writable only by the backend.** Bounty categories set from 90 days of data. Logged the 09-30 tail: hearth panel fixed, backups exist.
 - **2026-09-25** — the catch-up session. Android install verified on a real Pixel; service worker LOCKED. Lists collapse, section counts, left-align and two-line wrap. `/welcome` built.
 - **2026-09-11** — the momentum session. Forge declined; Gate E ahead of Gate C. Wall campaign rolodex. `series_id` lineage and last-done. Lists paste-to-split.
