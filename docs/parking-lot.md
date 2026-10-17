@@ -26,7 +26,9 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **Does the wall have room for two reel tiles?** "Embers landed" and "Last week" now sit together. **Density on the ambient rail is Scott's eye.**
 - **`beta_signups` rate limiting.** The honeypot stops form-filling bots, not a bot posting straight to the backend. **Only if spam actually shows up.**
 - **Split-twin bounties.** Four bounties were re-created instead of edited and now exist twice with different values: Empty Dishwasher (5 and 10), Vacuum and Mop Garage (15 and 25), Mop downstairs / Mop Downstairs, Vacuum downstairs / "Vaccuum Downstairs." **Their history and last-done dates are split.** Retire one of each pair.
-- **Test bounties pollute real history.** `testing approve`, `Testing retired`, `testing the dailies`, `really REALLY testing weekly`, `Give Mia embers for testing` all appear in the 90-day report and will appear in recaps and category counts. Joins the pre-production sweep, sooner.
+- **Test bounties pollute real history.** `testing approve`, `Testing retired`, `testing the dailies`, `really REALLY testing weekly`, `Give Mia embers for testing` all appear in the 90-day report and will appear in recaps and category counts. **10-13: confirmed live. "test celebration +1" sits in Cade's verified recap week.** Promoted to OPEN in status: before the beta, not the pre-production sweep.
+- **A duplicate on Mia's Quick Add (10-13).** "Refill Pre-Workout +20" and "Pre-workout refill +10," adult chores on a kid's quick bar. Depends on whether Quick Add is household-wide (see OPEN DECISIONS).
+- **Watch: rolodex legibility with mixed item types (10-14).** The wall's header rolodex now flips calendar entries, campaigns, the 48-hour reel and the weekly recap. **Live with it a week.** If a replay can't be told from an event at a glance, the fix is a small type marker on each flip, not a second rolodex.
 
 ---
 
@@ -44,6 +46,8 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 ⚠️ **TOUCHED IS NOT REVIEWED.** **Batch before firing.**
 
+**The pass now has its input:** `docs/archive/copy-inventory.md`, every user-facing string at app commit `a119f14`. Evidence, not current truth.
+
 | Screen | State | Notes |
 |---|---|---|
 | **The Slate** | ✅ **Reviewed 07-31, closed 08-02** | |
@@ -54,12 +58,12 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 | **Briefing** | ✅ **Reviewed** | |
 | **`/welcome`** | ✅ **Copy live and checked 10-08** | *Placeholder now "The Ashford Hold." Safety section claims are true under own-session.* |
 | **The wall** | ⬜ unreviewed | ⚠️ **Ranks first among the unreviewed. Now carries two reel tiles.** |
-| **The reel and the weekly recap** | ⬜ unreviewed | *New 10-08. "While you were away," "Campaign complete," "kept the hearth lit," the chip and tile labels.* |
+| **The reel and the weekly recap** | ⬜ unreviewed | *New 10-08. "While you were away," "Campaign complete," "kept the hearth lit," the chip and tile labels. **Not in the copy inventory; inventory first.*** |
 | **Ranks** | ⬜ unreviewed | *Weekly default, "All time" toggle, "Last week" label, new 10-08.* |
 | **The Vault** | ⬜ unreviewed | ⚠️ **The Kin empty state still says "adult."** |
 | **The Board** | ⬜ unreviewed | |
 | **Quest detail** | ⬜ unreviewed | |
-| **Lists** | ⬜ unreviewed | *"Add [search text]" on empty search, briefed 10-08.* |
+| **Lists** | ⬜ unreviewed | *"Add [search text]" verified 10-14. **The one-input redesign (DRAFT) rewrites this screen's copy: "Find or add…", the "Adding to:" line, the zero-match line. Review after it ships.*** |
 | **Onboarding — add family** | ⬜ unreviewed | ⚠️ **PipSpark says "this adult."** |
 | **Onboarding — recap** | ⬜ unreviewed | ⚠️ **"Adults turn dishes..." and "Adults approve."** |
 | **Onboarding — first bounty** | ⬜ unreviewed | ⚠️ **High-stakes screen; read it whole.** |
@@ -73,10 +77,12 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 - **🟠 DOES THE ACTIVITY FEED'S RESOLVED NAME STAY FROZEN?** Frozen at write time or looked up live? **Blocks the backfill design.**
 - **🟠 IS `kids-only` A DEAD AUDIENCE VALUE?** One grouped read settles it. **Do not kill it on 92%.**
-- **🟠 DOES THE WALL WANT AN AUDIENCE BADGE?** Scott's eye.
+- **🟠 DOES THE WALL WANT AN AUDIENCE BADGE? AND DO KEEPER BOARDS?** Scott's eye. **10-14 sharpened it:** Scott couldn't tell whether any bounty was parents-only, because nothing shows audience. jAIne's lean: **a small badge on Keeper boards only.** A Kin should never see a hint that something is hidden; a Keeper who can't tell "everyone" from "parents-only" is how a surprise ends up on the wall. Nothing needs it before the beta.
+- **🟠 LISTS ONE-INPUT: TOP OR BOTTOM?** The merge is decided (DRAFT); the position isn't. **jAIne's lean: bottom.** It's in thumb reach, beside the keyboard, already on every list. Rebalance it (input full-width, destination as a slim line above) rather than enlarge it. **The case for top:** the top bar already looks the way Scott wants the bar to look. **The one call the prompt depends on.**
+- **🟠 IS QUICK ADD HOUSEHOLD-WIDE BY DESIGN?** Mia's bar shows two adult pre-workout chores. If household-wide, it's only a duplicate to retire. If it should be per-profile, it's a fix.
 - **🟠 SHOULD LISTS GET AN AUDIENCE FLAG?** jAIne's lean: leave it.
 - **🟠 DOES A NULL `series_id` DESERVE ITS OWN EMPTY STATE?** Depends on the unreported backfill count.
-- **🟠 DOES A MEMBER WHO EARNED NOTHING APPEAR IN THE WEEKLY RECAP?** Today they get no beat and are absent from the finale. **Celebration-only says omit. "Whole house" says show them, without a zero.** Mia has been at zero for four reported weeks. **Watch Monday's recap with the family before deciding.**
+- **🟠 DOES A MEMBER WHO EARNED NOTHING APPEAR IN THE WEEKLY RECAP?** Today they get no beat and are absent from the finale. **Celebration-only says omit. "Whole house" says show them, without a zero.** Mia has been at zero for four reported weeks. *10-13: the recap was watched, but Mia had +3 that week, so she got a beat and the question went untested. Decide the first week someone actually earns zero.*
 - **🟠 WHEN CLIPS ARE EVERYWHERE, DOES THE FIRE STOP BEING THE HEAT DIAL?** Scott, 10-08: with real celebration clips he is not worried about the fire tracking embers. **The fire would become stage and transition.** Two things hold either way: **a 150 must still feel bigger than a 10** (the number, the burst, or which clip plays), and **the fire never carries a non-ember meaning.** Decide once the first category clips play.
 - **EMPTY ROSTER SEAT — auto-default an avatar, or a tappable "pick your hero" seat?** jAIne's lean: tappable seat; the wall is the exception. **Raised 07-29, still unratified.**
 - **Should `campaign.$id`'s create gate be removed, or should the FAB gain one?**
@@ -97,13 +103,13 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **🔴 THE EMAIL DOMAIN SESSION.** One session, two payoffs. **(1)** A provider. **(2)** theemberhold.com verified with SPF, DKIM and DMARC at the registrar, Scott's step. **(3)** Auth email pointed at the new provider, **the step people forget.** **(4)** A ping to Scott when a row lands in `beta_signups`, skipping honeypot catches. **Verify across all six providers, especially the one that spams today.** *Inspect any NS-record request before pasting.*
 - **🔴 A SHORT PRIVACY POLICY THAT IS TRUE.** Must name `flock.js`. Beta-grade.
 - **🔴 POSTHOG.** Day 8 is Gate E's entire exit criterion.
-- **WATCH THE WEEKLY RECAP, MONDAY 10-12.** On the wall, with the family. That is the verify. **Then settle the zero-earner question above.**
-- **CONFIRM THE TWO UNREPORTED 10-08 PROMPTS RAN.** (a) Wall tile cools to a replayable resting state; hearth avatars back to true circles, with Lovable's report on what re-broke them; Lists "Add [search text]." (b) The two fire scales; chips on every profile's Board, Keepers included.
+- ✅ ~~WATCH THE WEEKLY RECAP~~ and ✅ ~~CONFIRM THE TWO UNREPORTED 10-08 PROMPTS RAN~~ — **both closed on the glass 10-13/14.** See status.
 - **THE UNREQUESTED PACKAGE UPDATE REPORT.** Which packages, which versions, through bun? Then `bun audit`.
-- **A KIN-PROFILE REEL CHECK.** Chip appears; parents-only beats never do.
+- **THE GROUPED AUDIENCE READ.** Read-only Code work. Closes "is `kids-only` dead" and says whether any parents-only bounty exists, which unparks the Kin leak check.
+- **TEST DATA OUT OF LIVE TOTALS.** Before the beta. "test celebration +1" is in a verified recap week.
 - **THE WALL TABLET INSTALL.** Chrome proper, never Fully Kiosk.
 - **BACKUP: A SECOND LOCATION.** Two exports exist on one desktop. A cloud copy.
-- **THE FOUR "adult" STRINGS** plus the grep report that never came back.
+- **THE FOUR "adult" STRINGS + THE `TIER_LABEL` LEAK.** All located in the copy inventory. One Lovable prompt. **Plus: retire or fence `/hearth-log` and `/avatar-review`.**
 - **VERIFY THE PHONE BOARD'S CAMPAIGNS** · **THE `series_id` BACKFILL COUNT** · **🔴 THE THREE RENAME COMMITS (08-03).**
 - **🖊️ THE SCREEN COPY PASS.** The wall ranks first; the reel's copy is new.
 - **`board.tsx:149`'s kicker** · **`Testing retired`** · **the wall's `logActivity` in `mutationFn`** · **prod test-object cleanup** (`testing approve` minted 10 real embers to Mia) · **signup glass checks #2 and #3** · **the grant-revoke probe** · **the `quests.audience` grouped read** · **onboarding screenshots for screen 3** · **the Briefing's double claim** · **STALE chip predicate.**
@@ -167,9 +173,20 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 - **PIP NARRATES THE WEEKLY RECAP.** One line per member written from the week's real numbers. One model call per hold per week. **Send anonymized counts, swap names in on the device.** Proposed, not decided.
 - **SAVE RECIPE V1 AS A PLAYBOOK.** `playbooks/hero-clips.md` beside `avatar-generation.md`: the model, the length, "roster file as-is, no end frame," the portal-burn opener, and the four prompts that worked. **The bones of the north star should not live in a chat log.**
 
+### 🅿️ THE WEEKLY RECAP AS ITS OWN CEREMONY (parked 10-13)
+
+**Scott, after watching it with the family:** it works, it's cool, and it looks too much like the 48-hour reel with different numbers. Four points, one idea:
+
+1. **It should look fundamentally different** from a standard recap. **Keep the framework** (the reel, the campaign beat and the recap decomposed to one; that stays). **Change the stage:** a different set, a different light, a different rhythm. Reskin, not rebuild.
+2. **Open on the total embers earned.** Flips build-to-the-finale into headline-then-story. Cheap, and it does a lot of point 1's work by itself.
+3. **Weekly clips, a little longer.** Depends on the clip library and bounty categories, like every automation. **fal spend, so after the beta.**
+4. **The final page as a member dashboard.** Members more prominent; tap one for a dashboard: biggest bounty, week over week, and so on. **Week over week is nearly free:** `household_week_bounds` already defines the week; ask it for the prior one. **This is the natural home for the trophy card. Fold them; don't build twice.** It also overlaps the profile dashboard below; one design pass for all three.
+
+**Order:** total-first and the dashboard together (they reshape the same screens), then the new stage, clips last. **None of it jumps the critical path.** Scott: "All this is nice to have."
+
 ### The reel, round two
 
-- **THE TROPHY CARD.** ✅ LOCKED in principle 10-08: **phone only, one card per member per week, free.** Its home is the weekly recap's member beat: Mia's week, framed, saveable as an image. **Styled hotter as the haul grows.** Build after Monday's recap verifies. Saving on iOS is its own failure surface; test there first.
+- **THE TROPHY CARD.** ✅ LOCKED in principle 10-08: **phone only, one card per member per week, free.** **The recap verified 10-13, so it's unblocked.** Its home is either the recap's member beat or, per 10-13, the tapped-member dashboard in the ceremony redesign above. **Decide in that design pass.** Styled hotter as the haul grows. Saving on iOS is its own failure surface; test there first.
 - **LIVING FIRE.** The fireplace is painted and static. Lovable was clear that convincing moving flames need looping video. **This is an asset task, Scott's lane:** four short seamless loops (coals, low flame, full fire, roaring), generated or licensed, matched to the painterly hearth. **The firebox is already structured to crossfade video per tier without rework.** Then the sconces, same treatment.
 - **THE NUMBER'S STYLE.** It went from gold to cream with a heavy black outline. **Legible, but it reads slightly like a sticker.** A warm gold-white with a softer dark glow is worth one try. Scott's eye.
 
@@ -210,6 +227,16 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 ### Onboarding, phase three
 
 - **The kid joiner flow** (downgraded 08-02) · **the install-tutorial screen in the joiner flow** · **`/first-run/*` copy second read** · **the stacked-Pip-voice line** · **a creator who bails mid-onboarding gets the joiner tour** · **the early-approval seam.**
+
+### Lists: one input, not two (DRAFT 10-14)
+
+**One bounded Lovable prompt, auto-accept ON, behind the email work. Needs Scott's top-vs-bottom call first** (OPEN DECISIONS). The brief, at the floor and the intent:
+- One input on every list: typing filters live; enter or "+" adds.
+- The separate search bar goes away.
+- The destination section stays visible while typing.
+- Zero matches says so in a line (and carries the paste-a-list hint).
+- Prominence: clearly the main control on the page, not a banner. Lovable proposes; Scott judges on the phone.
+- No dependency changes without asking.
 
 ### Everything else
 
@@ -253,6 +280,9 @@ Four buckets. **Inbox** is untriaged. **NOW** is the next work. **NEXT** is soon
 
 ## KILLED / SUPERSEDED
 
+- **SEARCH ONLY ON LARGE LISTS — DECLINED 10-14, SCOTT'S CALL.** jAIne: "on 21 items your eyes are the search." **Scott: a gesture that works on one list and vanishes on the next teaches people the app is inconsistent.** Replaced by the one-input design.
+- **A SEPARATE "Add [search text]" COPY FIX — SUPERSEDED 10-14** by the one-input design, which removes the problem it patched.
+- **RETIRING THE 48-HOUR REEL FOR THE WEEKLY RECAP — NEVER PROPOSED, CONFIRMED 10-14.** Scott asked; nothing in canon retires it. Both live in the rolodex and do different jobs.
 - **THE ARCHED-HALL REEL STAGE — SUPERSEDED 10-08, SAME SESSION.** It landed well and Scott loved it, then replaced it with the fireplace. **The arch was a backdrop with a number on it; the fire is the tier mapping itself.**
 - **A CODE-DRAWN "ATMOSPHERIC" CASTLE — jAINE'S LEAN, WRONG, 10-08.** jAIne steered away from a detailed castle expecting clip art next to the painted avatars. Lovable went painterly and it sat right beside them. **Scott's push past "atmospheric" was right.**
 - **MOVING THE AVATAR OUT OF THE FIRE — DECLINED 10-08, SCOTT'S CALL.** jAIne read the avatar covering the firebox as a composition defect. **Scott: the member stands in their own achievement.** Legibility was solved with backlighting and a scrim, not relocation.
